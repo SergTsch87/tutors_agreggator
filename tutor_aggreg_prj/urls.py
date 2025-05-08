@@ -14,20 +14,16 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
-from django.urls import path
-
-urlpatterns = [
-    path('admin/', admin.site.urls),
-]
 
 # For CBV
 from django.contrib import admin
 from django.urls import path, include
+from tutors_app.views import HomeView
 # from django.views.generic import TemplateView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('tutors_app.urls')),   # app.urls
+    path('', HomeView.as_view(), name='home'),
+    # path('', include('tutors_app.urls')),   # app.urls
     # path("extend/", TemplateView.as_view(template_name="extend.html")),
 ]
