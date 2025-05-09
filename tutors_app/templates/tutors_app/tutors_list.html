@@ -2,11 +2,28 @@
 
 {% block content %}
 <h1>Our Tutors</h1>
-<ul class="list-groups">
-  {% for tutor in tutors %}
-  <li class="list-group-item">
-    {{ tutor.name }} - {{ tutor.subject }}
-  </li>
-  {% endfor %}
-</ul>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Name</th>
+      <th scope="col">Subject</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for tutor in tutors %}
+    <tr>
+      <th scope="row">{{ tutor.id }}</th>
+      <td>
+        <a href="{{ tutor.get_absolute_url }}">
+          {{ tutor.name }}
+        </a>
+      </td>
+      <td>{{ tutor.subject.name }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
 {% endblock %}
