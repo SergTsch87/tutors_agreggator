@@ -1,11 +1,10 @@
-
 # with templates
 # # Class-Based View (CBV):
 # from tutors_app.views import HomeView
 from django.urls import path
-from .views import HomeView
+from .views import TutorListView
 
 
 urlpatterns = [
-    path('', HomeView.as_view(), name='home'),
+    path('', TutorListView.as_view(), name='tutor_list'),
 ]

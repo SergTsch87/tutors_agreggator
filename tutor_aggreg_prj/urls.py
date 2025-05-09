@@ -18,12 +18,8 @@ Including another URLconf
 # For CBV
 from django.contrib import admin
 from django.urls import path, include
-from tutors_app.views import HomeView
-# from django.views.generic import TemplateView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', HomeView.as_view(), name='home'),
-    # path('', include('tutors_app.urls')),   # app.urls
-    # path("extend/", TemplateView.as_view(template_name="extend.html")),
+    path('', include('tutors_app.urls')),   # app.urls
 ]
