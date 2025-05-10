@@ -20,7 +20,7 @@
           {{ tutor.name }}
         </a>
       </td>
-      <td>{{ tutor.subject.name }}</td>
+      <td><a href="{% url 'tutors:tutor_detail' tutor.pk %}">{{ tutor.name }}</a></td>
     </tr>
     {% endfor %}
   </tbody>

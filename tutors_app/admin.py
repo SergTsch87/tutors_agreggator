@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Tutor
+from .models import Tutor#, Subject
 
 # Register your models here.
 # admin.site.register(Tutor)
@@ -8,3 +8,6 @@ from .models import Tutor
 class TutorAdmin(admin.ModelAdmin):
     list_display = ('name', 'subject')
     search_fields = ('name', 'subject')
+
+
+# admin.site.register(Subject)
