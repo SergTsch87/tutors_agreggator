@@ -7,3 +7,6 @@ class Tutor(models.Model):
 
     def __str__(self):
         return self.name
+
+    def formatted_subject(self):
+        return self.subject.title()
