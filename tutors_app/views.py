@@ -13,6 +13,14 @@ class TutorListView(ListView):
     template_name = 'tutors_app/tutors_list.html'
     context_object_name = 'tutors'
 
+    # filter queryset if a subject is passed
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        subject = self.request.GET.get("subject")  # to read the filter value
+        if subject:
+            queryset = queryset.filter(subject__iexact=subject)
+        return queryset
+
 
 class TutorDetailView(DetailView):
     model = Tutor
