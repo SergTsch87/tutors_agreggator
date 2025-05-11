@@ -11,6 +11,7 @@ To keep things dynamic, extract all available subjects from the database -->
   <select name="subject" id="subject" onchange="this.form.submit()">
     <option value="">All Subjects</option>
     {% for subj in subjects %}
+      <!-- This line ensures that the selected value stays selected when the form is submitted -->
       <option value="{{ subj }}" {% if request.GET.subject == subj %}selected{% endif %}>
         {{ subj }}
       </option>
