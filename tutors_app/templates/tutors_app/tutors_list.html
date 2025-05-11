@@ -3,6 +3,21 @@
 {% block content %}
 <h1 class="mb-4">Available Tutors</h1>
 
+<!-- to select subject -->
+<!-- On change, the form should submit automatically.
+To keep things dynamic, extract all available subjects from the database -->
+<form action="" method="get">
+  <label for="subject">Filter by subject</label>
+  <select name="subject" id="subject" onchange="this.form.submit()">
+    <option value="">All Subjects</option>
+    {% for subj in subjects %}
+      <option value="{{ subj }}" {% if request.GET.subject == subj %}selected{% endif %}>
+        {{ subj }}
+      </option>
+    {% endfor %}
+  </select>
+</form>
+
 <table class="table table-striped">
   <thead>
     <tr>
