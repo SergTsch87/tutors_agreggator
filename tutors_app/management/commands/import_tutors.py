@@ -47,7 +47,11 @@ class Command(BaseCommand):
             )
             if created:
                 created_count += 1
+                self.stdout.write(self.style.SUCCESS(f"✓ Created {entry['name']}"))  # ✅ Green (successful operation)
+            else:
+                self.stdout.write(self.style.WARNING(f"⚠️  Skipped (already exists): {entry['name']}"))   # ⚠️ Yellow (non-critical info)
 
         self.stdout.write(self.style.SUCCESS(f"Imported {created_count} new tutors."))
         # self.style.SUCCESS - Print colored success message
-        # return super().handle(*args, **options)
+        
+        # self.style.ERROR('text') — ❌ Red (critical failure)
