@@ -16,6 +16,12 @@ class Command(BaseCommand):
             default=os.path.join(settings.BASE_DIR, 'tutors_data.json')
         )
 
+        parser.add_argument(
+            '--limit',
+            type=int,
+            help='Limit the number of tutors to import'
+        )
+
     # is the entry point for your command
     def handle(self, *args, **options):
         path = options['path']  # accesses the value passed from the command line (e.g. --path=data/tutors.json)
