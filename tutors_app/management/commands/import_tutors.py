@@ -16,10 +16,12 @@ class Command(BaseCommand):
             default=os.path.join(settings.BASE_DIR, 'tutors_data.json')
         )
 
+    # is the entry point for your command
     def handle(self, *args, **options):
-        path = options['path']
+        path = options['path']  # accesses the value passed from the command line (e.g. --path=data/tutors.json)
 
         if not os.path.exists(path):
+            # self.stderr.write - Print styled error messages
             self.stderr.write(self.style.ERROR(f"File not found: {path}"))
             return
         
@@ -28,6 +30,7 @@ class Command(BaseCommand):
 
         created_count = 0
         for entry in data:
+            # get_or_create - Avoid creating duplicates
             obj, created = Tutor.objects.get_or_create(
                 name=entry['name'],
                 defaults={'subject': entry['subject']}
@@ -36,4 +39,5 @@ class Command(BaseCommand):
                 created_count += 1
 
         self.stdout.write(self.style.SUCCESS(f"Imported {created_count} new tutors."))
+        # self.style.SUCCESS - Print colored success message
         # return super().handle(*args, **options)
