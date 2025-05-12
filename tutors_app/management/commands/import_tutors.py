@@ -25,6 +25,7 @@ class Command(BaseCommand):
     # is the entry point for your command
     def handle(self, *args, **options):
         path = options['path']  # accesses the value passed from the command line (e.g. --path=data/tutors.json)
+        limit = options.get('limit')  # to import only a limited number of tutors
 
         if not os.path.exists(path):
             # self.stderr.write - Print styled error messages
@@ -33,6 +34,9 @@ class Command(BaseCommand):
         
         with open(path, 'r', encoding='utf-8') as f:
             data = json.load(f)
+
+        if limit is not None:
+            data = data[:limit]
 
         created_count = 0
         for entry in data:
