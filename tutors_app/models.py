@@ -3,7 +3,7 @@ from django.urls import reverse
 
 # Create your models here.
 class Subject(models.Model):
-    name = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=100, unique=True)  # The unique=True ensures no duplicate subjects.
 
     def __str__(self):
         return self.name
@@ -12,7 +12,7 @@ class Subject(models.Model):
 class Tutor(models.Model):
     name = models.CharField(max_length=100)
     # subject = models.CharField(max_length=100)  # ← This will be changed
-    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name='titors')
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name='titors')  # creates a many-to-one link from Tutor to Subject
 
     def __str__(self):
         return self.name
