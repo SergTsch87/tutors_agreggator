@@ -11,8 +11,8 @@ class Subject(models.Model):
 
 class Tutor(models.Model):
     name = models.CharField(max_length=100)
-    # subject = models.CharField(max_length=100)  # ← This will be changed
-    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name='titors')  # creates a many-to-one link from Tutor to Subject
+    subject = models.CharField(max_length=100)  # ← This will be changed
+    # subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name='titors')  # creates a many-to-one link from Tutor to Subject
 
     def __str__(self):
         return self.name
