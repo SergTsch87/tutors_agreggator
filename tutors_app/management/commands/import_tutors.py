@@ -1,7 +1,7 @@
 import json
 import os
 from django.core.management.base import BaseCommand
-from tutors_app.models import Tutor
+from tutors_app.models import Tutor, Subject
 from django.conf import settings
 
 
@@ -29,7 +29,7 @@ class Command(BaseCommand):
 
         if not os.path.exists(path):
             # self.stderr.write - Print styled error messages
-            self.stderr.write(self.style.ERROR(f"File not found: {path}"))
+            self.stderr.write(self.style.ERROR(f"❌ File not found: {path}"))
             return
         
         with open(path, 'r', encoding='utf-8') as f:
@@ -41,9 +41,23 @@ class Command(BaseCommand):
         created_count = 0
         for entry in data:
             # get_or_create - Avoid creating duplicates
+            subj_name = entry['subject'].strip()
+            # Either get existing Subject or create a new one
+            subj_obj, _ = Subject.objects.get_or_create(name=subj_name)
+
+
+            # Var 2)
+            # # Now create the Tutor with ForeignKey to Subject
+            # Tutor.objects.create(name=entry['name'], subject=subj_obj)
+            # To avoid data duplication or bad links from pre-migration data
+            # Tutor.objects.all().delete()
+            # Subject.objects.all().delete()
+
+
             obj, created = Tutor.objects.get_or_create(
                 name=entry['name'],
-                defaults={'subject': entry['subject']}
+                # defaults={'subject': entry['subject']}
+                subject=subj_obj
             )
             if created:
                 created_count += 1
