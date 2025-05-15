@@ -7,8 +7,11 @@ from .models import Tutor, Subject
 @admin.register(Tutor)
 class TutorAdmin(admin.ModelAdmin):
     list_display = ('name', 'subject')
-    search_fields = ('name', 'subject')
+    search_fields = ('name', 'subject__name')
     list_filter = ('subject',)
 
 
-admin.site.register(Subject)
+# admin.site.register(Subject)
+@admin.register(Subject)
+class SubjectAdmin(admin.ModelAdmin):
+    list_display = ('name',)
