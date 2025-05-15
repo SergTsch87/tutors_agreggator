@@ -1,10 +1,10 @@
 [
-    {"name": "Amanda Smith", "subject": "Chemistry"},
-    {"name": "Smithsone Carl", "subject": "Math"},
-    {"name": "Johannsson Dixie", "subject": "Physics"},
+    {"name": "Smithsone Carl", "subject": "Chemistry"},
     {"name": "Alister Freddy", "subject": "Biology"},
     {"name": "Lee'O Dow", "subject": "Physics"},
     {"name": "Sampson Flow", "subject": "Math"},
+    {"name": "Amanda Smith", "subject": "Math"},
+    {"name": "Johannsson Dixie", "subject": "Physics"},
     {"name": "Black David", "subject": "History"},
     {"name": "Meg Kingsly", "subject": "Math"},
     {"name": "Müllerich Evita", "subject": "Biology"},    
