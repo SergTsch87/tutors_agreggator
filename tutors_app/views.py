@@ -30,5 +30,5 @@ class TutorListView(ListView):
 
 class TutorDetailView(DetailView):
     model = Tutor
-    template_name = 'tutors_app/tutors_detail.html'
+    template_name = 'tutors_app/tutor_detail.html'
     context_object_name = 'tutor'

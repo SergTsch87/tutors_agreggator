@@ -19,6 +19,15 @@ To keep things dynamic, extract all available subjects from the database -->
   </select>
 </form>
 
+<h3>Filter by subject</h3>
+<ul>
+  {% for subj in subjects %}
+  <li>
+    <a href="?subject={{ subj }}">{{ subj }}</a>
+  </li>
+  {% endfor %}
+</ul>
+
 <table class="table table-striped">
   <thead>
     <tr>
@@ -31,7 +40,8 @@ To keep things dynamic, extract all available subjects from the database -->
     {% for tutor in tutors %}
     <tr>
       <th scope="row">{{ tutor.id }}</th>
-      <td><a href="{{ tutor.get_absolute_url }}">{{ tutor.name }}</a></td>
+      <!-- <td><a href="{{ tutor.get_absolute_url }}">{{ tutor.name }}</a></td> -->
+      <td><a href="{% url 'tutor_detail' tutor.id %}">{{ tutor.name }}</a></td>
       <td>{{ tutor.subject.name }}</td>
     </tr>
     {% endfor %}
