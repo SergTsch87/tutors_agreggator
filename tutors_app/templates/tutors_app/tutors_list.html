@@ -41,7 +41,7 @@ To keep things dynamic, extract all available subjects from the database -->
     <tr>
       <th scope="row">{{ tutor.id }}</th>
       <!-- <td><a href="{{ tutor.get_absolute_url }}">{{ tutor.name }}</a></td> -->
-      <td><a href="{% url 'tutor_detail' tutor.id %}">{{ tutor.name }}</a></td>
+      <td><a href="{% url 'tutors:tutor_detail' tutor.id %}">{{ tutor.name }}</a></td>
       <td>{{ tutor.subject.name }}</td>
     </tr>
     {% endfor %}
