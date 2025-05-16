@@ -15,7 +15,7 @@ class TutorListView(ListView):
 
     # filter queryset if a subject is passed
     def get_queryset(self):
-        queryset = super().get_queryset()
+        queryset = super().get_queryset().select_related('subject')
         subject = self.request.GET.get("subject")  # to read the filter value
         if subject:
             queryset = queryset.filter(subject__iexact=subject)
