@@ -3,6 +3,10 @@
 {% block content %}
 <h1 class="mb-4">Available Tutors</h1>
 
+{% if request.GET.subject %}
+  <a href="{% url 'tutors:tutors_list' %}" class="btn btn-primary">Back to list / Clear filter</a>
+{% endif %}
+
 <!-- to select subject -->
 <!-- On change, the form should submit automatically.
 To keep things dynamic, extract all available subjects from the database -->
@@ -18,15 +22,6 @@ To keep things dynamic, extract all available subjects from the database -->
     {% endfor %}
   </select>
 </form>
-
-<h3>Filter by subject</h3>
-<ul>
-  {% for subj in subjects %}
-  <li>
-    <a href="?subject={{ subj }}">{{ subj }}</a>
-  </li>
-  {% endfor %}
-</ul>
 
 <table class="table table-striped">
   <thead>
@@ -47,5 +42,14 @@ To keep things dynamic, extract all available subjects from the database -->
     {% endfor %}
   </tbody>
 </table>
+
+<h3>Filter by subject</h3>
+<ul>
+  {% for subj in subjects %}
+  <li>
+    <a href="?subject={{ subj }}">{{ subj }}</a>
+  </li>
+  {% endfor %}
+</ul>
 
 {% endblock %}
