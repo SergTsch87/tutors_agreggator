@@ -18,7 +18,13 @@ class TutorListView(ListView):
         queryset = super().get_queryset().select_related('subject')
         subject = self.request.GET.get("subject")  # to read the filter value
         if subject:
-            queryset = queryset.filter(subject__iexact=subject)
+            # to filter by id:
+            queryset = queryset.filter(subject__id=subject)
+            
+            # # to filter by name: not work...
+            # queryset = queryset.filter(subject__name__iexact=subject)
+
+            # queryset = queryset.filter(subject__iexact=subject)
         return queryset
     
     # Pass the list of subjects to the template
