@@ -5,7 +5,7 @@
 # with templates
 # Class-Based View (CBV):
 from django.views.generic import ListView, DetailView
-from .models import Tutor
+from .models import Tutor, Subject
 
 
 class TutorListView(ListView):
@@ -16,12 +16,14 @@ class TutorListView(ListView):
     # filter queryset if a subject is passed
     def get_queryset(self):
         queryset = super().get_queryset().select_related('subject')
+        # Gets the value of the GET parameter ?subject=25
         subject = self.request.GET.get("subject")  # to read the filter value
         if subject:
-            # to filter by id:
+            # Filters tutors by subject ID (foreign key comparison)
             queryset = queryset.filter(subject__id=subject)
             
             # # to filter by name: not work...
+            # ❌ This does NOT work for foreign keys:
             # queryset = queryset.filter(subject__name__iexact=subject)
 
             # queryset = queryset.filter(subject__iexact=subject)
@@ -29,8 +31,15 @@ class TutorListView(ListView):
     
     # Pass the list of subjects to the template
     def get_context_data(self, **kwargs):
+        # Gets default context from ListView (which includes 'tutors')
         context = super().get_context_data(**kwargs)
-        context["subjects"] = Tutor.objects.values_list("subject", flat=True).distinct()
+
+        # Get all distinct subjects associated with tutors, including subject objects
+        subject_ids = Tutor.objects.values_list('subject', flat=True).distinct()
+        context["subjects"] = Subject.objects.filter(id__in=subject_ids)
+
+        # Adds a list of unique subject IDs (used in dropdown or filter list)
+        # context["subjects"] = Tutor.objects.values_list("subject", flat=True).distinct()
         return context
 
 
