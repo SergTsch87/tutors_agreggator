@@ -5,7 +5,7 @@
     <div class="card-body">
         <h2>{{ tutor.name }}</h2>
         <p><strong>Subject:</strong> {{ tutor.formatted_subject }}</p>
-        <a href="{% url 'tutors:list' %}" class="btn btn-primary">Back to list / Clear filter</a>
+        <a href="{% url 'tutors:tutors_list' %}" class="btn btn-primary">Back to list / Clear filter</a>
     </div>
 </div>
 {% endblock %}

@@ -18,7 +18,7 @@ class Tutor(models.Model):
         return self.name
 
     def formatted_subject(self):
-        return self.subject.title()
+        return self.subject.name.title()
     
     def get_absolute_url(self):
         return reverse('tutors:tutor_detail', args=[str(self.pk)])
