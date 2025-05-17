@@ -47,7 +47,8 @@ To keep things dynamic, extract all available subjects from the database -->
 <ul>
   {% for subj in subjects %}
   <li>
-    <a href="?subject={{ subj }}">{{ subj }}</a>
+    <!-- <a href="?subject={{ subj }}">{{ subj }}</a> -->
+    <a href="?subject={{ subj.id }}">{{ subj.name }}</a>
   </li>
   {% endfor %}
 </ul>
