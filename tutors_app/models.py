@@ -7,12 +7,19 @@ class Subject(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class TutorManager(models.Manager):
+    def by_subject(self, subject_name):
+        return self.select_related('subject').filter(subject__name=subject_name)
     
 
 class Tutor(models.Model):
     name = models.CharField(max_length=100)
     # subject = models.CharField(max_length=100)  # ← This will be changed
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name='tutors')  # creates a many-to-one link from Tutor to Subject
+
+    objects = TutorManager()
 
     def __str__(self):
         return self.name
