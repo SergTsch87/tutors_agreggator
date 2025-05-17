@@ -1,7 +1,11 @@
 {% extends "tutors_app/base.html" %}
 
 {% block content %}
-<h1 class="mb-4">Available Tutors</h1>
+{% if selected_subject %}
+  <h1 class="mb-4">Tutors for subject: {{ selected_subject.name }}</h1>
+{% else %}  
+  <h1 class="mb-4">Available Tutors</h1>
+{% endif %}
 
 {% if request.GET.subject %}
   <a href="{% url 'tutors:tutors_list' %}" class="btn btn-primary">Back to list / Clear filter</a>
