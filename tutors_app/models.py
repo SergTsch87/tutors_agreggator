@@ -18,7 +18,7 @@ class Tutor(models.Model):
     name = models.CharField(max_length=100)
     # subject = models.CharField(max_length=100)  # ← This will be changed
     # subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name='tutors')  # creates a many-to-one link from Tutor to Subject
-    subject = models.ManyToManyField(Subject, related_name='tutors')  # creates a many-to-many link between Tutor and Subject
+    subjects = models.ManyToManyField(Subject, related_name='tutors')  # creates a many-to-many link between Tutor and Subject
 
     objects = TutorManager()
 
