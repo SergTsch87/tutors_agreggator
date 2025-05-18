@@ -20,7 +20,9 @@ class TutorListView(ListView):
         subject = self.request.GET.get("subject")  # to read the filter value
         if subject:
             # Filters tutors by subject ID (foreign key comparison)
-            queryset = queryset.filter(subject__id=subject)
+            queryset = queryset.filter(subjects__id=subject)
+            # or...
+            # queryset = queryset.filter(subjects__name__iexact=subject)
             
             # # to filter by name: not work...
             # ❌ This does NOT work for foreign keys:

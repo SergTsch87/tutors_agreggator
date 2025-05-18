@@ -4,7 +4,12 @@
 <div class="card">
     <div class="card-body">
         <h2>{{ tutor.name }}</h2>
-        <p><strong>Subject:</strong> {{ tutor.formatted_subject }}</p>
+        <!-- <p><strong>Subject:</strong> {{ tutor.formatted_subject }}</p> -->
+         <p><strong>Subjects:</strong>
+            {% for subj in tutor.subjects.all %}
+                {{ subj.name }}{% if not forloop.last %}, {% endif %}
+            {% endfor %}
+        </p>
         <a href="{% url 'tutors:tutors_list' %}" class="btn btn-primary">Back to list / Clear filter</a>
     </div>
 </div>

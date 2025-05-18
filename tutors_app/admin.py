@@ -4,10 +4,11 @@ from .models import Tutor, Subject
 # Register your models here.
 @admin.register(Tutor)
 class TutorAdmin(admin.ModelAdmin):
-    list_display = ('name', 'subject')
-    search_fields = ('name', 'subject__name')
-    list_filter = ('subject',)
-    raw_id_fields = ('subject',)
+    list_display = ('name', 'subjects')
+    # search_fields = ('name', 'subject__name')
+    list_filter = ('subjects',)
+    raw_id_fields = ('subjects',)
+    filter_horizontal = ('subjects',)  # cleaner UI for many-to-many
 
 
 # admin.site.register(Subject)
