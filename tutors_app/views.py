@@ -2,6 +2,7 @@
 # Class-Based View (CBV):
 from django.views.generic import ListView, DetailView
 from django.db.models import Prefetch
+from django.core.paginator import Paginator
 from .models import Tutor, Subject
 
 
@@ -9,6 +10,7 @@ class TutorListView(ListView):
     model = Tutor
     template_name = 'tutors_app/tutors_list.html'
     context_object_name = 'tutors'
+    paginate_by = 10  # ✅ NEW: This enables automatic pagination
 
     # filter queryset if a subject is passed
     def get_queryset(self):
