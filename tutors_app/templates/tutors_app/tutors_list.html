@@ -44,7 +44,11 @@
           <th scope="row">{{ tutor.id }}</th>
           <!-- <td><a href="{{ tutor.get_absolute_url }}">{{ tutor.name }}</a></td> -->
           <td><a href="{% url 'tutors:tutor_detail' tutor.id %}">{{ tutor.name }}</a></td>
-          <td>{{ tutor.subject }}</td>
+          <td>
+            {% for subj in tutor.subjects.all %}
+                {{ subj.name }}{% if not forloop.last %}, {% endif %}
+            {% endfor %}
+          </td>
         </tr>
         {% endfor %}
       </tbody>
