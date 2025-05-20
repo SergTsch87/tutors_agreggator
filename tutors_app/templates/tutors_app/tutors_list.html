@@ -1,60 +1,67 @@
 {% extends "tutors_app/base.html" %}
 
 {% block content %}
-{% if selected_subject %}
-  <h1 class="mb-4">Tutors for subject: {{ selected_subject.name }}</h1>
-{% else %}  
-  <h1 class="mb-4">Available Tutors</h1>
-{% endif %}
+<div class="row">
+  <div class="col-8">
 
-{% if request.GET.subject %}
-  <a href="{% url 'tutors:tutors_list' %}" class="btn btn-primary">Back to list / Clear filter</a>
-{% endif %}
+    {% if selected_subject %}
+      <h1 class="mb-4">Tutors for subject: {{ selected_subject.name }}</h1>
+    {% else %}  
+      <h1 class="mb-4">Available Tutors</h1>
+    {% endif %}
 
-<!-- to select subject -->
-<!-- On change, the form should submit automatically.
-To keep things dynamic, extract all available subjects from the database -->
-<form action="" method="get">
-  <label for="subject">Filter by subject</label>
-  <select name="subject" id="subject" onchange="this.form.submit()">
-    <option value="">All Subjects</option>
-    {% for subj in subjects %}
-      <!-- This line ensures that the selected value stays selected when the form is submitted -->
-      <option value="{{ subj.id }}" {% if request.GET.subject == subj.id|stringformat:"s" %}selected{% endif %}>
-        {{ subj.name }}
-      </option>
-    {% endfor %}
-  </select>
-</form>
+    {% if request.GET.subject %}
+      <a href="{% url 'tutors:tutors_list' %}" class="btn btn-primary">Back to list / Clear filter</a>
+    {% endif %}
 
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">Name</th>
-      <th scope="col">Subject</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for tutor in tutors %}
-    <tr>
-      <th scope="row">{{ tutor.id }}</th>
-      <!-- <td><a href="{{ tutor.get_absolute_url }}">{{ tutor.name }}</a></td> -->
-      <td><a href="{% url 'tutors:tutor_detail' tutor.id %}">{{ tutor.name }}</a></td>
-      <td>{{ tutor.subject }}</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+    <!-- to select subject -->
+    <!-- On change, the form should submit automatically.
+    To keep things dynamic, extract all available subjects from the database -->
+    <form action="" method="get">
+      <label for="subject">Filter by subject</label>
+      <select name="subject" id="subject" onchange="this.form.submit()">
+        <option value="">All Subjects</option>
+        {% for subj in subjects %}
+          <!-- This line ensures that the selected value stays selected when the form is submitted -->
+          <option value="{{ subj.id }}" {% if request.GET.subject == subj.id|stringformat:"s" %}selected{% endif %}>
+            {{ subj.name }}
+          </option>
+        {% endfor %}
+      </select>
+    </form>
 
-<h3>Filter by subject</h3>
-<ul>
-  {% for subj in subjects %}
-  <li>
-    <!-- <a href="?subject={{ subj }}">{{ subj }}</a> -->
-    <a href="?subject={{ subj.id }}">{{ subj.name }}</a>
-  </li>
-  {% endfor %}
-</ul>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Name</th>
+          <th scope="col">Subject</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for tutor in tutors %}
+        <tr>
+          <th scope="row">{{ tutor.id }}</th>
+          <!-- <td><a href="{{ tutor.get_absolute_url }}">{{ tutor.name }}</a></td> -->
+          <td><a href="{% url 'tutors:tutor_detail' tutor.id %}">{{ tutor.name }}</a></td>
+          <td>{{ tutor.subject }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+  </div>
+  <div class="col-4">
+    <h3>Filter by subject</h3>
+    <ul>
+      {% for subj in subjects %}
+      <li>
+        <!-- <a href="?subject={{ subj }}">{{ subj }}</a> -->
+        <a href="?subject={{ subj.id }}">{{ subj.name }}</a>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
 
 {% endblock %}
