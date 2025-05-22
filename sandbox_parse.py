@@ -12,9 +12,15 @@ def parse_tutors_page(html):
     soup = BeautifulSoup(html, "html.parser")
     tutors = []
 
-    for block in soup.select(".thumbnail"):
-        name = block.select_one(".title").text.strip()
-        price = block.select_one(".price").text.strip()
+    for block in soup.select(".styles_container__4lrBa"):
+        # Extract the tutos name
+        name_tag = block.select_one(".styles_userName__ltIVo span")
+        name = name_tag.get_text(strip=True) if name_tag else "N/A"
+        #__next > div > section > div.styles_tutorsContainer__y5yzC > div.styles_catalogWrapper__zRZcm > div.styles_mainContent__fp_h3 > div.styles_tutorsList__80R_9 > div:nth-child(1) > div > div.styles_userPreviewWrapper__HBWPS > div.styles_userPreview__dSzlG > p > span
+        #__next > div > section > div.styles_tutorsContainer__y5yzC > div.styles_catalogWrapper__zRZcm > div.styles_mainContent__fp_h3 > div.styles_tutorsList__80R_9
+        # price_tag = block.select_one(".rate.schoolRate .topCeil")
+        price_tag = block.select_one(".rate .topCeil")
+        price = price_tag.get_text(strip=True) if price_tag else "N/A"
         tutors.append({"name": name, "price": price})
 
     return tutors
