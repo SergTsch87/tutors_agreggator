@@ -18,33 +18,45 @@ def parse_tutors_page(html):
 
     for block in soup.select(".styles_container__4lrBa"):
         # Extract the tutors name
-        # name_tag = block.select_one(".styles_userName__ltIVo span")
-        # name = name_tag.get_text(strip=True) if name_tag else "N/A"
         name = get_element(block, ".styles_userName__ltIVo span")
         
         # Extract the price
-        # price_tag = block.select_one(".rate.schoolRate .topCeil")
-        # price_tag = block.select_one(".rate .topCeil")
-        # price = price_tag.get_text(strip=True) if price_tag else "N/A"
         price = get_element(block, ".rate .topCeil")
 
         object_item = ''
         for item in block.find_all('span', class_="styles_lessonsItem__v8FAD"):
             object_item += item.get_text(strip=True) + ', '
             print(f'object_item: {object_item}')
+
+        ratg_revs = block.find('div', class_="styles_reviewsBlock__FNrPL") if block else "N/A"
+        rating = ratg_revs.select_one('span').get_text(strip=True)
+        number_of_reviews = ratg_revs.find('span', class_="styles_reviewsCount__EAIh6").get_text(strip=True)
+
+        main_info = block.find('div', class_="styles_mainInfo__cK8Ru") if block else "N/A"
+        # education = main_info.find('p', class_="styles_education__41VXk").select_one('span').get_text(strip=True)
+        education = main_info.find('p', class_="styles_education__41VXk").get_text(strip=True)
+        experience = main_info.find('p', class_="styles_practice__AZyXc").get_text(strip=True)
             
-        tutors.append({"name": name, "price": price, "objects": object_item})
+        tutors.append({"name": name, "price": price, "objects": object_item, "rating": rating, "number_of_reviews": number_of_reviews, "education": education, "experience": experience})
 
     return tutors
 
 
 def main():
-    url = "https://buki.com.ua/tutors-online/biolohiia/5/"
+    url = "https://buki.com.ua/tutors-online/biolohiia/6/"
     html = get_html(url)
     data = parse_tutors_page(html)
 
     for tutor in data:
-        print(f"Tutor name: {tutor['name']},  Price: {tutor['price']},  Objects: {tutor['objects']}")
+        print(f"Tutor name: {tutor['name']},  Price: {tutor['price']},  Objects: {tutor['objects']}, Rating: {tutor['rating']}, Number of reviews: {tutor['number_of_reviews']}, Education: {tutor['education']}, Experience: {tutor['experience']}")
+
+
+    # html_str = "<p class='styles_education__41VXk'>Освіта: <span>Запорізький державний медичний університет (ЗДМУ)</span></p>"
+    # soup_elem = BeautifulSoup(html_str, "html.parser")
+    
+    # education = soup_elem.find('p', class_="styles_education__41VXk")
+    # print(f"education = {education.get_text(strip=True)}")
+    # print(f"education = {education}")
 
 
 if __name__ == "__main__":
