@@ -12,17 +12,36 @@ def get_element(block_tag, tag_class):
     return block_tag.select_one(tag_class).get_text(strip=True) if block_tag else "N/A"
 
 
-def safe_text(soup, selector=None, class_name=None,  tag='span', default="N/A"):
-    if not soup:
+# def safe_text(soup_or_el, selector=None, class_name=None,  tag='span', default="N/A"):
+#     if not soup_or_el:
+#         return default
+#     try:
+#         if class_name:
+#             el = soup_or_el.find(tag, class_=class_name)
+#         elif selector:
+#             el = soup_or_el.select_one(selector)
+#         else:
+#             return default
+#         return el.get_text(strip=True) if el else default
+#     except Exception:
+#         return default
+
+def safe_text(soup_or_el, selector=None, class_name=None,  tag='span', default="N/A"):
+    if not soup_or_el:
         return default
+    
     try:
-        if class_name:
-            el = soup.find(tag, class_=class_name)
-        elif selector:
-            el = soup.select_one(selector)
+        if selector or class_name:
+            if class_name:
+                el = soup_or_el.find(tag, class_=class_name)
+            else:
+                el = soup_or_el.select_one(selector)
+    
         else:
-            return default
+            el = soup_or_el  # Вважаємо, що передали вже готовий елемент
+    
         return el.get_text(strip=True) if el else default
+    
     except Exception:
         return default
 
@@ -56,8 +75,8 @@ def parse_tutor_card(html_card):
             "objects": [o.get_text(strip=True) for o in soup.find_all('span', class_="styles_lessonsItem__v8FAD")],
             "rating": safe_text(soup.select_one('div.styles_reviewsBlock__FNrPL'), "span"), # rating,
             "number_of_reviews": safe_text(soup.select_one('div.styles_reviewsBlock__FNrPL'), "span", class_name="styles_reviewsCount__EAIh6"), # number_of_reviews,
-            "education": safe_text(soup.select_one('div.styles_mainInfo__cK8Ru'), "p", class_name="styles_education__41VXk"), # education,
-            "experience": safe_text(soup.select_one('div.styles_mainInfo__cK8Ru'), "p", class_name="styles_practice__AZyXc"), # experience
+            "education": safe_text(soup.select_one('p.styles_education__41VXk'), "span"), # education,
+            "experience": safe_text(soup.select_one('p.styles_practice__AZyXc')), # experience
         }
 
 
@@ -76,8 +95,8 @@ def parse_tutors_page(html):
 
 
 def main():
-    # url = "https://buki.com.ua/tutors-online/biolohiia/7/"
-    url = "https://profrepetitor.com.ua/repetitors-biologiya"
+    url = "https://buki.com.ua/tutors-online/biolohiia/3/"
+    # url = "https://profrepetitor.com.ua/repetitors-biologiya"
     html = get_html(url)
     data = parse_tutors_page(html)
 
