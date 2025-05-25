@@ -12,41 +12,52 @@ def get_element(block_tag, tag_class):
     return block_tag.select_one(tag_class).get_text(strip=True) if block_tag else "N/A"
 
 
+def safe_text(soup, selector=None, class_name=None,  tag='span', default="N/A"):
+    if not soup:
+        return default
+    try:
+        if class_name:
+            el = soup.find(tag, class_=class_name)
+        elif selector:
+            el = soup.select_one(selector)
+        else:
+            return default
+        return el.get_text(strip=True) if el else default
+    except Exception:
+        return default
+
+
 def parse_tutor_card(html_card):
     # Extract Data from a Single Tutor Card
     # Саме в цій функції ми визначаємо усі ті дані, які хочемо дістати з кожної картки репетитора
     soup = BeautifulSoup(html_card, 'html.parser')
 
-    # Extract the tutors name
-    name = get_element(soup, ".styles_userName__ltIVo span")
+    # # ratg_revs = soup.find('div', class_="styles_reviewsBlock__FNrPL") if soup else "N/A"
+    # # rating = ratg_revs.select_one('span').get_text(strip=True)
+    # safe_text(soup.select_one('div.styles_reviewsBlock__FNrPL'), "span")
+
+    # # number_of_reviews = ratg_revs.find('span', class_="styles_reviewsCount__EAIh6").get_text(strip=True)
+    # safe_text(soup.select_one('div.styles_reviewsBlock__FNrPL'), "span", class_name="styles_reviewsCount__EAIh6")
     
-    # Extract the price
-    price = get_element(soup, ".rate .topCeil")
 
-    object_item = ''
-    for item in soup.find_all('span', class_="styles_lessonsItem__v8FAD"):
-        object_item += item.get_text(strip=True) + ', '
-        print(f'object_item: {object_item}')
+    # # main_info = soup.find('div', class_="styles_mainInfo__cK8Ru") if soup else "N/A"
+    # # # education = main_info.find('p', class_="styles_education__41VXk").select_one('span').get_text(strip=True)
+    # # education = main_info.find('p', class_="styles_education__41VXk").get_text(strip=True)
+    # safe_text(soup.select_one('div.styles_mainInfo__cK8Ru'), "p", class_name="styles_education__41VXk")
 
-    ratg_revs = soup.find('div', class_="styles_reviewsBlock__FNrPL") if soup else "N/A"
-    rating = ratg_revs.select_one('span').get_text(strip=True)
-    number_of_reviews = ratg_revs.find('span', class_="styles_reviewsCount__EAIh6").get_text(strip=True)
-
-    main_info = soup.find('div', class_="styles_mainInfo__cK8Ru") if soup else "N/A"
-    # education = main_info.find('p', class_="styles_education__41VXk").select_one('span').get_text(strip=True)
-    education = main_info.find('p', class_="styles_education__41VXk").get_text(strip=True)
-    experience = main_info.find('p', class_="styles_practice__AZyXc").get_text(strip=True)
+    # # experience = main_info.find('p', class_="styles_practice__AZyXc").get_text(strip=True)
+    # safe_text(soup.select_one('div.styles_mainInfo__cK8Ru'), "p", class_name="styles_practice__AZyXc")
     
     # current_price = extract_element(soup, "div", "ft-whitespace-nowrap ft-text-22 ft-font-bold")
 
     return {
-            "name": name,
-            "price": price,
-            "objects": object_item,
-            "rating": rating,
-            "number_of_reviews": number_of_reviews,
-            "education": education,
-            "experience": experience
+            "name": get_element(soup, ".styles_userName__ltIVo span"),
+            "price": get_element(soup, ".rate .topCeil"),
+            "objects": [o.get_text(strip=True) for o in soup.find_all('span', class_="styles_lessonsItem__v8FAD")],
+            "rating": safe_text(soup.select_one('div.styles_reviewsBlock__FNrPL'), "span"), # rating,
+            "number_of_reviews": safe_text(soup.select_one('div.styles_reviewsBlock__FNrPL'), "span", class_name="styles_reviewsCount__EAIh6"), # number_of_reviews,
+            "education": safe_text(soup.select_one('div.styles_mainInfo__cK8Ru'), "p", class_name="styles_education__41VXk"), # education,
+            "experience": safe_text(soup.select_one('div.styles_mainInfo__cK8Ru'), "p", class_name="styles_practice__AZyXc"), # experience
         }
 
 
@@ -65,7 +76,8 @@ def parse_tutors_page(html):
 
 
 def main():
-    url = "https://buki.com.ua/tutors-online/biolohiia/7/"
+    # url = "https://buki.com.ua/tutors-online/biolohiia/7/"
+    url = "https://profrepetitor.com.ua/repetitors-biologiya"
     html = get_html(url)
     data = parse_tutors_page(html)
 
