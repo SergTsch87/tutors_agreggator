@@ -106,19 +106,37 @@ def parse_tutors_page_profrep(html):
     return tutors
 
 
+def log_parse(func):
+    def wrapper(*args, **kwargs):
+        print('Starting parsing...')
+        result = func(*args, **kwargs)
+        print('Parsing done.')
+        return result
+    
+    return wrapper
+
+
+@log_parse
+def parse_example():
+    print('Parsing something...')
+
+
 def main():
-    # url = "https://buki.com.ua/tutors-online/biolohiia/3/"
+    # # url = "https://buki.com.ua/tutors-online/biolohiia/3/"
+    # # html = get_html(url)
+    # # data = parse_tutors_page_buki(html)
+
+    # url = "https://profrepetitor.com.ua/repetitors-biologiya"
     # html = get_html(url)
-    # data = parse_tutors_page_buki(html)
+    # # print(f'\nsize(html): {len(html)}\n')
+    # data = parse_tutors_page_profrep(html)
+    # # print(f'\nCount elements of data: {len(data)}\n')
 
-    url = "https://profrepetitor.com.ua/repetitors-biologiya"
-    html = get_html(url)
-    # print(f'\nsize(html): {len(html)}\n')
-    data = parse_tutors_page_profrep(html)
-    # print(f'\nCount elements of data: {len(data)}\n')
+    # for tutor in data:
+    #     print(f"Tutor name: {tutor['name']},  Price: {tutor['price']},  Objects: {tutor['objects']}, Rating: {tutor['rating']}, Number of reviews: {tutor['number_of_reviews']}, Education: {tutor['education']}, Experience: {tutor['experience']}, about_myself: {tutor['about_myself']}, city_or_online: {tutor['city_or_online']}")
 
-    for tutor in data:
-        print(f"Tutor name: {tutor['name']},  Price: {tutor['price']},  Objects: {tutor['objects']}, Rating: {tutor['rating']}, Number of reviews: {tutor['number_of_reviews']}, Education: {tutor['education']}, Experience: {tutor['experience']}, about_myself: {tutor['about_myself']}, city_or_online: {tutor['city_or_online']}")
+
+    parse_example()
 
 
     # html_str = "<p class='styles_education__41VXk'>Освіта: <span>Запорізький державний медичний університет (ЗДМУ)</span></p>"
