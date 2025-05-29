@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+from decors import parse_example
 
 
 def get_html(url):
@@ -106,19 +107,19 @@ def parse_tutors_page_profrep(html):
     return tutors
 
 
-def log_parse(func):
-    def wrapper(*args, **kwargs):
-        print('Starting parsing...')
-        result = func(*args, **kwargs)
-        print('Parsing done.')
-        return result
+# def log_parse(func):
+#     def wrapper(*args, **kwargs):
+#         print('Starting parsing...')
+#         result = func(*args, **kwargs)
+#         print('Parsing done.')
+#         return result
     
-    return wrapper
+#     return wrapper
 
 
-@log_parse
-def parse_example():
-    print('Parsing something...')
+# @log_parse
+# def parse_example():
+#     print('Parsing something...')
 
 
 def main():
