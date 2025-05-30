@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
-# from decors import parse_example
-from decors import log_parse
+
+# from decors import log_parse
 
 
 def get_html(url):
@@ -108,19 +108,32 @@ def parse_tutors_page_profrep(html):
     return tutors
 
 
-# def log_parse(func):
-#     def wrapper(*args, **kwargs):
-#         print('Starting parsing...')
-#         result = func(*args, **kwargs)
-#         print('Parsing done.')
-#         return result
-    
-#     return wrapper
+# @log_parse
+# def parse_example():
+#     print('Parsing something...')
 
 
-@log_parse
-def parse_example():
-    print('Parsing something...')
+# @log_parse
+# def adding_two_numbers(x, y):
+#     return x + y
+
+
+# def outer(name):
+#     def inner():
+#         print(f'Hello, {name}!')
+#     return inner
+
+
+def make_multiplier(factor):
+    def multiply(x):
+        return x * factor
+    return multiply
+
+
+# def f(x):
+#     def g(y):
+#         return y
+#     return g
 
 
 def main():
@@ -138,7 +151,26 @@ def main():
     #     print(f"Tutor name: {tutor['name']},  Price: {tutor['price']},  Objects: {tutor['objects']}, Rating: {tutor['rating']}, Number of reviews: {tutor['number_of_reviews']}, Education: {tutor['education']}, Experience: {tutor['experience']}, about_myself: {tutor['about_myself']}, city_or_online: {tutor['city_or_online']}")
 
 
-    parse_example()
+    # parse_example()
+    # --------
+    # a = 2
+    # b = 3
+    # print(adding_two_numbers(a, b))
+    # --------
+    # greet = outer('Alice')
+    # greet()
+    # --------
+    double = make_multiplier(2)
+    tripple = make_multiplier(3)
+
+    print(double(7))
+    print(tripple(9))
+    # --------
+
+    # a = 5
+    # b = 1
+    # h = f(a)
+    # print(h(b))
 
 
     # html_str = "<p class='styles_education__41VXk'>Освіта: <span>Запорізький державний медичний університет (ЗДМУ)</span></p>"

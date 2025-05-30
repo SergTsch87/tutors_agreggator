@@ -6,8 +6,3 @@ def log_parse(func):
         return result
     
     return wrapper
-
-
-# @log_parse
-# def parse_example():
-#     print('Parsing something...')
