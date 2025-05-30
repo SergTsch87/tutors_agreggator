@@ -14,3 +14,9 @@ class TestParserRegistry(unittest.TestCase):
         register('buki', dummy_parser)
         self.assertIn('buki', registry)
         self.assertEqual(registry['buki']('test html'), 'I parsed something!')
+
+    def test_register_multiple_sites(self):
+        register('buki', parser1)
+        register('profrep', parser2)
+        self.assertEqual(registry['buki']('test'), 'A')
+        self.assertEqual(registry['profrep']('test'), 'B')
