@@ -54,17 +54,17 @@ class TestParserRegistry(unittest.TestCase):
 
 class TestPrePostProcessing(unittest.TestCase):
     def test_log_before_and_after_parse(self):
-        # log = []
+        log = []
 
-        # def fake_log(msg):
-        #     log.append(msg)
+        def fake_log(msg):
+            log.append(msg)
 
         # Create a dummy decorator for test; we'll replace this with the real one later.
         def log_decorator(func):
             def wrapper(html):
-                fake_log('Before parsing')
+                fake_log('BEFORE parsing')
                 result = func(html)
-                fake_log('After parsing')
+                fake_log('AFTER parsing')
                 return result
             return wrapper
         
@@ -75,4 +75,4 @@ class TestPrePostProcessing(unittest.TestCase):
         result = dummy_parser('test_html')
 
         self.assertEqual(result, "parsed(test_html)")
-        self.assertEqual(log, ["BEFORE parsing", "AFTER parsing"])                
+        self.assertEqual(log, ["BEFORE parsing", "AFTER parsing"])
