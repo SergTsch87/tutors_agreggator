@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 
 # from decors import log_parse
-from decors import decor_calls
+# from decors import decor_calls
 
 
 def get_html(url):
@@ -123,7 +123,7 @@ def main():
     # for tutor in data:
     #     print(f"Tutor name: {tutor['name']},  Price: {tutor['price']},  Objects: {tutor['objects']}, Rating: {tutor['rating']}, Number of reviews: {tutor['number_of_reviews']}, Education: {tutor['education']}, Experience: {tutor['experience']}, about_myself: {tutor['about_myself']}, city_or_online: {tutor['city_or_online']}")
 
-    
+    pass
 
     # html_str = "<p class='styles_education__41VXk'>Освіта: <span>Запорізький державний медичний університет (ЗДМУ)</span></p>"
     # soup_elem = BeautifulSoup(html_str, "html.parser")
