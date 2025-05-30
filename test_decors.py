@@ -1,5 +1,5 @@
 import unittest
-from decors import registry, register
+from decors import registry, register, register_parser
 
 
 def dummy_parser(html):
@@ -27,3 +27,11 @@ class TestParserRegistry(unittest.TestCase):
         
         self.assertEqual(registry['buki']('test'), 'A')
         self.assertEqual(registry['profrep']('test'), 'B')
+
+    def test_decorator_registers_function(self):
+        @register_parser('buki')
+        def parse_buki(html):
+            return 'Parsed Buki'
+
+        self.assertIn('buki', registry)
+        self.assertEqual(registry['buki']('html...'), 'Parsed Buki')
