@@ -35,3 +35,9 @@ class TestParserRegistry(unittest.TestCase):
 
         self.assertIn('buki', registry)
         self.assertEqual(registry['buki']('html...'), 'Parsed Buki')
+
+    def test_invalid_site_name_type(self):
+        with self.assertRaises(TypeError):
+            @register_parser(123)
+            def invalid_parser(html):
+                return 'Should not register'
