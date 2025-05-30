@@ -12,7 +12,16 @@ def register_parser(site_name):
         # Optional: Warn if overwriting existing key
         if site_name in registry:
             print(f'[WARN] Overwriting existing parser for site: "{site_name}"')
-            
+
         registry[site_name] = func
         return func
     return decorator
+
+
+def log_parse(func):
+    def wrapper(html):
+        print(f'[LOG] BEFORE parsing: {func.__name__}')
+        result = func(html)
+        print(f'[LOG] AFTER parsing: {func.__name__}')
+        return result
+    return wrapper
