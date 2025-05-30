@@ -41,3 +41,12 @@ class TestParserRegistry(unittest.TestCase):
             @register_parser(123)
             def invalid_parser(html):
                 return 'Should not register'
+
+    def test_overwriting_existing_key(self):
+        @register_parser('buki')
+        def parse_v1(html): return 'v1'
+
+        @register_parser('buki')  # second definition should overwrite
+        def parse_v2(html): return 'v2'
+
+        self.assertEqual(registry['buki']('dummy'), 'v2')
