@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 
-# from decors import log_parse
+from decors import log_parse
 # from decors import decor_calls
 
 
@@ -109,9 +109,14 @@ def parse_tutors_page_profrep(html):
     return tutors
 
 
+@log_parse()  # Uses default logger (print)
+def parse_example(html):
+    return html[:50]
+
+
 def main():
-    # # url = "https://buki.com.ua/tutors-online/biolohiia/3/"
-    # # html = get_html(url)
+    url = "https://buki.com.ua/tutors-online/biolohiia/3/"
+    html = get_html(url)
     # # data = parse_tutors_page_buki(html)
 
     # url = "https://profrepetitor.com.ua/repetitors-biologiya"
@@ -123,7 +128,7 @@ def main():
     # for tutor in data:
     #     print(f"Tutor name: {tutor['name']},  Price: {tutor['price']},  Objects: {tutor['objects']}, Rating: {tutor['rating']}, Number of reviews: {tutor['number_of_reviews']}, Education: {tutor['education']}, Experience: {tutor['experience']}, about_myself: {tutor['about_myself']}, city_or_online: {tutor['city_or_online']}")
 
-    pass
+    print(parse_example(html))
 
     # html_str = "<p class='styles_education__41VXk'>Освіта: <span>Запорізький державний медичний університет (ЗДМУ)</span></p>"
     # soup_elem = BeautifulSoup(html_str, "html.parser")
