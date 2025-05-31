@@ -24,6 +24,8 @@ def parser(site, debug=False, logger=print):
                 logger(f"[LOG] AFTER {func.__name__}")
             return result
         
+        if site in site_parsers:
+            warn_overwrite(site, logger=logger)
         site_parsers[site] = wrapper
         return wrapper
     return decorator
