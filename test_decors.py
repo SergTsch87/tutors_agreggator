@@ -104,3 +104,21 @@ class TestPrePostProcessing(unittest.TestCase):
             failing_parser("bad html")
 
         self.assertEqual(log, ["BEFORE parsing", "ERROR: Parse failed"])
+
+
+class TestConditionalLog(unittest.TestCase):
+    def test_logs_when_enabled(self):
+        log = []
+
+        def fake_log(msg):
+            log.append(msg)
+
+        # Assume this decorator exists
+        @conditional_log(enabled=True, logger=fake_log)
+        def dummy_parser(html):
+            return f"parsed({html})"
+
+        result = dummy_parser("hello")
+
+        self.assertEqual(result, "parsed(hello)")
+        self.assertEqual(log, ["[LOG] BEFORE dummy_parser", "[LOG] AFTER dummy_parser"])
