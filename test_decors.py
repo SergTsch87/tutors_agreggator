@@ -5,6 +5,10 @@ from decors import registry, register, register_parser
 site_parsers = {}
 
 
+def warn_overwrite(site, logger=print):
+    logger(f'[WARN] Overwriting existing parser for site: "{site}"')
+
+
 def parser(site, debug=False, logger=print):
     if not isinstance(site, str):
         raise TypeError(f'Expected site to be str, got {type(site).__name__}')
