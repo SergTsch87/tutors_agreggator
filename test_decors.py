@@ -76,3 +76,31 @@ class TestPrePostProcessing(unittest.TestCase):
 
         self.assertEqual(result, "parsed(test_html)")
         self.assertEqual(log, ["BEFORE parsing", "AFTER parsing"])
+
+
+    def test_log_on_exception(self):
+        log = []
+
+        def fake_log(msg):
+            log.append(msg)
+
+        def log_decorator(func):
+            def wrapper(html):
+                try:
+                    fake_log("BEFORE parsing")
+                    result = func(html)
+                    fake_log("AFTER parsing")
+                    return result
+                except Exception as e:
+                    fake_log(f"ERROR: {e}")
+                    raise
+            return wrapper
+
+        @log_decorator
+        def failing_parser(html):
+            raise ValueError("Parse failed")
+
+        with self.assertRaises(ValueError):
+            failing_parser("bad html")
+
+        self.assertEqual(log, ["BEFORE parsing", "ERROR: Parse failed"])
