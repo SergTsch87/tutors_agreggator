@@ -46,11 +46,12 @@ class TestFullParserDecorator(unittest.TestCase):
             "[LOG] AFTER parse_buki"
         ])
 
-    def test_invalid_site_type_raises(self):
-        with self.assertRaises(TypeError):
-            @parser(site=123, debug=True, logger=self.fake_log)
-            def bad_parser(html):
-                return "Should fail"
+    # 1-й варіант тесту для перевірки типу
+    # def test_invalid_site_type_raises(self):
+    #     with self.assertRaises(TypeError):
+    #         @parser(site=123, debug=True, logger=self.fake_log)
+    #         def bad_parser(html):
+    #             return "Should fail"
 
 # ----------------------------------------------------------
 
@@ -220,3 +221,18 @@ class TestConditionalLog(unittest.TestCase):
 
         self.assertEqual(result, "Parsed: Data")
         self.assertEqual(self.logs, [])  # No logs should be captured
+
+
+# 2-й варіант тесту для перевірки типу
+class TestInputValidation(unittest.TestCase):
+    def setUp(self):
+        self.logs = []
+
+    def fake_log(self, message):
+        self.logs.append(message)
+
+    def test_invalid_site_type(self):
+        with self.assertRaises(TypeError):
+            @parser(site=None, debug=True, logger=self.fake_log)
+            def bad_parser(html):
+                return "Should fail"
