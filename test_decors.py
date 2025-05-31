@@ -2,6 +2,29 @@ import unittest
 from decors import registry, register, register_parser
 
 
+class TestFullParserDecorator(unittest.TestCase):
+    def setUp(self):
+        site_parsers.clear()  # Reset the registry before each test
+        self.logs = []
+
+    def fake_log(self, message):
+        self.logs.append(message)
+
+    def test_parser_registers_and_logs(self):
+        @parser(site="buki", debug=True, logger=self.fake_log)
+        def parse_buki(html):
+            return f"Parsed: {html}"
+
+        result = site_parsers["buki"]("Hello")
+
+        self.assertEqual(result, "Parsed: Hello")
+        self.assertEqual(self.logs, [
+            "BEFORE parse_buki",
+            "AFTER parse_buki"
+        ])
+
+# ----------------------------------------------------------
+
 def dummy_parser(html):
     return "I parsed something!"
 
