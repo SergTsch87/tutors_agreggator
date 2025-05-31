@@ -229,6 +229,19 @@ class TestConditionalLog(unittest.TestCase):
         self.assertEqual(self.logs, [])  # No logs should be captured
 
 
+    def test_warns_on_overwrite(self):
+        @parser(site="buki", debug=False, logger=self.fake_log)
+        def first(html):
+            return "1"
+
+        @parser(site="buki", debug=False, logger=self.fake_log)
+        def second(html):
+            return "2"
+
+        self.assertIn('buki', site_parsers)
+        self.assertEqual(self.logs[-1], '[WARN] Overwriting existing parser for site: "buki"')
+
+
 # 2-й варіант тесту для перевірки типу
 class TestInputValidation(unittest.TestCase):
     def setUp(self):
