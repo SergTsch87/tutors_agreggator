@@ -38,8 +38,8 @@ class TestFullParserDecorator(unittest.TestCase):
 
         self.assertEqual(result, "Parsed: Hello")
         self.assertEqual(self.logs, [
-            "BEFORE parse_buki",
-            "AFTER parse_buki"
+            "[LOG] BEFORE parse_buki",
+            "[LOG] AFTER parse_buki"
         ])
 
 # ----------------------------------------------------------
@@ -162,6 +162,12 @@ def conditional_log(enabled=True, logger=print):
 
 
 class TestConditionalLog(unittest.TestCase):
+    def setUp(self):
+        self.logs = []
+
+    def fake_log(self, message):
+        self.logs.append(message)
+
     def test_logs_when_enabled(self):
         log = []
 
@@ -193,3 +199,14 @@ class TestConditionalLog(unittest.TestCase):
 
         self.assertEqual(result, "parsed(hello)")
         self.assertEqual(log, [])  # nothing should have been logged
+
+
+    def test_parser_silent_when_debug_false(self):
+        @parser(site="profrep", debug=False, logger=self.fake_log)
+        def parse_profrep(html):
+            return f"Parsed: {html}"
+
+        result = site_parsers["profrep"]("Data")
+
+        self.assertEqual(result, "Parsed: Data")
+        self.assertEqual(self.logs, [])  # No logs should be captured
