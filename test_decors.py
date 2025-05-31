@@ -2,6 +2,25 @@ import unittest
 from decors import registry, register, register_parser
 
 
+site_parsers = {}
+
+
+def parser(site, debug=False, logger=print):
+    def decorator(func):
+        def wrapper(html):
+            if debug:
+                logger(f"[LOG] BEFORE {func.__name__}")
+            
+            result = func(html)
+            
+            if debug:
+                logger(f"[LOG] AFTER {func.__name__}")
+            return result
+        site_parsers[site] = wrapper
+        return wrapper
+    return decorator
+
+
 class TestFullParserDecorator(unittest.TestCase):
     def setUp(self):
         site_parsers.clear()  # Reset the registry before each test
