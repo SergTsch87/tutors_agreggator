@@ -6,8 +6,8 @@ site_parsers = {}
 
 
 def parser(site, debug=False, logger=print):
-    # if not isinstance(site, str):
-    #     raise TypeError(f'Expected site to be str, got {type(site).__name__}')
+    if not isinstance(site, str):
+        raise TypeError(f'Expected site to be str, got {type(site).__name__}')
         
     def decorator(func):
         def wrapper(html):
@@ -45,6 +45,12 @@ class TestFullParserDecorator(unittest.TestCase):
             "[LOG] BEFORE parse_buki",
             "[LOG] AFTER parse_buki"
         ])
+
+    def test_invalid_site_type_raises(self):
+        with self.assertRaises(TypeError):
+            @parser(site=123, debug=True, logger=self.fake_log)
+            def bad_parser(html):
+                return "Should fail"
 
 # ----------------------------------------------------------
 
