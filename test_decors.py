@@ -135,3 +135,19 @@ class TestConditionalLog(unittest.TestCase):
 
         self.assertEqual(result, "parsed(hello)")
         self.assertEqual(log, ["[LOG] BEFORE dummy_parser", "[LOG] AFTER dummy_parser"])
+
+    
+    def test_does_not_log_when_disabled(self):
+        log = []
+
+        def fake_log(msg):
+            log.append(msg)
+
+        @conditional_log(enabled=False, logger=fake_log)
+        def dummy_parser(html):
+            return f"parsed({html})"
+
+        result = dummy_parser("hello")
+
+        self.assertEqual(result, "parsed(hello)")
+        self.assertEqual(log, [])  # nothing should have been logged
