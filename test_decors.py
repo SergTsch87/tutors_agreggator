@@ -6,6 +6,9 @@ site_parsers = {}
 
 
 def parser(site, debug=False, logger=print):
+    # if not isinstance(site, str):
+    #     raise TypeError(f'Expected site to be str, got {type(site).__name__}')
+        
     def decorator(func):
         def wrapper(html):
             if debug:
@@ -16,6 +19,7 @@ def parser(site, debug=False, logger=print):
             if debug:
                 logger(f"[LOG] AFTER {func.__name__}")
             return result
+        
         site_parsers[site] = wrapper
         return wrapper
     return decorator
