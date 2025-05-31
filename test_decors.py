@@ -106,13 +106,26 @@ class TestPrePostProcessing(unittest.TestCase):
         self.assertEqual(log, ["BEFORE parsing", "ERROR: Parse failed"])
 
 
+def conditional_log(enabled=True, logger=print):
+    def decorator(func):
+        def wrapper(html):
+            if enabled:
+                logger(f"[LOG] BEFORE {func.__name__}")
+            result = func(html)
+            if enabled:
+                logger(f"[LOG] AFTER {func.__name__}")
+            return result
+        return wrapper
+    return decorator
+
+
 class TestConditionalLog(unittest.TestCase):
     def test_logs_when_enabled(self):
         log = []
 
         def fake_log(msg):
             log.append(msg)
-
+        
         # Assume this decorator exists
         @conditional_log(enabled=True, logger=fake_log)
         def dummy_parser(html):
