@@ -1,5 +1,5 @@
 import unittest
-from decors import registry, register, register_parser
+from decors import registry, register#, register_parser
 
 
 site_parsers = {}
@@ -20,23 +20,19 @@ def parser(site, debug=False, logger=print):
         raise TypeError(f'Expected site to be str, got {type(site).__name__}')
         
     def decorator(func):
-        def wrapper(html):
-            if debug:
-                logger(f"[LOG] BEFORE {func.__name__}")
-            
-            result = func(html)
-            
-            if debug:
-                logger(f"[LOG] AFTER {func.__name__}")
-            return result
-        
-        register_site_parser(site, wrapper, logger=logger)
-        # # винесемо логіку з parser() до register_site_parser()
-        # if site in site_parsers:
-        #     warn_overwrite(site, logger=logger)
-        # site_parsers[site] = wrapper
+        decorated_func = func
 
-        return wrapper
+        if debug:
+            def wrapper(html):
+                logger(f"[LOG] BEFORE {func.__name__}")
+                result = func(html)
+                logger(f"[LOG] AFTER {func.__name__}")
+                return result
+            decorated_func = wrapper
+        
+        register_site_parser(site, decorated_func, logger=logger)
+        return decorated_func
+    
     return decorator
 
 
@@ -97,7 +93,7 @@ class TestParserRegistry(unittest.TestCase):
         self.assertEqual(registry['profrep']('test'), 'B')
 
     def test_decorator_registers_function(self):
-        @register_parser('buki')
+        @parser('buki')
         def parse_buki(html):
             return 'Parsed Buki'
 
@@ -106,15 +102,15 @@ class TestParserRegistry(unittest.TestCase):
 
     def test_invalid_site_name_type(self):
         with self.assertRaises(TypeError):
-            @register_parser(123)
+            @parser(123)
             def invalid_parser(html):
                 return 'Should not register'
 
     def test_overwriting_existing_key(self):
-        @register_parser('buki')
+        @parser('buki')
         def parse_v1(html): return 'v1'
 
-        @register_parser('buki')  # second definition should overwrite
+        @parser('buki')  # second definition should overwrite
         def parse_v2(html): return 'v2'
 
         self.assertEqual(registry['buki']('dummy'), 'v2')
