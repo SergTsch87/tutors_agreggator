@@ -1,8 +1,8 @@
 import unittest
-from decors import registry, register#, register_parser
+from decors import registry, register, site_parsers#, register_parser
 
 
-site_parsers = {}
+# site_parsers = {}
 
 
 def warn_overwrite(site, logger=print):
