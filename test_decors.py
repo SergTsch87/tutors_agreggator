@@ -57,13 +57,6 @@ class TestFullParserDecorator(unittest.TestCase):
             "[LOG] AFTER parse_buki"
         ])
 
-    # 1-й варіант тесту для перевірки типу
-    # def test_invalid_site_type_raises(self):
-    #     with self.assertRaises(TypeError):
-    #         @parser(site=123, debug=True, logger=self.fake_log)
-    #         def bad_parser(html):
-    #             return "Should fail"
-
 # ----------------------------------------------------------
 
 def dummy_parser(html):
