@@ -31,6 +31,7 @@ def parser(site, debug=False, logger=print):
             decorated_func = wrapper
         
         register_site_parser(site, decorated_func, logger=logger)
+        register(site, decorated_func)
         return decorated_func
     
     return decorator
