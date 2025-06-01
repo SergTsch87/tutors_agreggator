@@ -9,6 +9,12 @@ def warn_overwrite(site, logger=print):
     logger(f'[WARN] Overwriting existing parser for site: "{site}"')
 
 
+def register_site_parser(site, func, logger=print):
+    if site in site_parsers:
+        logger(f'[WARN] Overwriting existing parser for site: "{site}"')
+    site_parsers[site] = func
+
+
 def parser(site, debug=False, logger=print):
     if not isinstance(site, str):
         raise TypeError(f'Expected site to be str, got {type(site).__name__}')
@@ -24,9 +30,12 @@ def parser(site, debug=False, logger=print):
                 logger(f"[LOG] AFTER {func.__name__}")
             return result
         
-        if site in site_parsers:
-            warn_overwrite(site, logger=logger)
-        site_parsers[site] = wrapper
+        register_site_parser(site, wrapper, logger=logger)
+        # # винесемо логіку з parser() до register_site_parser()
+        # if site in site_parsers:
+        #     warn_overwrite(site, logger=logger)
+        # site_parsers[site] = wrapper
+
         return wrapper
     return decorator
 
