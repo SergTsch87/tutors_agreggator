@@ -93,7 +93,12 @@ class TestParserRegistry(unittest.TestCase):
         self.assertEqual(registry['profrep']('test'), 'B')
 
     def test_decorator_registers_function(self):
-        @parser('buki')
+        log = []
+
+        def fake_log(msg):
+            log.append(msg)
+
+        @parser('buki', debug=True, logger=fake_log)
         def parse_buki(html):
             return 'Parsed Buki'
 
@@ -101,16 +106,26 @@ class TestParserRegistry(unittest.TestCase):
         self.assertEqual(registry['buki']('html...'), 'Parsed Buki')
 
     def test_invalid_site_name_type(self):
+        log = []
+
+        def fake_log(msg):
+            log.append(msg)
+
         with self.assertRaises(TypeError):
-            @parser(123)
+            @parser(123, debug=True, logger=fake_log)
             def invalid_parser(html):
                 return 'Should not register'
 
     def test_overwriting_existing_key(self):
-        @parser('buki')
+        log = []
+
+        def fake_log(msg):
+            log.append(msg)
+
+        @parser('buki', debug=True, logger=fake_log)
         def parse_v1(html): return 'v1'
 
-        @parser('buki')  # second definition should overwrite
+        @parser('buki', debug=True, logger=fake_log)  # second definition should overwrite
         def parse_v2(html): return 'v2'
 
         self.assertEqual(registry['buki']('dummy'), 'v2')
