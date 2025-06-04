@@ -1,7 +1,12 @@
 {% extends "tutors_app/base.html" %}
-
+main
 {% block content %}
-<div class="row">
+
+  <form action="" method="get">
+    <input type="text" name="q" placeholder="Search by name or subject" value="{{ request.GET.q }}">
+    <button type="submit">Search</button>
+  </form>
+
   <div class="col-8">
 
     {% if selected_subject %}
@@ -69,5 +74,6 @@
     </ul>
   </div>
 </div>
+
 
 {% endblock %}

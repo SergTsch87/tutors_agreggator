@@ -1,8 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
 
-# from decors import log_parse
-
 
 def get_html(url):
     response = requests.get(url)
@@ -56,24 +54,14 @@ def parse_tutor_card_profrep(html_card):
     # Саме в цій функції ми визначаємо усі ті дані, які хочемо дістати з кожної картки репетитора
     soup = BeautifulSoup(html_card, 'html.parser')
     return {
-            # "name": get_element(soup, ".card-courses-title h4 span"),
-            # "name": get_element(soup, ".card-courses-title span"),
-            "name": safe_text(soup.select_one('div.card-courses-title'), "span"),
-            
+            "name": safe_text(soup.select_one('div.card-courses-title'), "span"),            
             "price": None,
             "objects": None,
-            
             "rating": None,
             "number_of_reviews": None,
             "education": safe_text(soup.select_one('div.col-md-12.catalog-item-desc.mt-1 > p:nth-child(2)')),
-            # col-md-12 catalog-item-desc mt-1
-            # div.col-md-12.catalog-item-desc.mt-1 > p:nth-child(2) > b
             "experience": safe_text(soup.select_one('div.col-md-12.catalog-item-desc.mt-1 > p:nth-child(1)')),
-            # div.col-md-12.catalog-item-desc.mt-1 > p:nth-child(1) > b
-
             "about_myself": safe_text(soup.select_one('div.col-md-12.catalog-item-desc.mt-1 > p:nth-child(3)')),
-            # div.col-md-12.catalog-item-desc.mt-1 > p:nth-child(3)
-
             "city_or_online": safe_text(soup.select_one('i.fa fa-map-marker-alt')),
         }
 
@@ -98,9 +86,6 @@ def parse_tutors_page_profrep(html):
     
     # tutor_cards = soup.select(".row > .col-lg-12.m-b30 > .widget-inner")
     tutor_cards = soup.select(".widget-inner")
-    # print(f'\ntutor_cards: {tutor_cards}\n')
-    # print(f'\nsize(data): {len(tutor_cards)}\n')
-    # print(f'tutor_cards: {tutor_cards}')
     for card in tutor_cards:
         current_card = parse_tutor_card_profrep(str(card))
         tutors.append(current_card)
@@ -108,32 +93,10 @@ def parse_tutors_page_profrep(html):
     return tutors
 
 
-# @log_parse
-# def parse_example():
-#     print('Parsing something...')
-
-
-# @log_parse
-# def adding_two_numbers(x, y):
-#     return x + y
-
-
-# def outer(name):
-#     def inner():
-#         print(f'Hello, {name}!')
-#     return inner
-
-
 def make_multiplier(factor):
     def multiply(x):
         return x * factor
     return multiply
-
-
-# def f(x):
-#     def g(y):
-#         return y
-#     return g
 
 
 def main():
@@ -152,25 +115,7 @@ def main():
 
 
     # parse_example()
-    # --------
-    # a = 2
-    # b = 3
-    # print(adding_two_numbers(a, b))
-    # --------
-    # greet = outer('Alice')
-    # greet()
-    # --------
-    double = make_multiplier(2)
-    tripple = make_multiplier(3)
-
-    print(double(7))
-    print(tripple(9))
-    # --------
-
-    # a = 5
-    # b = 1
-    # h = f(a)
-    # print(h(b))
+    pass
 
 
     # html_str = "<p class='styles_education__41VXk'>Освіта: <span>Запорізький державний медичний університет (ЗДМУ)</span></p>"
