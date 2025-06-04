@@ -2,9 +2,10 @@
 # Class-Based View (CBV):
 from django.views.generic import ListView, DetailView
 from django.db.models import Prefetch
-# from django.db.models import Q  # Q-objects for complex queries
+from django.db.models import Q  # Q-objects for complex queries
 from django.core.paginator import Paginator
 from .models import Tutor, Subject
+# from django.shortcuts import render
 
 
 class TutorListView(ListView):
@@ -13,12 +14,15 @@ class TutorListView(ListView):
     context_object_name = 'tutors'
     paginate_by = 10  # ✅ NEW: This enables automatic pagination
 
+    # Modify get_queryset() to include q from GET
     # filter queryset if a subject is passed
     def get_queryset(self):
         queryset = super().get_queryset().prefetch_related('subjects')  # ✅ Use prefetch_related for M2M
+        
         # Gets the value of the GET parameter ?subject=25
+        # ✅ NEW: Get subject and search query
         subject_id = self.request.GET.get("subject")  # to read the filter value
-        # name = self.request.GET.get("name")
+        query = self.request.GET.get("q", "").strip()
 
         # Allow filtering by tutor name substring AND subject at the same time
         if subject_id:
@@ -29,6 +33,12 @@ class TutorListView(ListView):
         # if name:
         #     # Filters tutors by name
         #     queryset = queryset.filter(name__icontains=name)
+
+        # ✅ Filter by name or subject match (case-insensitive)
+        if query:
+            queryset = queryset.filter(
+                Q(name__icontains=query) | Q(subjects__name__icontains=query)
+            ).distinct()  # remove duplicates if subject joins cause them
 
         return queryset
     
