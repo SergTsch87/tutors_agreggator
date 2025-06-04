@@ -55,11 +55,16 @@ class TutorListView(ListView):
         # Adds a list of unique subject IDs (used in dropdown or filter list)
         # context["subjects"] = Tutor.objects.values_list("subject", flat=True).distinct()
 
-        # ✅ Pass the selected subject ID for keeping the filter state
-        # to show the currently selected subject at the top of the page
-        subject_id = self.request.GET.get("subject")
-        if subject_id:
-            context['selected_subject'] = Subject.objects.filter(id=subject_id).first()
+        # # ✅ Pass the selected subject ID for keeping the filter state
+        # # to show the currently selected subject at the top of the page
+        # subject_id = self.request.GET.get("subject")
+        # if subject_id:
+        #     context['selected_subject'] = Subject.objects.filter(id=subject_id).first()
+
+        # ✅ Return current filters to template for display
+        context["selected_subject"] = self.request.GET.get("subject", "")
+        context["search_query"] = self.request.GET.get("q", "").strip()
+
         return context
 
 
