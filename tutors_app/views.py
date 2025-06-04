@@ -22,7 +22,7 @@ class TutorListView(ListView):
         # Gets the value of the GET parameter ?subject=25
         # ✅ NEW: Get subject and search query
         subject_id = self.request.GET.get("subject")  # to read the filter value
-        query = self.request.GET.get("q", "").strip()
+        search_query = self.request.GET.get("q", "").strip()
 
         # Allow filtering by tutor name substring AND subject at the same time
         if subject_id:
@@ -35,10 +35,11 @@ class TutorListView(ListView):
         #     queryset = queryset.filter(name__icontains=name)
 
         # ✅ Filter by name or subject match (case-insensitive)
-        if query:
-            queryset = queryset.filter(
-                Q(name__icontains=query) | Q(subjects__name__icontains=query)
-            ).distinct()  # remove duplicates if subject joins cause them
+        if search_query:
+            queryset = queryset.filter(name__icontains=search_query)
+            # queryset = queryset.filter(
+            #     Q(name__icontains=search_query) | Q(subjects__name__icontains=search_query)
+            # ).distinct()  # remove duplicates if subject joins cause them
 
         return queryset
     
