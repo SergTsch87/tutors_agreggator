@@ -36,7 +36,10 @@ class TutorListView(ListView):
 
         # ✅ Filter by name or subject match (case-insensitive)
         if search_query:
+            # ! Use the simple version if you're only implementing name-based search for now
             queryset = queryset.filter(name__icontains=search_query)
+
+            # ! Use the Q expression version if you want users to be able to search in both fields (name or subject)
             # queryset = queryset.filter(
             #     Q(name__icontains=search_query) | Q(subjects__name__icontains=search_query)
             # ).distinct()  # remove duplicates if subject joins cause them

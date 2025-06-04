@@ -2,6 +2,7 @@
 
 {% block content %}
 
+  <!-- SEARCH FORM -->
   <form action="" method="get">
     <input type="text" name="q" placeholder="Search by name or subject" value="{{ search_query }}">
 
@@ -17,6 +18,23 @@
     <button type="submit">Search</button>
   </form>
 
+  <hr>
+
+  <!-- TUTOR LIST -->
+  {% for tutor in tutors %}
+    <div>
+      <h3>{{ tutor.name }}</h3>
+      <p>Subjects:
+        {% for subject in tutor.subjects.all %}
+          {{ subject.name }}{% if not forloop.last %}, {% endif %}
+        {% endfor %}
+      </p>
+    </div>
+  {% empty %}
+    <p>No tutors found.</p>
+  {% endfor %}
+
+  
   <div class="col-8">
 
     {% if selected_subject %}
