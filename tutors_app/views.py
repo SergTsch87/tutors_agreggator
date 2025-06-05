@@ -44,6 +44,9 @@ class TutorListView(ListView):
             #     Q(name__icontains=search_query) | Q(subjects__name__icontains=search_query)
             # ).distinct()  # remove duplicates if subject joins cause them
 
+            # Optional: filter using full_name in Python (slower, but works for demo)
+            queryset = [tutor for tutor in queryset if search_query.lower() in tutor.name.lower()]
+
         return queryset
     
     # Pass the list of subjects to the template

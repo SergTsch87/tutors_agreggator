@@ -23,7 +23,9 @@
   <!-- TUTOR LIST -->
   {% for tutor in tutors %}
     <div>
-      <h3>{{ tutor.name }}</h3>
+      <!-- <h3>{{ tutor.name }}</h3> -->
+       <h3>{{ tutor.first_name }}</h3>
+       <h3>{{ tutor.last_name }}</h3>
       <p>Subjects:
         {% for subject in tutor.subjects.all %}
           {{ subject.name }}{% if not forloop.last %}, {% endif %}

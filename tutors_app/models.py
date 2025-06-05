@@ -30,3 +30,12 @@ class Tutor(models.Model):
     
     def get_absolute_url(self):
         return reverse('tutors:tutor_detail', args=[str(self.pk)])
+
+    @property
+    def first_name(self):
+        return self.name.split()[0] if self.name else ""
+
+    @property
+    def last_name(self):
+        parts = self.name.split() 
+        return parts[-1] if len(parts) > 1 else ""
