@@ -6,6 +6,7 @@ from django.db.models import Q  # Q-objects for complex queries
 from django.core.paginator import Paginator
 from .models import Tutor, Subject
 # from django.shortcuts import render
+from django.db.models.functions import Lower
 
 
 class TutorListView(ListView):
@@ -36,16 +37,17 @@ class TutorListView(ListView):
 
         # ✅ Filter by name or subject match (case-insensitive)
         if search_query:
-            # ! Use the simple version if you're only implementing name-based search for now
-            queryset = queryset.filter(name__icontains=search_query)
+            # # ! Use the simple version if you're only implementing name-based search for now
+            # queryset = queryset.filter(name__icontains=search_query)
 
-            # ! Use the Q expression version if you want users to be able to search in both fields (name or subject)
-            # queryset = queryset.filter(
-            #     Q(name__icontains=search_query) | Q(subjects__name__icontains=search_query)
-            # ).distinct()  # remove duplicates if subject joins cause them
+            # # Optional: filter using full_name in Python (slower, but works for demo)
+            # queryset = [tutor for tutor in queryset if search_query.lower() in tutor.name.lower()]
 
-            # Optional: filter using full_name in Python (slower, but works for demo)
-            queryset = [tutor for tutor in queryset if search_query.lower() in tutor.name.lower()]
+            queryset = queryset.annotate(
+                lower_name=Lower("name")
+            ).filter(
+                    lower_name__icontains=search_query.lower()
+                )
 
         return queryset
     
