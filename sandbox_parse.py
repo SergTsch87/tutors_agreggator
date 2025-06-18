@@ -31,6 +31,8 @@ def safe_text(soup_or_el, selector=None, class_name=None,  tag='span', default="
     except Exception:
         return default
 
+# ------------------------------------------------
+# Site BUKI com
 
 def parse_tutor_card_buki(html_card):
     # Extract Data from a Single Tutor Card
@@ -78,6 +80,8 @@ def parse_tutors_page_buki(html):
 
     return tutors
 
+# ---------------------------------
+# Site PROFREP
 
 def parse_tutors_page_profrep(html):
     soup = BeautifulSoup(html, "html.parser")
@@ -92,6 +96,7 @@ def parse_tutors_page_profrep(html):
 
     return tutors
 
+# ---------------------------------
 
 def make_multiplier(factor):
     def multiply(x):
@@ -100,9 +105,9 @@ def make_multiplier(factor):
 
 
 def main():
-    # # url = "https://buki.com.ua/tutors-online/biolohiia/3/"
-    # # html = get_html(url)
-    # # data = parse_tutors_page_buki(html)
+    url = "https://buki.com.ua/tutors-online/biolohiia/3/"
+    html = get_html(url)
+    data = parse_tutors_page_buki(html)
 
     # url = "https://profrepetitor.com.ua/repetitors-biologiya"
     # html = get_html(url)
@@ -110,12 +115,12 @@ def main():
     # data = parse_tutors_page_profrep(html)
     # # print(f'\nCount elements of data: {len(data)}\n')
 
-    # for tutor in data:
-    #     print(f"Tutor name: {tutor['name']},  Price: {tutor['price']},  Objects: {tutor['objects']}, Rating: {tutor['rating']}, Number of reviews: {tutor['number_of_reviews']}, Education: {tutor['education']}, Experience: {tutor['experience']}, about_myself: {tutor['about_myself']}, city_or_online: {tutor['city_or_online']}")
+    for tutor in data:
+        print(f"Tutor name: {tutor['name']},  Price: {tutor['price']},  Objects: {tutor['objects']}, Rating: {tutor['rating']}, Number of reviews: {tutor['number_of_reviews']}, Education: {tutor['education']}, Experience: {tutor['experience']}, about_myself: {tutor['about_myself']}, city_or_online: {tutor['city_or_online']}")
 
 
     # parse_example()
-    pass
+    # pass
 
 
     # html_str = "<p class='styles_education__41VXk'>Освіта: <span>Запорізький державний медичний університет (ЗДМУ)</span></p>"
