@@ -16,6 +16,22 @@ class TutorManager(models.Manager):
 
 class Tutor(models.Model):
     name = models.CharField(max_length=100)
+
+# --------------------
+# Fields that are used in the `defaults` of `get_or_create` (defaults)
+
+    price = models.IntegerField(blank=True, null=True)
+    rating = models.FloatField(blank=True, null=True)
+    number_of_reviews = models.IntegerField(blank=True, null=True)
+    
+    # In Django forms, it renders as an HTML <textarea> element:
+    education = models.TextField(blank=True, null=True)
+    experience = models.TextField(blank=True, null=True)
+    about_myself = models.TextField(blank=True, null=True)
+    
+    city_or_online = models.CharField(max_length=100, blank=True, null=True)
+# --------------------
+
     # subject = models.CharField(max_length=100)  # ← This will be changed
     # subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name='tutors')  # creates a many-to-one link from Tutor to Subject
     subjects = models.ManyToManyField(Subject, related_name='tutors')  # creates a many-to-many link between Tutor and Subject
