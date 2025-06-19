@@ -29,7 +29,7 @@ class Tutor(models.Model):
     experience = models.TextField(blank=True, null=True)
     about_myself = models.TextField(blank=True, null=True)
     
-    city_or_online = models.CharField(max_length=100, blank=True, null=True)
+    city_or_online = models.CharField(max_length=100, blank=True, null=True, default='online')
 # --------------------
 
     # subject = models.CharField(max_length=100)  # ← This will be changed
