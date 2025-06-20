@@ -42,6 +42,7 @@ def parse_tutor_card_buki(html_card):
     return {
             "name": get_element(soup, ".styles_userName__ltIVo span"),
             "price": parse_price(get_element(soup, ".rate .topCeil")),
+            # "price": get_element(soup, ".rate .topCeil"),
             "objects": [o.get_text(strip=True) for o in soup.find_all('span', class_="styles_lessonsItem__v8FAD")],
             "rating": safe_text(soup.select_one('div.styles_reviewsBlock__FNrPL'), "span"),
             "number_of_reviews": safe_text(soup.select_one('div.styles_reviewsBlock__FNrPL'), "span", class_name="styles_reviewsCount__EAIh6"),
@@ -106,6 +107,7 @@ def make_multiplier(factor):
 
 
 def main():
+    # print(parse_price('300 грн/45 хв'))
     url = "https://buki.com.ua/tutors-online/biolohiia/3/"
     html = get_html(url)
     data = parse_tutors_page_buki(html)
@@ -118,6 +120,7 @@ def main():
 
     for tutor in data:
         print(f"Tutor name: {tutor['name']},  Price: {tutor['price']},  Objects: {tutor['objects']}, Rating: {tutor['rating']}, Number of reviews: {tutor['number_of_reviews']}, Education: {tutor['education']}, Experience: {tutor['experience']}, about_myself: {tutor['about_myself']}, city_or_online: {tutor['city_or_online']}")
+        # print(f"Tutor name: {tutor['name']},  Price: {parse_price(tutor['price'])},  Objects: {tutor['objects']}, Rating: {tutor['rating']}, Number of reviews: {tutor['number_of_reviews']}, Education: {tutor['education']}, Experience: {tutor['experience']}, about_myself: {tutor['about_myself']}, city_or_online: {tutor['city_or_online']}")
 
 
     # parse_example()

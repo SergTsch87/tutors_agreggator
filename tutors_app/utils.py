@@ -12,10 +12,11 @@ def parse_price(text):
         return None  # or raise an exception or log
     
     amount = int(match.group(1)) # к-сть грн
-    duration = match.group(2) # тривалість (к-сть хв/год)
-    unit = match.group(3) # одиниця ("хв" / "год")
+    # unit_curr = match.group(2) # одиниця ("грн")
+    duration = match.group(3) # тривалість (к-сть хв/год)
+    unit_time = match.group(4) # одиниця ("хв" / "год")
 
-    if unit == "hour" or duration is None:
+    if unit_time == "hour" or duration is None:
         return amount
     else:
         minutes = int(duration)
