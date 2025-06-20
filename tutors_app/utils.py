@@ -3,10 +3,11 @@ import re
 def parse_price(text):
     """
     Extracts a normalized hourly price from strings like:
-    '500 UAH/hour', '300 UAH/45 min', etc.
+    '500 UAH/hour', '300 UAH/45 min',
+    '500 грн/год', '300 грн/45 хв', etc.
     Returns an integer price per 60 minutes.
     """
-    match = re.search(r"(\d+)\s*UAH\s*/\s*(\d+)?\s*(min|hour)", text.lower())
+    match = re.search(r"(\d+)\s*(грн|UAH)\s*/\s*(\d+)?\s*(хв|год|min|hour)", text.lower())
     if not match:
         return None  # or raise an exception or log
     

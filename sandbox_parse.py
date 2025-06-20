@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+from tutors_app.utils import parse_price
 
 
 def get_html(url):
@@ -40,7 +41,7 @@ def parse_tutor_card_buki(html_card):
     soup = BeautifulSoup(html_card, 'html.parser')
     return {
             "name": get_element(soup, ".styles_userName__ltIVo span"),
-            "price": get_element(soup, ".rate .topCeil"),
+            "price": parse_price(get_element(soup, ".rate .topCeil")),
             "objects": [o.get_text(strip=True) for o in soup.find_all('span', class_="styles_lessonsItem__v8FAD")],
             "rating": safe_text(soup.select_one('div.styles_reviewsBlock__FNrPL'), "span"),
             "number_of_reviews": safe_text(soup.select_one('div.styles_reviewsBlock__FNrPL'), "span", class_name="styles_reviewsCount__EAIh6"),
