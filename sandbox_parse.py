@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-from tutors_app.utils import parse_price
+from tutors_app.utils import parse_price, get_num_of_reviews
 
 
 def get_html(url):
@@ -40,12 +40,14 @@ def parse_tutor_card_buki(html_card):
     # Саме в цій функції ми визначаємо усі ті дані, які хочемо дістати з кожної картки репетитора
     soup = BeautifulSoup(html_card, 'html.parser')
     return {
+            "id_tutor": int(soup.select_one(".styles_userName__ltIVo a")["href"][6:-1]),
             "name": get_element(soup, ".styles_userName__ltIVo span"),
             "price": parse_price(get_element(soup, ".rate .topCeil")),
             # "price": get_element(soup, ".rate .topCeil"),
             "objects": [o.get_text(strip=True) for o in soup.find_all('span', class_="styles_lessonsItem__v8FAD")],
             "rating": safe_text(soup.select_one('div.styles_reviewsBlock__FNrPL'), "span"),
-            "number_of_reviews": safe_text(soup.select_one('div.styles_reviewsBlock__FNrPL'), "span", class_name="styles_reviewsCount__EAIh6"),
+            # "number_of_reviews": safe_text(soup.select_one('div.styles_reviewsBlock__FNrPL'), "span", class_name="styles_reviewsCount__EAIh6"),
+            "number_of_reviews": get_num_of_reviews(safe_text(soup.select_one('div.styles_reviewsBlock__FNrPL'), "span", class_name="styles_reviewsCount__EAIh6")),
             "education": safe_text(soup.select_one('p.styles_education__41VXk'), "span"),
             "experience": safe_text(soup.select_one('p.styles_practice__AZyXc')),
             "about_myself": None,
@@ -107,7 +109,13 @@ def make_multiplier(factor):
 
 
 def main():
-    # print(parse_price('300 грн/45 хв'))
+    # url = "https://buki.com.ua/tutors-online/biolohiia/3/"
+    # html = get_html(url)
+    # soup = BeautifulSoup(html, 'html.parser')
+    # # print( get_element(soup, ".styles_userName__ltIVo a")["href"] )
+    # print( get_element(soup, ".styles_userName__ltIVo a[href]") )
+    # print( soup.select_one(".styles_userName__ltIVo a")["href"] )
+
     url = "https://buki.com.ua/tutors-online/biolohiia/3/"
     html = get_html(url)
     data = parse_tutors_page_buki(html)
@@ -119,7 +127,9 @@ def main():
     # # print(f'\nCount elements of data: {len(data)}\n')
 
     for tutor in data:
-        print(f"Tutor name: {tutor['name']},  Price: {tutor['price']},  Objects: {tutor['objects']}, Rating: {tutor['rating']}, Number of reviews: {tutor['number_of_reviews']}, Education: {tutor['education']}, Experience: {tutor['experience']}, about_myself: {tutor['about_myself']}, city_or_online: {tutor['city_or_online']}")
+        # print(f"ID Tutor: {tutor['id_tutor']}, Tutor name: {tutor['name']},  Price: {tutor['price']},  Objects: {tutor['objects']}, Rating: {tutor['rating']}, Number of reviews: {tutor['number_of_reviews']}, Education: {tutor['education']}, Experience: {tutor['experience']}, about_myself: {tutor['about_myself']}, city_or_online: {tutor['city_or_online']}")
+        print(f"ID Tutor: {tutor['id_tutor']}")
+
         # print(f"Tutor name: {tutor['name']},  Price: {parse_price(tutor['price'])},  Objects: {tutor['objects']}, Rating: {tutor['rating']}, Number of reviews: {tutor['number_of_reviews']}, Education: {tutor['education']}, Experience: {tutor['experience']}, about_myself: {tutor['about_myself']}, city_or_online: {tutor['city_or_online']}")
 
 

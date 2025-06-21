@@ -21,3 +21,13 @@ def parse_price(text):
     else:
         minutes = int(duration)
         return round((amount / minutes) * 60) # потрібне округлення до 10
+
+
+def get_num_of_reviews(text):
+    """
+    Extracts a number of reviews from string like:
+    '(відгуків: 31)'
+    Returns an integer number of reviews.
+    """
+    return text[11:-1].strip()
+# number_of_reviews

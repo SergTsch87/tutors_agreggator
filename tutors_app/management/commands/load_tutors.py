@@ -11,6 +11,7 @@ class Command(BaseCommand):
         tutors_data = parse_tutors_page_buki(html)
 
         for item in tutors_data:
+            id_tutor = item.get("id_tutor")
             name = item.get("name", "").strip()
             price = item.get("price", 0)
             rating = item.get("rating", None)
@@ -21,10 +22,14 @@ class Command(BaseCommand):
             city_or_online = item.get("city_or_online", "") # .strip()
             subject_names = item.get("objects", [])
 
-            if not name:
+            # if not name:
+            #     continue
+            if not id_tutor:
                 continue
 
-            tutor, created = Tutor.objects.get_or_create(name=name, defaults={
+            # tutor, created = Tutor.objects.get_or_create(name=name, defaults={
+            tutor, created = Tutor.objects.get_or_create(id_tutor=id_tutor, defaults={
+                "name": name, # new
                 "price": price,
                 "rating": rating,
                 "number_of_reviews": number_of_reviews,
