@@ -16,11 +16,12 @@ def parse_price(text):
     duration = match.group(3) # тривалість (к-сть хв/год)
     unit_time = match.group(4) # одиниця ("хв" / "год")
 
-    if unit_time == "hour" or duration is None:
+    if unit_time == "год" or unit_time == "hour" or duration is None:
         return amount
     else:
         minutes = int(duration)
-        return round((amount / minutes) * 60) # потрібне округлення до 10
+        # return round((amount / minutes) * 60, -1) # округлення до 10
+        return round(amount * (60 / minutes), -1) # округлення до 10
 
 
 def get_num_of_reviews(text):

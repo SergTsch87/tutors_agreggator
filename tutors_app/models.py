@@ -15,7 +15,7 @@ class TutorManager(models.Manager):
     
 
 class Tutor(models.Model):
-    id_tutor = models.IntegerField()
+    id_tutor = models.IntegerField(unique=True, null=True) # after migration and cleanup, you can later remove `null=True`
     
     name = models.CharField(max_length=100)
 
@@ -42,7 +42,8 @@ class Tutor(models.Model):
     objects = TutorManager()
 
     def __str__(self):
-        return self.name + ' ' + self.name #  update
+        return self.name
+        # return self.name + ' ' + self.name #  update ???
 
     def formatted_subject(self):
         return self.subjects.name.title()

@@ -39,6 +39,7 @@ def parse_tutor_card_buki(html_card):
     # Extract Data from a Single Tutor Card
     # Саме в цій функції ми визначаємо усі ті дані, які хочемо дістати з кожної картки репетитора
     soup = BeautifulSoup(html_card, 'html.parser')
+    about_myself = soup.select_one('p.styles_description__EnqoA')
     return {
             "id_tutor": int(soup.select_one(".styles_userName__ltIVo a")["href"][6:-1]),
             "name": get_element(soup, ".styles_userName__ltIVo span"),
@@ -49,26 +50,13 @@ def parse_tutor_card_buki(html_card):
             # "number_of_reviews": safe_text(soup.select_one('div.styles_reviewsBlock__FNrPL'), "span", class_name="styles_reviewsCount__EAIh6"),
             "number_of_reviews": get_num_of_reviews(safe_text(soup.select_one('div.styles_reviewsBlock__FNrPL'), "span", class_name="styles_reviewsCount__EAIh6")),
             "education": safe_text(soup.select_one('p.styles_education__41VXk'), "span"),
-            "experience": safe_text(soup.select_one('p.styles_practice__AZyXc')),
-            "about_myself": None,
-            "city_or_online": None,
-        }
-
-
-def parse_tutor_card_profrep(html_card):
-    # Extract Data from a Single Tutor Card
-    # Саме в цій функції ми визначаємо усі ті дані, які хочемо дістати з кожної картки репетитора
-    soup = BeautifulSoup(html_card, 'html.parser')
-    return {
-            "name": safe_text(soup.select_one('div.card-courses-title'), "span"),            
-            "price": None,
-            "objects": None,
-            "rating": None,
-            "number_of_reviews": None,
-            "education": safe_text(soup.select_one('div.col-md-12.catalog-item-desc.mt-1 > p:nth-child(2)')),
-            "experience": safe_text(soup.select_one('div.col-md-12.catalog-item-desc.mt-1 > p:nth-child(1)')),
-            "about_myself": safe_text(soup.select_one('div.col-md-12.catalog-item-desc.mt-1 > p:nth-child(3)')),
-            "city_or_online": safe_text(soup.select_one('i.fa fa-map-marker-alt')),
+            
+            "experience": safe_text(soup.select_one('p.styles_practice__AZyXc'))[15:-6].strip() + '+',
+            
+            # "about_myself": safe_text(soup.select_one('p.styles_description__EnqoA')),
+            "about_myself": about_myself.select_one('span').get_text(strip=True) + about_myself.select_one('span.next_sibling').get_text(strip=True),
+            
+            "city_or_online": safe_text(soup.select_one('div.styles_userData__xpfLk a')),
         }
 
 
@@ -86,6 +74,22 @@ def parse_tutors_page_buki(html):
 
 # ---------------------------------
 # Site PROFREP
+def parse_tutor_card_profrep(html_card):
+    # Extract Data from a Single Tutor Card
+    # Саме в цій функції ми визначаємо усі ті дані, які хочемо дістати з кожної картки репетитора
+    soup = BeautifulSoup(html_card, 'html.parser')
+    return {
+            "name": safe_text(soup.select_one('div.card-courses-title'), "span"),            
+            "price": None,
+            "objects": None,
+            "rating": None,
+            "number_of_reviews": None,
+            "education": safe_text(soup.select_one('div.col-md-12.catalog-item-desc.mt-1 > p:nth-child(2)')),
+            "experience": safe_text(soup.select_one('div.col-md-12.catalog-item-desc.mt-1 > p:nth-child(1)')),
+            "about_myself": safe_text(soup.select_one('div.col-md-12.catalog-item-desc.mt-1 > p:nth-child(3)')),
+            "city_or_online": safe_text(soup.select_one('i.fa fa-map-marker-alt')),
+        }
+
 
 def parse_tutors_page_profrep(html):
     soup = BeautifulSoup(html, "html.parser")
@@ -102,10 +106,10 @@ def parse_tutors_page_profrep(html):
 
 # ---------------------------------
 
-def make_multiplier(factor):
-    def multiply(x):
-        return x * factor
-    return multiply
+# def make_multiplier(factor):
+#     def multiply(x):
+#         return x * factor
+#     return multiply
 
 
 def main():
