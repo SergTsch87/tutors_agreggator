@@ -15,7 +15,8 @@ class TutorManager(models.Manager):
     
 
 class Tutor(models.Model):
-    id_tutor = models.IntegerField(unique=True, null=True) # after migration and cleanup, you can later remove `null=True`
+    id_tutor = models.IntegerField(unique=True, null=True, blank=True) # after migration and cleanup, you can later remove `null=True`
+    # id_tutor = models.IntegerField(unique=True)
     
     name = models.CharField(max_length=100)
 
@@ -31,7 +32,11 @@ class Tutor(models.Model):
     experience = models.TextField(blank=True, null=True)
     about_myself = models.TextField(blank=True, null=True)
     
-    city_or_online = models.CharField(max_length=100, blank=True, null=True, default='online')
+    city = models.CharField(max_length=100, blank=True, null=True)
+    is_online = models.BooleanField(blank=True, null=True)
+    # Filter easily (.filter(is_online=True)) or group by city
+
+    # city_or_online = models.CharField(max_length=100, blank=True, null=True, default='online')
     # set default='online' for city_or_online in Tutor
 # --------------------
 
