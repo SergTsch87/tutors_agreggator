@@ -6,7 +6,8 @@ class Command(BaseCommand):
     help = 'Scrapes tutors from Buki and saves them into the DB'
 
     def handle(self, *args, **kwargs):
-        url = "https://buki.com.ua/tutors-online/biolohiia/5/"
+        num_page = 5
+        url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
         html = get_html(url)
         tutors_data = parse_tutors_page_buki(html)
 

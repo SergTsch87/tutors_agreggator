@@ -120,7 +120,8 @@ def main():
     # print( get_element(soup, ".styles_userName__ltIVo a[href]") )
     # print( soup.select_one(".styles_userName__ltIVo a")["href"] )
 
-    url = "https://buki.com.ua/tutors-online/biolohiia/3/"
+    num_page = 5
+    url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
     html = get_html(url)
     data = parse_tutors_page_buki(html)
 

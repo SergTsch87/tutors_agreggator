@@ -15,14 +15,17 @@ def parse_price(text):
     # unit_curr = match.group(2) # одиниця ("грн")
     duration = match.group(3) # тривалість (к-сть хв/год)
     unit_time = match.group(4) # одиниця ("хв" / "год")
-
+    
     if unit_time == "год" or unit_time == "hour" or duration is None:
         return amount
+    elif int(duration) == 45:
+        # return round(amount * (4 / 3), -1) # округлення до 10
+        return round(amount + (amount / 50) * 17, -1) # округлення до 10
+        # amount * (4 / 3) == amount + amount * (1 / 3) == amount + (amount / 50) * (50 / 3), де (50 / 3) == (приблизно) 17
     else:
         minutes = int(duration)
-        # return round((amount / minutes) * 60, -1) # округлення до 10
         return round(amount * (60 / minutes), -1) # округлення до 10
-
+    
 
 def get_num_of_reviews(text):
     """
