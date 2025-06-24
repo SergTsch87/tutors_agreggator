@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 from tutors_app.utils import parse_price, get_num_of_reviews
+from pathlib import Path
 
 
 def get_html(url):
@@ -105,11 +106,23 @@ def parse_tutors_page_profrep(html):
     return tutors
 
 # ---------------------------------
-
 # def make_multiplier(factor):
 #     def multiply(x):
 #         return x * factor
 #     return multiply
+# ---------------------------------
+
+def create_folder(folder_path):
+    '''
+    folder_path == "my_documents/reports"
+    Create a directory:
+        Create a Path object and then use its mkdir() method.
+        Set "parents=True" to create any missing parent directories,
+        and "exist_ok=True" to avoid an error if the directory already exists.
+    '''
+    folder_path = Path(folder_path)
+    folder_path.mkdir(parents=True, exist_ok=True)
+    print(f"Folder '{folder_path}' created successfully (or already exists).")
 
 
 def main():
