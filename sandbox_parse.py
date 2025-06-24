@@ -112,17 +112,45 @@ def parse_tutors_page_profrep(html):
 #     return multiply
 # ---------------------------------
 
-def create_folder(folder_path):
+def create_dir(dir_path):
     '''
-    folder_path == "my_documents/reports"
+    dir_path == "my_documents/reports"
     Create a directory:
         Create a Path object and then use its mkdir() method.
         Set "parents=True" to create any missing parent directories,
         and "exist_ok=True" to avoid an error if the directory already exists.
     '''
-    folder_path = Path(folder_path)
-    folder_path.mkdir(parents=True, exist_ok=True)
-    print(f"Folder '{folder_path}' created successfully (or already exists).")
+    dir_path = Path(dir_path)
+    dir_path.mkdir(parents=True, exist_ok=True)
+    print(f"Folder '{dir_path}' created successfully (or already exists).")
+
+
+# def get_list_ids_tutors_on_page(num_page):
+#     pass
+
+def create_empty_txt_file(file_name):
+    with open(file_name, 'w'):
+        pass
+
+
+def create_file_dir_structure():
+    dir_path = "/bio/"
+    create_dir(dir_path)
+    for num_page_dir in range(1, 8):
+        create_empty_txt_file(f'/{num_page_dir}.txt') # html-код за адресою f'/{num_page_dir}/'
+        create_dir(dir_path + '/' + str(num_page_dir))
+        for id_tutor_dir in range( 1 + 20 * ( num_page_dir - 1), 1 + 20 * num_page_dir ):
+            create_dir(dir_path + '/' + str(num_page_dir) + '/' + str(id_tutor_dir))
+            create_empty_txt_file(f'/{id_tutor_dir}.txt') # html-код за адресою f'/{num_page_dir}/{id_tutor_dir}/'
+
+        # list_ids_tutors_on_page = get_list_ids_tutors_on_page(num_page_dir)
+        # for id_tutor_dir in list_ids_tutors_on_page:
+        #     create_dir(dir_path + '/' + str(num_page_dir) + '/' + str(id_tutor_dir))
+        #     # create_empty_txt_file() # html-код за адресою f'/{num_page_dir}/{id_tutor_dir}/'
+
+
+# def rename_txt_file():
+#     pass
 
 
 def main():
