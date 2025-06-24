@@ -159,8 +159,11 @@ def create_file_dir_structure(subject):
 
 def main():
 
-    subject = 'bio'
-    create_file_dir_structure(subject)
+    subject_dir = Path('bio')
+    if not subject_dir.exists():
+        create_file_dir_structure(subject_dir)
+    else:
+        print('Така папка вже існує!')
 
     # url = "https://buki.com.ua/tutors-online/biolohiia/3/"
     # html = get_html(url)
