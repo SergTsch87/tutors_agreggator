@@ -122,7 +122,7 @@ def create_dir(dir_path):
     '''
     dir_path = Path(dir_path)
     dir_path.mkdir(parents=True, exist_ok=True)
-    print(f"Folder '{dir_path}' created successfully (or already exists).")
+    # print(f"Folder '{dir_path}' created successfully (or already exists).") # for test
 
 
 # def get_list_ids_tutors_on_page(num_page):
@@ -131,18 +131,22 @@ def create_dir(dir_path):
 def create_empty_txt_file(file_name):
     with open(file_name, 'w'):
         pass
+    # print(f"File '{file_name}' created successfully") # for test
 
 
-def create_file_dir_structure():
-    dir_path = "/bio/"
+def create_file_dir_structure(subject):
+    current_directory = Path.cwd()
+    dir_path = f"{current_directory}/{subject}/"
     create_dir(dir_path)
     for num_page_dir in range(1, 8):
-        create_empty_txt_file(f'/{num_page_dir}.txt') # html-код за адресою f'/{num_page_dir}/'
-        create_dir(dir_path + '/' + str(num_page_dir))
+        dir_path_num_page = f"{dir_path}/{str(num_page_dir)}"
+        create_dir(dir_path_num_page)
+        create_empty_txt_file(f'{dir_path_num_page}/{num_page_dir}.txt') # html-код за адресою f'/{num_page_dir}/' - для подальшого зберігання списку репетиторів на певній сторінці
         for id_tutor_dir in range( 1 + 20 * ( num_page_dir - 1), 1 + 20 * num_page_dir ):
-            create_dir(dir_path + '/' + str(num_page_dir) + '/' + str(id_tutor_dir))
-            create_empty_txt_file(f'/{id_tutor_dir}.txt') # html-код за адресою f'/{num_page_dir}/{id_tutor_dir}/'
-
+            path_id_tutor_dir = f'{dir_path_num_page}/{str(id_tutor_dir)}'
+            create_dir(f'{path_id_tutor_dir}')
+            create_empty_txt_file(f'{path_id_tutor_dir}/{id_tutor_dir}.txt') # html-код за адресою f'/{num_page_dir}/{id_tutor_dir}/'
+  
         # list_ids_tutors_on_page = get_list_ids_tutors_on_page(num_page_dir)
         # for id_tutor_dir in list_ids_tutors_on_page:
         #     create_dir(dir_path + '/' + str(num_page_dir) + '/' + str(id_tutor_dir))
@@ -154,6 +158,10 @@ def create_file_dir_structure():
 
 
 def main():
+
+    subject = 'bio'
+    create_file_dir_structure(subject)
+
     # url = "https://buki.com.ua/tutors-online/biolohiia/3/"
     # html = get_html(url)
     # soup = BeautifulSoup(html, 'html.parser')
@@ -161,22 +169,23 @@ def main():
     # print( get_element(soup, ".styles_userName__ltIVo a[href]") )
     # print( soup.select_one(".styles_userName__ltIVo a")["href"] )
 
-    num_page = 5
-    url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
-    html = get_html(url)
-    data = parse_tutors_page_buki(html)
 
-    # url = "https://profrepetitor.com.ua/repetitors-biologiya"
+    # num_page = 5
+    # url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
     # html = get_html(url)
-    # # print(f'\nsize(html): {len(html)}\n')
-    # data = parse_tutors_page_profrep(html)
-    # # print(f'\nCount elements of data: {len(data)}\n')
+    # data = parse_tutors_page_buki(html)
 
-    for tutor in data:
-        # print(f"ID Tutor: {tutor['id_tutor']}, Tutor name: {tutor['name']},  Price: {tutor['price']},  Objects: {tutor['objects']}, Rating: {tutor['rating']}, Number of reviews: {tutor['number_of_reviews']}, Education: {tutor['education']}, Experience: {tutor['experience']}, about_myself: {tutor['about_myself']}, city_or_online: {tutor['city_or_online']}")
-        print(f"ID Tutor: {tutor['id_tutor']}")
+    # # url = "https://profrepetitor.com.ua/repetitors-biologiya"
+    # # html = get_html(url)
+    # # # print(f'\nsize(html): {len(html)}\n')
+    # # data = parse_tutors_page_profrep(html)
+    # # # print(f'\nCount elements of data: {len(data)}\n')
 
-        # print(f"Tutor name: {tutor['name']},  Price: {parse_price(tutor['price'])},  Objects: {tutor['objects']}, Rating: {tutor['rating']}, Number of reviews: {tutor['number_of_reviews']}, Education: {tutor['education']}, Experience: {tutor['experience']}, about_myself: {tutor['about_myself']}, city_or_online: {tutor['city_or_online']}")
+    # for tutor in data:
+    #     # print(f"ID Tutor: {tutor['id_tutor']}, Tutor name: {tutor['name']},  Price: {tutor['price']},  Objects: {tutor['objects']}, Rating: {tutor['rating']}, Number of reviews: {tutor['number_of_reviews']}, Education: {tutor['education']}, Experience: {tutor['experience']}, about_myself: {tutor['about_myself']}, city_or_online: {tutor['city_or_online']}")
+    #     print(f"ID Tutor: {tutor['id_tutor']}")
+
+    #     # print(f"Tutor name: {tutor['name']},  Price: {parse_price(tutor['price'])},  Objects: {tutor['objects']}, Rating: {tutor['rating']}, Number of reviews: {tutor['number_of_reviews']}, Education: {tutor['education']}, Experience: {tutor['experience']}, about_myself: {tutor['about_myself']}, city_or_online: {tutor['city_or_online']}")
 
 
     # parse_example()
