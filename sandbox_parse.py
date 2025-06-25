@@ -112,6 +112,9 @@ def parse_tutors_page_profrep(html):
 #     return multiply
 # ---------------------------------
 
+# ========================================
+# Створення структури папок для пришвидшення розробки веб-скрапера
+
 def create_dir(dir_path):
     '''
     dir_path == "my_documents/reports"
@@ -153,17 +156,52 @@ def create_file_dir_structure(subject):
         #     # create_empty_txt_file() # html-код за адресою f'/{num_page_dir}/{id_tutor_dir}/'
 
 
-# def rename_txt_file():
-#     pass
-
-
-def main():
-
+def create_and_info_dir(category_name):
     subject_dir = Path('bio')
     if not subject_dir.exists():
         create_file_dir_structure(subject_dir)
+        print('Такої папки нема, тому Створено задану структуру папок')
     else:
         print('Така папка вже існує!')
+
+
+# def rename_txt_file():
+#     pass
+# ========================================
+
+def main():
+
+    category_name = 'bio'
+    create_and_info_dir(category_name)
+    # subject_dir = Path('bio')
+    # if not subject_dir.exists():
+    #     create_file_dir_structure(subject_dir)
+    #     print('Такої папки нема, тому Створено задану структуру папок')
+    # else:
+    #     print('Така папка вже існує!')
+
+    
+    # num_page = 5
+    # url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
+    # html = get_html(url)
+    # # tutors_data = parse_tutors_page_buki(html)
+
+    list_num_pages = [1, 10, 30, 50, 60, 90, 98]
+    for num_page in list_num_pages:
+        url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
+        html = get_html(url)
+        soup = BeautifulSoup(html, "html.parser")
+
+        # Тут буде збереження файлу: код сторінки з усіма її репетиторами
+
+        tutor_cards = soup.select(".styles_container__4lrBa")
+        for card in tutor_cards:
+            soup = BeautifulSoup(card, 'html.parser') # А точно цей рядок коду тут потрібен? Хіба не достатньо замість 'soup' просто залишити 'card'?..
+            url_tutor = 'https://buki.com.ua/' + soup.select_one(".styles_userName__ltIVo a")["href"],
+
+            html = get_html(url_tutor)
+        
+            # Тут буде збереження файлу: код сторінки певного репетитора
 
     # url = "https://buki.com.ua/tutors-online/biolohiia/3/"
     # html = get_html(url)
