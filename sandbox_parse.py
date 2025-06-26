@@ -156,14 +156,47 @@ def create_file_dir_structure(subject):
         #     # create_empty_txt_file() # html-код за адресою f'/{num_page_dir}/{id_tutor_dir}/'
 
 
-def create_and_info_dir(category_name):
+def create_and_info_dir(category_name): # is_exist_dir()
     subject_dir = Path('bio')
+    # return subject_dir.exists()
+
     if not subject_dir.exists():
         create_file_dir_structure(subject_dir)
         print('Такої папки нема, тому Створено задану структуру папок')
     else:
         print('Така папка вже існує!')
 
+# --------------------------------------------------
+# def generate_large_text_chunks(num_chunks, text):
+#     for i in range(num_chunks):
+#         # yield f"This is chunk {i + 1} of data"
+#         yield text[i] # i-th line
+
+
+def get_count_lines_file(file_path):
+    with open(file_path, 'r') as file:
+        line_count = 0
+        for count, _ in enumerate(file):
+            # pass
+            line_count = count + 1
+        # line_count = count + 1 if count is not None else 0 # Handle empty files
+        # line_count = count + 1
+    
+    return line_count
+
+
+def writing_html_to_file(num_page, file_name):
+    url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
+    html = get_html(url)
+    file_path = f'{Path.cwd()}/bio/{num_page}/{file_name}.txt'
+
+    try:
+        with open(file_path, 'w', encoding='utf-8') as file:
+            file.write(html)
+        print(f"Succesfully wrote large text in chunks to {file_path}")
+
+    except IOError as e:
+        print(f'Error writing to file: {e}')
 
 # def rename_txt_file():
 #     pass
@@ -171,14 +204,48 @@ def create_and_info_dir(category_name):
 
 def main():
 
-    category_name = 'bio'
-    create_and_info_dir(category_name)
-    # subject_dir = Path('bio')
-    # if not subject_dir.exists():
-    #     create_file_dir_structure(subject_dir)
-    #     print('Такої папки нема, тому Створено задану структуру папок')
-    # else:
-    #     print('Така папка вже існує!')
+    # !!! Already work!
+    # category_name = 'bio'
+    # create_and_info_dir(category_name)
+
+    num_page = 5
+    file_name = '81'
+    writing_html_to_file(num_page, file_name)
+
+            # num_page = 5
+            # url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
+            # html = get_html(url)
+            # file_name = '81'
+            # file_path = f'{Path.cwd()}/bio/{num_page}/{file_name}.txt'
+
+            # try:
+            #     with open(file_path, 'w', encoding='utf-8') as file:
+            #         file.write(html)
+            #     print(f"Succesfully wrote large text in chunks to {file_path}")
+
+            # except IOError as e:
+            #     print(f'Error writing to file: {e}')
+    
+
+
+    # line_count = get_count_lines_file(file_name)
+    # print(f'line_count == {line_count}')
+    # print(f'len(html) == {len(html)}')
+    
+    # num_chunks = get_count_lines(html) # 10000
+
+    # try:
+    #     with open(file_name, 'w', encoding='utf-8') as f:
+    #         # f.write(html)
+    #         for chunk in generate_large_text_chunks(num_chunks, html):
+    #             f.write(chunk)
+    #     print(f"Succesfully wrote large text in chunks to {file_name}")
+
+    # except IOError as e:
+    #     print(f'Error writing to file: {e}')
+
+    # with open(file_name, 'w', encoding='utf-8') as f:
+    #     f.write(html)
 
     
     # num_page = 5
@@ -186,22 +253,24 @@ def main():
     # html = get_html(url)
     # # tutors_data = parse_tutors_page_buki(html)
 
-    list_num_pages = [1, 10, 30, 50, 60, 90, 98]
-    for num_page in list_num_pages:
-        url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
-        html = get_html(url)
-        soup = BeautifulSoup(html, "html.parser")
 
-        # Тут буде збереження файлу: код сторінки з усіма її репетиторами
+    # list_num_pages = [1, 10, 30, 50, 60, 90, 98]
+    # for num_page in list_num_pages:
+    #     url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
+    #     html = get_html(url)
+    #     soup = BeautifulSoup(html, "html.parser")
 
-        tutor_cards = soup.select(".styles_container__4lrBa")
-        for card in tutor_cards:
-            soup = BeautifulSoup(card, 'html.parser') # А точно цей рядок коду тут потрібен? Хіба не достатньо замість 'soup' просто залишити 'card'?..
-            url_tutor = 'https://buki.com.ua/' + soup.select_one(".styles_userName__ltIVo a")["href"],
+    #     # Тут буде збереження файлу: код сторінки з усіма її репетиторами
 
-            html = get_html(url_tutor)
+    #     tutor_cards = soup.select(".styles_container__4lrBa")
+    #     for card in tutor_cards:
+    #         soup = BeautifulSoup(card, 'html.parser') # А точно цей рядок коду тут потрібен? Хіба не достатньо замість 'soup' просто залишити 'card'?..
+    #         url_tutor = 'https://buki.com.ua/' + soup.select_one(".styles_userName__ltIVo a")["href"],
+
+    #         html = get_html(url_tutor)
         
-            # Тут буде збереження файлу: код сторінки певного репетитора
+    #         # Тут буде збереження файлу: код сторінки певного репетитора
+
 
     # url = "https://buki.com.ua/tutors-online/biolohiia/3/"
     # html = get_html(url)
