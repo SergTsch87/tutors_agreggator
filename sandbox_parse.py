@@ -188,7 +188,7 @@ def get_count_lines_file(file_path):
 def writing_html_to_file(num_page, file_name):
     url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
     html = get_html(url)
-    file_path = f'{Path.cwd()}/bio/{num_page}/{file_name}.txt'
+    file_path = f'{Path.cwd()}/bio/{num_page}/{file_name}/{file_name}.txt'
 
     try:
         with open(file_path, 'w', encoding='utf-8') as file:
@@ -198,8 +198,16 @@ def writing_html_to_file(num_page, file_name):
     except IOError as e:
         print(f'Error writing to file: {e}')
 
-# def rename_txt_file():
-#     pass
+
+def rename_txt_file(old_file_name, new_file_name):
+    old_file_path = Path(f'{Path.cwd()}/bio/{old_file_name}.txt')
+    new_file_path = Path(f'{Path.cwd()}/bio/{new_file_name}.txt')
+    
+    if old_file_path.exists():
+        old_file_path.rename(new_file_path)
+    else:
+        print(f'Не існує файлу {old_file_name}.txt!')
+
 # ========================================
 
 def main():
@@ -208,24 +216,13 @@ def main():
     # category_name = 'bio'
     # create_and_info_dir(category_name)
 
-    num_page = 5
-    file_name = '81'
-    writing_html_to_file(num_page, file_name)
+    # num_page = 5
+    # file_name = '84'
+    # writing_html_to_file(num_page, file_name)
 
-            # num_page = 5
-            # url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
-            # html = get_html(url)
-            # file_name = '81'
-            # file_path = f'{Path.cwd()}/bio/{num_page}/{file_name}.txt'
-
-            # try:
-            #     with open(file_path, 'w', encoding='utf-8') as file:
-            #         file.write(html)
-            #     print(f"Succesfully wrote large text in chunks to {file_path}")
-
-            # except IOError as e:
-            #     print(f'Error writing to file: {e}')
-    
+    old_file_name = 'file1'
+    new_file_name = 'file2'
+    rename_txt_file(old_file_name, new_file_name)
 
 
     # line_count = get_count_lines_file(file_name)
