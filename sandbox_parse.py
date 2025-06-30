@@ -2,6 +2,8 @@ import requests
 from bs4 import BeautifulSoup
 from tutors_app.utils import parse_price, get_num_of_reviews
 from pathlib import Path
+import zlib
+from lorem_text import lorem  #  for insert text 'dolorem ipsum')
 
 
 def get_html(url):
@@ -210,7 +212,41 @@ def rename_txt_file(old_file_name, new_file_name):
 
 # ========================================
 
+def get_html_some_num_page(num_page):
+    url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
+    return get_html(url)
+
+
+
 def main():
+
+
+# ================================
+# Тестовий код для обходу усіх сторінок
+#   
+    # num_page = 1
+    # html = get_html_some_num_page(num_page)
+    # # tutors_data = parse_tutors_page_buki(html)
+
+    # list_num_pages = [1, 10, 30, 50, 60, 90, 98]
+    list_num_pages = [number for number in range(1, 99)]
+    
+    for num_page in list_num_pages:
+        html = get_html_some_num_page(num_page)
+        soup = BeautifulSoup(html, "html.parser")
+
+        # Тут буде збереження файлу: код сторінки з усіма її репетиторами
+
+        tutor_cards = soup.select(".styles_container__4lrBa")
+        for card in tutor_cards:
+            soup = BeautifulSoup(card, 'html.parser') # А точно цей рядок коду тут потрібен? Хіба не достатньо замість 'soup' просто залишити 'card'?..
+            url_tutor = 'https://buki.com.ua/' + soup.select_one(".styles_userName__ltIVo a")["href"],
+
+            html = get_html(url_tutor)
+        
+            # Тут буде збереження файлу: код сторінки певного репетитора
+
+# ================================================
 
     # !!! Already work!
     # category_name = 'bio'
@@ -220,9 +256,13 @@ def main():
     # file_name = '84'
     # writing_html_to_file(num_page, file_name)
 
-    old_file_name = 'file1'
-    new_file_name = 'file2'
-    rename_txt_file(old_file_name, new_file_name)
+    # old_file_name = 'file1'
+    # new_file_name = 'file2'
+    # rename_txt_file(old_file_name, new_file_name)
+
+    # large_str = lorem.paragraph() * 10
+    # print(f'large_str: {large_str}\n')
+    # print(f'Compress large_str: {zlib.compress(large_str.encode('utf-8'))}')
 
 
     # line_count = get_count_lines_file(file_name)
@@ -244,7 +284,9 @@ def main():
     # with open(file_name, 'w', encoding='utf-8') as f:
     #     f.write(html)
 
-    
+# ================================
+# Тестовий код для обмеженої к-сти сторінок та фалів
+#     
     # num_page = 5
     # url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
     # html = get_html(url)
@@ -268,6 +310,7 @@ def main():
         
     #         # Тут буде збереження файлу: код сторінки певного репетитора
 
+# ================================================
 
     # url = "https://buki.com.ua/tutors-online/biolohiia/3/"
     # html = get_html(url)
