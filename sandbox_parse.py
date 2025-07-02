@@ -212,7 +212,7 @@ def rename_txt_file(old_file_name, new_file_name):
 
 # ========================================
 
-def get_html_some_num_page(num_page):
+def get_html_by_page_number(num_page):
     url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
     return get_html(url)
 
@@ -224,27 +224,34 @@ def main():
 # ================================
 # Тестовий код для обходу усіх сторінок
 #   
-    # num_page = 1
-    # html = get_html_some_num_page(num_page)
-    # # tutors_data = parse_tutors_page_buki(html)
-
     # list_num_pages = [1, 10, 30, 50, 60, 90, 98]
     list_num_pages = [number for number in range(1, 99)]
-    
+    list_urls_tutors = []
+    hundreds_counter = 0
+
     for num_page in list_num_pages:
-        html = get_html_some_num_page(num_page)
+        html = get_html_by_page_number(num_page)
         soup = BeautifulSoup(html, "html.parser")
 
         # Тут буде збереження файлу: код сторінки з усіма її репетиторами
+        
+        if len(list_urls_tutors) % 100 == 0:
+            data_for_save = list_urls_tutors[ 1 + 100 * hundreds_counter: 100 * (hundreds_counter + 1) ]
+            hundreds_counter += 1
+            # Зберігаємо кожні 100 нових адрес зі списку репетиторів 
+            file_name = str(1 + 100 * hundreds_counter: 100 * (hundreds_counter + 1))
+            file_path = f'{Path.cwd()}/bio/{file_name}.txt'
+            with open(file_path, 'w', encoding='utf-8') as file:
+                file.write(data_for_save)
 
         tutor_cards = soup.select(".styles_container__4lrBa")
         for card in tutor_cards:
             soup = BeautifulSoup(card, 'html.parser') # А точно цей рядок коду тут потрібен? Хіба не достатньо замість 'soup' просто залишити 'card'?..
-            url_tutor = 'https://buki.com.ua/' + soup.select_one(".styles_userName__ltIVo a")["href"],
+            url_tutor = 'https://buki.com.ua/' + soup.select_one(".styles_userName__ltIVo a")["href"]
+            list_urls_tutors.append()
 
-            html = get_html(url_tutor)
-        
-            # Тут буде збереження файлу: код сторінки певного репетитора
+            # html = get_html(url_tutor)
+            # # Тут буде збереження файлу: код сторінки певного репетитора
 
 # ================================================
 
