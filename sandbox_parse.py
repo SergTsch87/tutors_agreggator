@@ -2,8 +2,8 @@ import requests
 from bs4 import BeautifulSoup
 from tutors_app.utils import parse_price, get_num_of_reviews
 from pathlib import Path
-import zlib
-from lorem_text import lorem  #  for insert text 'dolorem ipsum')
+# import zlib
+# from lorem_text import lorem  #  for insert text 'dolorem ipsum')
 
 
 def get_html(url):
@@ -225,33 +225,59 @@ def main():
 # Тестовий код для обходу усіх сторінок
 #   
     # list_num_pages = [1, 10, 30, 50, 60, 90, 98]
+    
+    # Код для отримання найбільшого номера пагінації
+    # ! Якщо такого номера нема, - тоді:
+    # - відбувається редірект на 'https://buki.com.ua/tutors/biolohiia/'
+    # - виходимо з циклу без збереження даних на поточній ітерації
+
+    
     list_num_pages = [number for number in range(1, 99)]
     list_urls_tutors = []
-    hundreds_counter = 0
+            # hundreds_counter = 0
+    file_name = 'list_urls_tutors'
+    file_path = f'{Path.cwd()}/bio/{file_name}.txt'
 
     for num_page in list_num_pages:
         html = get_html_by_page_number(num_page)
         soup = BeautifulSoup(html, "html.parser")
 
         # Тут буде збереження файлу: код сторінки з усіма її репетиторами
-        
-        if len(list_urls_tutors) % 100 == 0:
-            data_for_save = list_urls_tutors[ 1 + 100 * hundreds_counter: 100 * (hundreds_counter + 1) ]
-            hundreds_counter += 1
-            # Зберігаємо кожні 100 нових адрес зі списку репетиторів 
-            file_name = str(1 + 100 * hundreds_counter: 100 * (hundreds_counter + 1))
-            file_path = f'{Path.cwd()}/bio/{file_name}.txt'
+
+        # Збереження списку нових 20 URLs репетиторів
+                    # ! За такої логіки не збережеться крайній залишок репетиторів!
+                    # Напр.: 1012 репетитори. крайні 12 URLs не збережуться...
+        if len(list_urls_tutors) % 20 == 0: # or len(list_urls_tutors) // 20 == ...:
+            
+                    # data_for_save = list_urls_tutors[ 1 + 20 * hundreds_counter: 1 + 20 * (hundreds_counter + 1) ]
+                    # data_for_save = list_urls_tutors
+                    # hundreds_counter += 1
+            
+            # Зберігаємо кожні 20 нових адрес зі списку репетиторів 
+                    # file_name = str(1 + 20 * hundreds_counter) + '-' + str(20 * (hundreds_counter + 1))
             with open(file_path, 'w', encoding='utf-8') as file:
-                file.write(data_for_save)
+                file.write(list_urls_tutors)
+                        # file.write(data_for_save)
+            
+            list_urls_tutors = []
 
         tutor_cards = soup.select(".styles_container__4lrBa")
         for card in tutor_cards:
-            soup = BeautifulSoup(card, 'html.parser') # А точно цей рядок коду тут потрібен? Хіба не достатньо замість 'soup' просто залишити 'card'?..
+            # А точно цей рядок коду тут потрібен? Хіба не достатньо замість 'soup' просто залишити 'card'?..
+            # Якщо буде зайвим, - налагодження скаже про це помилками
+            soup = BeautifulSoup(card, 'html.parser')
             url_tutor = 'https://buki.com.ua/' + soup.select_one(".styles_userName__ltIVo a")["href"]
-            list_urls_tutors.append()
+            list_urls_tutors.append(url_tutor)
 
             # html = get_html(url_tutor)
             # # Тут буде збереження файлу: код сторінки певного репетитора
+    
+    # Зберігаємо крайній залишок репетиторів
+    # Напр.: 1022 репетитори. Тепер збережуться крайні 22 URLs)
+    with open(file_path, 'w', encoding='utf-8') as file:
+        file.write(list_urls_tutors)
+
+    list_urls_tutors = []
 
 # ================================================
 
