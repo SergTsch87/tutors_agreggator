@@ -15,7 +15,7 @@ from pathlib import Path
 def get_html(url):
     try:
         response = requests.get(url, allow_redirects=False)
-        if 300 <= response.status_code < 400:
+        if 300 <= response.status_code < 400:  #  ! 301 or 302 (redirect)
             return response.text, 1 # 'redirect'
         else:
             return response.text, 0 # 'No redirect'
@@ -246,8 +246,23 @@ def main():
     # - відбувається редірект на 'https://buki.com.ua/tutors/biolohiia/'
     # - виходимо з циклу без збереження даних на поточній ітерації
 
+# ---------------------
+# !!!
+# get Error
+#
+# Traceback (most recent call last):
+#   File "g:\Windows\Meni\Work\Python\Lessons Python\tutor_dj_scrap\sandbox_parse.py", line 428, in <module>
+#     main()
+#   File "g:\Windows\Meni\Work\Python\Lessons Python\tutor_dj_scrap\sandbox_parse.py", line 255, in main    
+#     max_num_pagination = int( safe_text( soup.select_one("span.styles_separator__aFEYQ.next_sibling") ) ) 
+#                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
+# ValueError: invalid literal for int() with base 10: 'N/A'
+# ---------------------
+
     # for num_page in list_num_pages:
-    num_page = 1
+    # num_page = 1
+    num_page = 97 # ! for test !
+    
     html, is_redirect = get_html_by_page_number(num_page)
     soup = BeautifulSoup(html, 'html.parser')
     max_num_pagination = int( safe_text( soup.select_one("span.styles_separator__aFEYQ.next_sibling") ) )
@@ -266,11 +281,12 @@ def main():
         # if link_rel_next == None:
         #     break
 
-        if ( num_page > max_num_pagination ) or ( link_rel_next == None ):
+        if ( num_page > max_num_pagination ) or ( link_rel_next is None ):
             break
 
         html, is_redirect = get_html_by_page_number(num_page)
 
+        # Це мабуть вже зайвий код...
         if is_redirect:
             break
 
