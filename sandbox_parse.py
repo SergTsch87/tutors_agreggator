@@ -5,11 +5,25 @@ from pathlib import Path
 # import zlib
 # from lorem_text import lorem  #  for insert text 'dolorem ipsum')
 
+# ! Вилучи цей код
+# def get_html(url):
+#     response = requests.get(url)
+#     response.raise_for_status()
+#     return response.text
+
 
 def get_html(url):
-    response = requests.get(url)
-    response.raise_for_status()
-    return response.text
+    try:
+        response = requests.get(url, allow_redirects=False)
+        if 300 <= response.status_code < 400:
+            return response.text, 1 # 'redirect'
+        else:
+            return response.text, 0 # 'No redirect'
+    except requests.exceptions.RequestException as e:
+        print(f'An error occured: {e}')
+    
+    # response.raise_for_status()
+    # return response.text
 
 
 def get_element(block_tag, tag_class):
@@ -232,13 +246,15 @@ def main():
     # - виходимо з циклу без збереження даних на поточній ітерації
 
     
-    list_num_pages = [number for number in range(1, 99)]
+    # list_num_pages = [number for number in range(1, 99)]
     list_urls_tutors = []
             # hundreds_counter = 0
     file_name = 'list_urls_tutors'
     file_path = f'{Path.cwd()}/bio/{file_name}.txt'
 
-    for num_page in list_num_pages:
+    # for num_page in list_num_pages:
+    num_page = 1
+    while True:
         html = get_html_by_page_number(num_page)
         soup = BeautifulSoup(html, "html.parser")
 
@@ -271,6 +287,8 @@ def main():
 
             # html = get_html(url_tutor)
             # # Тут буде збереження файлу: код сторінки певного репетитора
+
+        num_page += 1
     
     # Зберігаємо крайній залишок репетиторів
     # Напр.: 1022 репетитори. Тепер збережуться крайні 22 URLs)
