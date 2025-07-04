@@ -203,7 +203,7 @@ def get_count_lines_file(file_path):
 
 def writing_html_to_file(num_page, file_name):
     url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
-    html = get_html(url)
+    html, _ = get_html(url)
     file_path = f'{Path.cwd()}/bio/{num_page}/{file_name}/{file_name}.txt'
 
     try:
@@ -228,7 +228,8 @@ def rename_txt_file(old_file_name, new_file_name):
 
 def get_html_by_page_number(num_page):
     url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
-    return get_html(url)
+    html, is_redirect = get_html(url)
+    return html, is_redirect
 
 
 
@@ -245,17 +246,36 @@ def main():
     # - відбувається редірект на 'https://buki.com.ua/tutors/biolohiia/'
     # - виходимо з циклу без збереження даних на поточній ітерації
 
-    
+    # for num_page in list_num_pages:
+    num_page = 1
+    html, is_redirect = get_html_by_page_number(num_page)
+    soup = BeautifulSoup(html, 'html.parser')
+    max_num_pagination = int( safe_text( soup.select_one("span.styles_separator__aFEYQ.next_sibling") ) )
+    print(f'max_num_pagination == {max_num_pagination}')
     # list_num_pages = [number for number in range(1, 99)]
     list_urls_tutors = []
             # hundreds_counter = 0
     file_name = 'list_urls_tutors'
     file_path = f'{Path.cwd()}/bio/{file_name}.txt'
 
-    # for num_page in list_num_pages:
-    num_page = 1
     while True:
-        html = get_html_by_page_number(num_page)
+        # ! Відсутність цього елемента:
+            # <link rel="next" href="https://buki.com.ua/tutors/biolohiia/99/">
+        # вже вказує на найбільший поточний номер пагінації
+        link_rel_next = soup.select_one(".styles_pagination__qGM14.div.next_sibling.next_sibling")
+        # if link_rel_next == None:
+        #     break
+
+        if ( num_page > max_num_pagination ) or ( link_rel_next == None ):
+            break
+
+        html, is_redirect = get_html_by_page_number(num_page)
+
+        if is_redirect:
+            break
+
+        # 'no tutor cards are found on the page' - як це перевірити, якщо є редірект?
+
         soup = BeautifulSoup(html, "html.parser")
 
         # Тут буде збереження файлу: код сторінки з усіма її репетиторами
