@@ -5,12 +5,6 @@ from pathlib import Path
 # import zlib
 # from lorem_text import lorem  #  for insert text 'dolorem ipsum')
 
-# ! Вилучи цей код
-# def get_html(url):
-#     response = requests.get(url)
-#     response.raise_for_status()
-#     return response.text
-
 
 def get_html(url):
     try:
@@ -24,9 +18,6 @@ def get_html(url):
             return response.text, 0 # 'No redirect'
     except requests.exceptions.RequestException as e:
         print(f'An error occured: {e}')
-    
-    # response.raise_for_status()
-    # return response.text
 
 
 def get_element(block_tag, tag_class):
@@ -186,21 +177,12 @@ def create_and_info_dir(category_name): # is_exist_dir()
         print('Така папка вже існує!')
 
 # --------------------------------------------------
-# def generate_large_text_chunks(num_chunks, text):
-#     for i in range(num_chunks):
-#         # yield f"This is chunk {i + 1} of data"
-#         yield text[i] # i-th line
-
-
 def get_count_lines_file(file_path):
     with open(file_path, 'r') as file:
         line_count = 0
         for count, _ in enumerate(file):
-            # pass
             line_count = count + 1
         # line_count = count + 1 if count is not None else 0 # Handle empty files
-        # line_count = count + 1
-    
     return line_count
 
 
@@ -234,6 +216,13 @@ def get_html_by_page_number(num_page):
     html, is_redirect = get_html(url)
     return html, is_redirect
 
+
+def write_list_data_to_file(file_path, list_data, mode='a'):
+    '''
+        mode == 'a' or 'w'
+    '''
+    with open(file_path, mode, encoding='utf-8') as file:
+        file.write('\n' + '\n'.join(list_data))
 
 
 def main():
@@ -271,7 +260,7 @@ def main():
     tag_body = soup.select_one('body')
 
     max_num_pagination = int( safe_text( tag_body.select(".styles_pagination__qGM14 div a")[-1] ) )
-    print(f'max_num_pagination == {max_num_pagination}')
+    # print(f'max_num_pagination == {max_num_pagination}')
     list_urls_tutors = []
     file_name = 'list_urls_tutors'
     file_path = f'{Path.cwd()}/bio/{file_name}.txt'
@@ -297,12 +286,13 @@ def main():
         # # Тут буде збереження файлу: код сторінки з усіма її репетиторами
 
         # Збереження списку нових 20 URLs репетиторів
-        if len(list_urls_tutors) == 20:            
+        if len(list_urls_tutors) == 20:
             # Зберігаємо кожні 20 нових адрес зі списку репетиторів 
             print(f'list_urls_tutors: {list_urls_tutors}')
-            with open(file_path, 'a', encoding='utf-8') as file:
-                file.write('\n' + '\n'.join(list_urls_tutors))
-                print(f'Insert list list_urls_tutors to file {file_path}:\n{list_urls_tutors}')
+            write_list_data_to_file(file_path, list_urls_tutors)
+            # with open(file_path, 'a', encoding='utf-8') as file:
+            #     file.write('\n' + '\n'.join(list_urls_tutors))
+            print(f'Insert list list_urls_tutors to file {file_path}:\n{list_urls_tutors}')
             
             list_urls_tutors = []
 
@@ -325,10 +315,10 @@ def main():
     
     # Зберігаємо крайній залишок репетиторів
     # Напр.: є 1012 репетиторів. Тепер збережуться крайні 12 URLs)
-    with open(file_path, 'a', encoding='utf-8') as file:
-        # file.write(list_urls_tutors)
-        file.write('\n' + '\n'.join(list_urls_tutors))
-        print(f'Insert list list_urls_tutors to file {file_path}:\n{list_urls_tutors}')
+    write_list_data_to_file(file_path, list_urls_tutors)
+    # with open(file_path, 'a', encoding='utf-8') as file:
+    #     file.write('\n' + '\n'.join(list_urls_tutors))
+    print(f'Insert list list_urls_tutors to file {file_path}:\n{list_urls_tutors}')
 
     list_urls_tutors = []
 
