@@ -262,7 +262,7 @@ def main():
 # ValueError: invalid literal for int() with base 10: 'N/A'
 # ---------------------
 
-    # for num_page in list_num_pages:
+    # ! Розкоментуй, щойно будеш готовий запустити скрипт для збору УСІХ посилань
     # num_page = 1
     num_page = 97 # ! for test !
     
@@ -270,31 +270,13 @@ def main():
     soup = BeautifulSoup(html, 'html.parser')
     tag_body = soup.select_one('body')
 
-    # # ! тут подивись
-    # link_rel_next = soup.select_one(".styles_pagination__qGM14.div.next_sibling.next_sibling")
-
-    # print(soup.select_one("span.styles_separator__aFEYQ"))
-    # print(soup.select_one("span.styles_separator__aFEYQ.next_sibling"))
-    # print(safe_text( soup.select_one("span.styles_separator__aFEYQ.next_sibling") ))
-
-    # max_num_pagination = int( safe_text( soup.select_one("span.styles_separator__aFEYQ ") ) )
     max_num_pagination = int( safe_text( tag_body.select(".styles_pagination__qGM14 div a")[-1] ) )
     print(f'max_num_pagination == {max_num_pagination}')
-    # list_num_pages = [number for number in range(1, 99)]
     list_urls_tutors = []
-            # hundreds_counter = 0
     file_name = 'list_urls_tutors'
     file_path = f'{Path.cwd()}/bio/{file_name}.txt'
 
     while True:
-        # ! Відсутність цього елемента:
-            # <link rel="next" href="https://buki.com.ua/tutors/biolohiia/99/">
-        # вже вказує на найбільший поточний номер пагінації
-        # link_rel_next = soup.select_one(".styles_pagination__qGM14.div.next_sibling.next_sibling")
-        # link_rel_next = soup.select(".styles_pagination__qGM14 div link")[-1] # rel == 'prev' or rel == 'next'
-        # if link_rel_next == None:
-        #     break
-
         # if ( num_page > max_num_pagination ) or ( link_rel_next is None ):
         # if ( num_page > max_num_pagination ) or ( link_rel_next['rel'] == 'prev' ):
         if ( num_page > max_num_pagination ):
@@ -303,48 +285,33 @@ def main():
 
         html, is_redirect = get_html_by_page_number(num_page)
 
-        # Це мабуть вже зайвий код...
+        # ! Якщо це дійсно зайві коди, - тоді доведеться всюди прибрати перевірку на редірект
+        # ! Це мабуть вже зайвий код...
         if is_redirect:
             print(f'is_redirect == {is_redirect}')
             break
+        # ! ...і це зайвий код
+        # # 'no tutor cards are found on the page' - як це перевірити, якщо є редірект?
 
-        # 'no tutor cards are found on the page' - як це перевірити, якщо є редірект?
-
-        # soup = BeautifulSoup(html, "html.parser")
-
-        # Тут буде збереження файлу: код сторінки з усіма її репетиторами
+        # ! Розкоментуй, щойно будеш готовий обробляти код сторінки з усіма її репетиторами
+        # # Тут буде збереження файлу: код сторінки з усіма її репетиторами
 
         # Збереження списку нових 20 URLs репетиторів
-                    # ! За такої логіки не збережеться крайній залишок репетиторів!
-                    # Напр.: 1012 репетитори. крайні 12 URLs не збережуться...
-        
-        # ! Мабуть, він зберігає лише перші 20 адрес... але чому?
-        # if len(list_urls_tutors) % 20 == 0: # or len(list_urls_tutors) // 20 == ...:
-        if len(list_urls_tutors) == 20:
-            
-                    # data_for_save = list_urls_tutors[ 1 + 20 * hundreds_counter: 1 + 20 * (hundreds_counter + 1) ]
-                    # data_for_save = list_urls_tutors
-                    # hundreds_counter += 1
-            
+        if len(list_urls_tutors) == 20:            
             # Зберігаємо кожні 20 нових адрес зі списку репетиторів 
-                    # file_name = str(1 + 20 * hundreds_counter) + '-' + str(20 * (hundreds_counter + 1))
             print(f'list_urls_tutors: {list_urls_tutors}')
             with open(file_path, 'a', encoding='utf-8') as file:
                 file.write('\n' + '\n'.join(list_urls_tutors))
                 print(f'Insert list list_urls_tutors to file {file_path}:\n{list_urls_tutors}')
-                        # file.write(data_for_save)
             
             list_urls_tutors = []
 
         tutor_cards = tag_body.select(".styles_container__4lrBa")
         for card in tutor_cards:
-            # А точно цей рядок коду тут потрібен? Хіба не достатньо замість 'soup' просто залишити 'card'?..
-            # Якщо буде зайвим, - налагодження скаже про це помилками
-            # soup_card = BeautifulSoup(card, 'html.parser')
-                # url_tutor = 'https://buki.com.ua/' + soup_card.select_one(".styles_userName__ltIVo a")["href"]
             url_tutor = 'https://buki.com.ua/' + card.select_one(".styles_userName__ltIVo a")["href"]
             list_urls_tutors.append(url_tutor)
 
+            # ! Розкоментуй, щойно будеш готовий обробляти код сторінки певного репетитора
             # html = get_html(url_tutor)
             # # Тут буде збереження файлу: код сторінки певного репетитора
 
@@ -357,14 +324,12 @@ def main():
     # ----------------------------
     
     # Зберігаємо крайній залишок репетиторів
-    # Напр.: 1022 репетитори. Тепер збережуться крайні 22 URLs)
+    # Напр.: є 1012 репетиторів. Тепер збережуться крайні 12 URLs)
     with open(file_path, 'a', encoding='utf-8') as file:
         # file.write(list_urls_tutors)
         file.write('\n' + '\n'.join(list_urls_tutors))
         print(f'Insert list list_urls_tutors to file {file_path}:\n{list_urls_tutors}')
 
-    # !!!
-    # Нащо тут тричі(!) очищується цей список?..
     list_urls_tutors = []
 
 # ================================================
