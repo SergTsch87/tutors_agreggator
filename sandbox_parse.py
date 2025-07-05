@@ -319,7 +319,8 @@ def main():
                     # Напр.: 1012 репетитори. крайні 12 URLs не збережуться...
         
         # ! Мабуть, він зберігає лише перші 20 адрес... але чому?
-        if len(list_urls_tutors) % 20 == 0: # or len(list_urls_tutors) // 20 == ...:
+        # if len(list_urls_tutors) % 20 == 0: # or len(list_urls_tutors) // 20 == ...:
+        if len(list_urls_tutors) == 20:
             
                     # data_for_save = list_urls_tutors[ 1 + 20 * hundreds_counter: 1 + 20 * (hundreds_counter + 1) ]
                     # data_for_save = list_urls_tutors
@@ -329,7 +330,7 @@ def main():
                     # file_name = str(1 + 20 * hundreds_counter) + '-' + str(20 * (hundreds_counter + 1))
             print(f'list_urls_tutors: {list_urls_tutors}')
             with open(file_path, 'a', encoding='utf-8') as file:
-                file.write('\n'.join(list_urls_tutors))
+                file.write('\n' + '\n'.join(list_urls_tutors))
                 print(f'Insert list list_urls_tutors to file {file_path}:\n{list_urls_tutors}')
                         # file.write(data_for_save)
             
@@ -348,14 +349,22 @@ def main():
             # # Тут буде збереження файлу: код сторінки певного репетитора
 
         num_page += 1
+        html, is_redirect = get_html_by_page_number(num_page)
+        soup = BeautifulSoup(html, 'html.parser')
+        tag_body = soup.select_one('body')
+        
+        # THE END While Loop
+    # ----------------------------
     
     # Зберігаємо крайній залишок репетиторів
     # Напр.: 1022 репетитори. Тепер збережуться крайні 22 URLs)
     with open(file_path, 'a', encoding='utf-8') as file:
         # file.write(list_urls_tutors)
-        file.write('\n'.join(list_urls_tutors))
+        file.write('\n' + '\n'.join(list_urls_tutors))
         print(f'Insert list list_urls_tutors to file {file_path}:\n{list_urls_tutors}')
 
+    # !!!
+    # Нащо тут тричі(!) очищується цей список?..
     list_urls_tutors = []
 
 # ================================================
