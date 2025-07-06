@@ -225,9 +225,16 @@ def write_list_data_to_file(file_path, list_data, mode='a'):
         file.write('\n' + '\n'.join(list_data))
 
 
+def get_tag_body(num_page):
+    url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
+    html, _ = get_html(url)
+    soup = BeautifulSoup(html, 'html.parser')
+    tag_body = soup.select_one('body')
+    return tag_body
+    
+
+
 def main():
-
-
 # ================================
 # Тестовий код для обходу усіх сторінок
 #   
@@ -239,27 +246,17 @@ def main():
     # - виходимо з циклу без збереження даних на поточній ітерації
 
 # ---------------------
-# !!!
-# get Error
-#
-# Traceback (most recent call last):
-#   File "g:\Windows\Meni\Work\Python\Lessons Python\tutor_dj_scrap\sandbox_parse.py", line 428, in <module>
-#     main()
-#   File "g:\Windows\Meni\Work\Python\Lessons Python\tutor_dj_scrap\sandbox_parse.py", line 255, in main    
-#     max_num_pagination = int( safe_text( soup.select_one("span.styles_separator__aFEYQ.next_sibling") ) ) 
-#                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
-# ValueError: invalid literal for int() with base 10: 'N/A'
-# ---------------------
 
     # ! Розкоментуй, щойно будеш готовий запустити скрипт для збору УСІХ посилань
     # num_page = 1
     num_page = 97 # ! for test !
     
-    url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
-    html, _ = get_html(url)
-    # html, _ = get_html_by_page_number(num_page)
-    soup = BeautifulSoup(html, 'html.parser')
-    tag_body = soup.select_one('body')
+    # url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
+    # html, _ = get_html(url)
+    # # html, _ = get_html_by_page_number(num_page)
+    # soup = BeautifulSoup(html, 'html.parser')
+    # tag_body = soup.select_one('body')
+    tag_body = get_tag_body(num_page)
 
     # А що, якщо перед циклом виставити фіктивне ( >> num_page ) значення, яке точно не буде на цьому сайті, а вже у циклі витягти з сайту його справжнє значення?..
     max_num_pagination = int( safe_text( tag_body.select(".styles_pagination__qGM14 div a")[-1] ) )
@@ -325,11 +322,11 @@ def main():
             # # Тут буде збереження файлу: код сторінки певного репетитора
 
         num_page += 1
-        url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
-        html, _ = get_html(url)
-        # html, _ = get_html_by_page_number(num_page)
-        soup = BeautifulSoup(html, 'html.parser')
-        tag_body = soup.select_one('body')
+        # url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
+        # html, _ = get_html(url)
+        # soup = BeautifulSoup(html, 'html.parser')
+        # tag_body = soup.select_one('body')
+        tag_body = get_tag_body(num_page)
         
         # THE END While Loop
     # ----------------------------
