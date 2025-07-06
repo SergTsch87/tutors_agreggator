@@ -6,7 +6,7 @@ from pathlib import Path
 # from lorem_text import lorem  #  for insert text 'dolorem ipsum')
 
 
-def get_html(url):
+def get_html(url: str):
     try:
         response = requests.get(url, allow_redirects=False)
         if 300 <= response.status_code < 400:  #  ! 301 or 302 (redirect)
@@ -211,10 +211,10 @@ def rename_txt_file(old_file_name, new_file_name):
 
 # ========================================
 
-def get_html_by_page_number(num_page):
-    url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
-    html, is_redirect = get_html(url)
-    return html, is_redirect
+# def get_html_by_page_number(num_page):
+#     url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
+#     html, is_redirect = get_html(url)
+#     return html, is_redirect
 
 
 def write_list_data_to_file(file_path, list_data, mode='a'):
@@ -255,10 +255,13 @@ def main():
     # num_page = 1
     num_page = 97 # ! for test !
     
-    html, is_redirect = get_html_by_page_number(num_page)
+    url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
+    html, _ = get_html(url)
+    # html, _ = get_html_by_page_number(num_page)
     soup = BeautifulSoup(html, 'html.parser')
     tag_body = soup.select_one('body')
 
+    # А що, якщо перед циклом виставити фіктивне ( >> num_page ) значення, яке точно не буде на цьому сайті, а вже у циклі витягти з сайту його справжнє значення?..
     max_num_pagination = int( safe_text( tag_body.select(".styles_pagination__qGM14 div a")[-1] ) )
     # print(f'max_num_pagination == {max_num_pagination}')
     list_urls_tutors = []
@@ -266,13 +269,25 @@ def main():
     file_path = f'{Path.cwd()}/bio/{file_name}.txt'
 
     while True:
+    # То, може таку умову для циклу зробити?..
+    # while num_page <= max_num_pagination:
+    # Тоді доведеться залишити ініц-цію max_num_pagination перед циклом...
+
+        # !!!
+        # А може, max_num_pagination створити тут?..
+        # Тоді не потрібна буде ініціалізація tag_body перед циклом
+        # if max_num_pagination is_not_int:
+        #     all code follow
+
         # if ( num_page > max_num_pagination ) or ( link_rel_next is None ):
         # if ( num_page > max_num_pagination ) or ( link_rel_next['rel'] == 'prev' ):
         if ( num_page > max_num_pagination ):
             print(f'num_page > max_num_pagination  =>  {num_page} > {max_num_pagination}  =>  {num_page > max_num_pagination}')
             break
 
-        html, is_redirect = get_html_by_page_number(num_page)
+        url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
+        html, is_redirect = get_html(url)
+        # html, is_redirect = get_html_by_page_number(num_page)
 
         # ! Якщо це дійсно зайві коди, - тоді доведеться всюди прибрати перевірку на редірект
         # ! Це мабуть вже зайвий код...
@@ -296,6 +311,10 @@ def main():
             
             list_urls_tutors = []
 
+        # !!!
+        # Якщо tutor_cards порожній — це може означати,
+        # що сторінка була редіректнута або порожня.
+        # Логуй і пропускай таку сторінку.
         tutor_cards = tag_body.select(".styles_container__4lrBa")
         for card in tutor_cards:
             url_tutor = 'https://buki.com.ua/' + card.select_one(".styles_userName__ltIVo a")["href"]
@@ -306,7 +325,9 @@ def main():
             # # Тут буде збереження файлу: код сторінки певного репетитора
 
         num_page += 1
-        html, is_redirect = get_html_by_page_number(num_page)
+        url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
+        html, _ = get_html(url)
+        # html, _ = get_html_by_page_number(num_page)
         soup = BeautifulSoup(html, 'html.parser')
         tag_body = soup.select_one('body')
         
