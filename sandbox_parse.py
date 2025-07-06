@@ -10,9 +10,6 @@ def get_html(url: str):
     try:
         response = requests.get(url, allow_redirects=False)
         if 300 <= response.status_code < 400:  #  ! 301 or 302 (redirect)
-            # soup = BeautifulSoup(response.text, 'html.parser')
-            # body_tag = soup.select_one('body')
-            # return body_tag, 1 # 'redirect'
             return response.text, 1 # 'redirect'
         else:
             return response.text, 0 # 'No redirect'
@@ -237,6 +234,10 @@ def get_max_pagination(soup_element):
     return int( safe_text( soup_element.select(".styles_pagination__qGM14 div a")[-1] ) )
 
 
+def get_tutor_urls(soup_elem):
+    return soup_elem.select_one(".styles_userName__ltIVo a")["href"][6:-1]
+
+
 def main():
 # ================================
 # Тестовий код для обходу усіх сторінок
@@ -264,9 +265,9 @@ def main():
     file_name = 'list_urls_tutors'
     file_path = f'{Path.cwd()}/bio/{file_name}.txt'
 
-    while True:
+    # while True:
     # То, може таку умову для циклу зробити?..
-    # while num_page <= max_num_pagination:
+    while num_page <= max_num_pagination:
     # Тоді доведеться залишити ініц-цію max_num_pagination перед циклом...
 
         # !!!
@@ -313,9 +314,10 @@ def main():
         # Логуй і пропускай таку сторінку.
         tutor_cards = tag_body.select(".styles_container__4lrBa")
         for card in tutor_cards:
-            # # Цей рядок потрібен під час витягання коду репетитора з БД чи файлу. А не навпаки(!)
-            # url_tutor = 'https://buki.com.ua' + card.select_one(".styles_userName__ltIVo a")["href"]
-            url_tutor = card.select_one(".styles_userName__ltIVo a")["href"][6:-1]
+            # # # Цей рядок потрібен під час витягання коду репетитора з БД чи файлу. А не навпаки(!)
+            # # url_tutor = 'https://buki.com.ua' + card.select_one(".styles_userName__ltIVo a")["href"]
+            # url_tutor = card.select_one(".styles_userName__ltIVo a")["href"][6:-1]
+            url_tutor = get_tutor_urls(card)
             list_urls_tutors.append(url_tutor)
 
             # ! Розкоментуй, щойно будеш готовий обробляти код сторінки певного репетитора
