@@ -233,6 +233,9 @@ def get_tag_body(num_page):
     return tag_body
     
 
+def get_max_pagination(soup_element):
+    return int( safe_text( soup_element.select(".styles_pagination__qGM14 div a")[-1] ) )
+
 
 def main():
 # ================================
@@ -251,15 +254,11 @@ def main():
     # num_page = 1
     num_page = 97 # ! for test !
     
-    # url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
-    # html, _ = get_html(url)
-    # # html, _ = get_html_by_page_number(num_page)
-    # soup = BeautifulSoup(html, 'html.parser')
-    # tag_body = soup.select_one('body')
     tag_body = get_tag_body(num_page)
 
     # А що, якщо перед циклом виставити фіктивне ( >> num_page ) значення, яке точно не буде на цьому сайті, а вже у циклі витягти з сайту його справжнє значення?..
-    max_num_pagination = int( safe_text( tag_body.select(".styles_pagination__qGM14 div a")[-1] ) )
+    # max_num_pagination = int( safe_text( tag_body.select(".styles_pagination__qGM14 div a")[-1] ) )
+    max_num_pagination = get_max_pagination(tag_body)
     # print(f'max_num_pagination == {max_num_pagination}')
     list_urls_tutors = []
     file_name = 'list_urls_tutors'
@@ -314,7 +313,9 @@ def main():
         # Логуй і пропускай таку сторінку.
         tutor_cards = tag_body.select(".styles_container__4lrBa")
         for card in tutor_cards:
-            url_tutor = 'https://buki.com.ua/' + card.select_one(".styles_userName__ltIVo a")["href"]
+            # # Цей рядок потрібен під час витягання коду репетитора з БД чи файлу. А не навпаки(!)
+            # url_tutor = 'https://buki.com.ua' + card.select_one(".styles_userName__ltIVo a")["href"]
+            url_tutor = card.select_one(".styles_userName__ltIVo a")["href"][6:-1]
             list_urls_tutors.append(url_tutor)
 
             # ! Розкоментуй, щойно будеш готовий обробляти код сторінки певного репетитора
@@ -322,10 +323,6 @@ def main():
             # # Тут буде збереження файлу: код сторінки певного репетитора
 
         num_page += 1
-        # url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
-        # html, _ = get_html(url)
-        # soup = BeautifulSoup(html, 'html.parser')
-        # tag_body = soup.select_one('body')
         tag_body = get_tag_body(num_page)
         
         # THE END While Loop
