@@ -11,6 +11,7 @@ from pathlib import Path
 # from lorem_text import lorem  #  for insert text 'dolorem ipsum')
 import socket
 import logging
+import time
 
 # ---------- Utility functions --------------------
 
@@ -49,6 +50,16 @@ def handle_exception(e, context=""):
     error_message = error_messages.get(type(e), f"Unexpected error: {e}")
     logging.error(f"{context} {error_message}")
     return error_message
+
+
+def timer_elapsed(func):   # Для замірювання часу виконання ф-ції func
+    def wrapper(*args, **kwargs):
+        start_time = time.time()
+        result = func(*args, **kwargs)
+        end_time = time.time()
+        print(f'Time elapsed in {func.__name__}: {end_time - start_time:.2f} seconds')
+        return result
+    return wrapper
 
 # ------------- Parsing logic ---------------------------------
 
