@@ -20,6 +20,10 @@ def is_connected():    # Для перевірки доступності інт
     except OSError:
         return False
 
+
+def get_file_path(fname):       # Визначаємо повний шлях до файлу fname
+    return Path(__file__).parent / fname
+
 # ------------- Parsing logic ---------------------------------
 
 
@@ -270,6 +274,9 @@ def main():
     list_urls_tutors = []
     file_name = 'list_urls_tutors'
     file_path = f'{Path.cwd()}/bio/{file_name}.txt'
+
+    if not is_connected():  # Якщо нема інтернет-зв'язку
+        return 'Error: No internet connection'
 
     while num_page <= max_num_pagination:
 
