@@ -1,9 +1,26 @@
+#!usr/bin/env python3
+
+# env1\bin\python -m pip freeze > requirements.txt
+# env2\bin\python -m pip install -r requirements.txt
+
 import requests
 from bs4 import BeautifulSoup
 from tutors_app.utils import parse_price, get_num_of_reviews
 from pathlib import Path
 # import zlib
 # from lorem_text import lorem  #  for insert text 'dolorem ipsum')
+import socket
+
+# ---------- Utility functions --------------------
+
+def is_connected():    # Для перевірки доступності інтернету перед відправленням запиту
+    try:
+        socket.create_connection(('www.google.com', 80), timeout=5)
+        return True
+    except OSError:
+        return False
+
+# ------------- Parsing logic ---------------------------------
 
 
 def get_html(url: str):
