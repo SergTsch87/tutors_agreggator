@@ -10,6 +10,7 @@ from pathlib import Path
 # import zlib
 # from lorem_text import lorem  #  for insert text 'dolorem ipsum')
 import socket
+import logging
 
 # ---------- Utility functions --------------------
 
@@ -23,6 +24,31 @@ def is_connected():    # Для перевірки доступності інт
 
 def get_file_path(fname):       # Визначаємо повний шлях до файлу fname
     return Path(__file__).parent / fname
+
+
+def handle_exception(e, context=""):
+    """
+    Handles exceptions and returns a formatted error message.
+
+    Args:
+        e (Exception): The exception to handle.
+        context (str): Additional context about where the error occurred.
+
+    Returns:
+        str: Formatted error message
+    """
+    error_messages = {
+        requests.exceptions.Timeout: "Request timed out.",
+        requests.exceptions.ConnectionError: "Could not connect to the server.",
+        requests.exceptions.HTTPError: "HTTP error occurred.",
+        AttributeError: "HTML structure issue.",
+        ValueError: "Data issue.",
+        requests.exceptions.RequestException: "Unexpected request error."
+    }
+
+    error_message = error_messages.get(type(e), f"Unexpected error: {e}")
+    logging.error(f"{context} {error_message}")
+    return error_message
 
 # ------------- Parsing logic ---------------------------------
 
