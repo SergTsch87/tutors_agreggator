@@ -379,7 +379,14 @@ def get_tutor_urls(soup_elem):
     return soup_elem.select_one(".styles_userName__ltIVo a")["href"][6:-1]
 
 
+@timer_elapsed
 def main():
+    logging.basicConfig(
+        filename=get_file_path('parser_errors.log'),
+        level=logging.ERROR,
+        format='%(asctime)s - %(levelname)s - %(message)s',
+        filemode = 'a'   # Дозаписування нових записів до файлу
+    )
 # ================================
 # Тестовий код для обходу усіх сторінок
 #   
