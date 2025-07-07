@@ -208,12 +208,6 @@ def rename_txt_file(old_file_name, new_file_name):
 
 # ========================================
 
-# def get_html_by_page_number(num_page):
-#     url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
-#     html, is_redirect = get_html(url)
-#     return html, is_redirect
-
-
 def write_list_data_to_file(file_path, list_data, mode='a'):
     '''
         mode == 'a' or 'w'
@@ -254,55 +248,18 @@ def main():
     # ! Розкоментуй, щойно будеш готовий запустити скрипт для збору УСІХ посилань
     # num_page = 1
     num_page = 97 # ! for test !
-    
     tag_body = get_tag_body(num_page)
-
-    # А що, якщо перед циклом виставити фіктивне ( >> num_page ) значення, яке точно не буде на цьому сайті, а вже у циклі витягти з сайту його справжнє значення?..
-    # max_num_pagination = int( safe_text( tag_body.select(".styles_pagination__qGM14 div a")[-1] ) )
     max_num_pagination = get_max_pagination(tag_body)
-    # print(f'max_num_pagination == {max_num_pagination}')
     list_urls_tutors = []
     file_name = 'list_urls_tutors'
     file_path = f'{Path.cwd()}/bio/{file_name}.txt'
 
-    # while True:
-    # То, може таку умову для циклу зробити?..
     while num_page <= max_num_pagination:
-    # # Тоді доведеться залишити ініц-цію max_num_pagination перед циклом...
-
-    #     # !!!
-    #     # А може, max_num_pagination створити тут?..
-    #     # Тоді не потрібна буде ініціалізація tag_body перед циклом
-    #     # if max_num_pagination is_not_int:
-    #     #     all code follow
-
-    #     # if ( num_page > max_num_pagination ) or ( link_rel_next is None ):
-    #     # if ( num_page > max_num_pagination ) or ( link_rel_next['rel'] == 'prev' ):
-    #     if ( num_page > max_num_pagination ):
-    #         print(f'num_page > max_num_pagination  =>  {num_page} > {max_num_pagination}  =>  {num_page > max_num_pagination}')
-    #         break
-
-# # -------------
-# # Зайвий код, який приберу після наступного коміту
-#         url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
-#         _, is_redirect = get_html(url)  # html - first var, instied '_'
-
-#         # ! Якщо це дійсно зайві коди, - тоді доведеться всюди прибрати перевірку на редірект
-#         # ! Це мабуть вже зайвий код...
-#         if is_redirect:
-#             print(f'is_redirect == {is_redirect}')
-#             break
-#         # ! ...і це зайвий код
-#         # # 'no tutor cards are found on the page' - як це перевірити, якщо є редірект?
 
 #         # ! Розкоментуй, щойно будеш готовий обробляти код сторінки з усіма її репетиторами
 #         # # Тут буде збереження файлу: код сторінки з усіма її репетиторами
-# # -----------------
 
-
-        # !!!
-        # Якщо tutor_cards порожній — це може означати,
-        # що сторінка була редіректнута або порожня.
+        # Якщо tutor_cards порожній — це може означати, що сторінка була редіректнута або порожня.
         # Логуй і пропускай таку сторінку.
         tag_body = get_tag_body(num_page)
 
@@ -321,28 +278,11 @@ def main():
         write_list_data_to_file(file_path, list_urls_tutors)
         list_urls_tutors = []
 
-
-        # # Збереження списку нових 20 URLs репетиторів
-        # if ( len(list_urls_tutors) == 20 ) or ( num_page == max_num_pagination ):
-        #     # Зберігаємо кожні 20 нових адрес зі списку репетиторів 
-        #     print(f'list_urls_tutors: {list_urls_tutors}')
-        #     write_list_data_to_file(file_path, list_urls_tutors)
-        #     print(f'Insert list list_urls_tutors to file {file_path}:\n{list_urls_tutors}')
-            
-        #     list_urls_tutors = []
-
-
-
         num_page += 1
-        # tag_body = get_tag_body(num_page)
         
         # THE END While Loop
     # ----------------------------
     
-    # # Зберігаємо репетиторів з останньої сторінки
-    # write_list_data_to_file(file_path, list_urls_tutors)
-    # print(f'Insert list list_urls_tutors to file {file_path}:\n{list_urls_tutors}')
-
     list_urls_tutors = []
 
 # ================================================
