@@ -62,6 +62,23 @@ def timer_elapsed(func):   # Для замірювання часу викона
     return wrapper
 
 # ------------- Parsing logic ---------------------------------
+def fetch_content(url, timeout=20, return_soup=True):
+    response = requests.get(url, timeout=20)
+    response.raise_for_status()  # Raise an HTTPError for bad responses (4xx and 5xx)
+    html = response.text
+    return BeautifulSoup(html, 'html.parser') if return_soup else html
+
+
+def get_html(url: str):
+    try:
+        response = requests.get(url, allow_redirects=False)
+        if 300 <= response.status_code < 400:  #  ! 301 or 302 (redirect)
+            return response.text, 1 # 'redirect'
+        else:
+            return response.text, 0 # 'No redirect'
+    except requests.exceptions.RequestException as e:
+        print(f'An error occured: {e}')
+
 
 def fetch_url_with_retries(url, retries=3, timeout=10):
     """
@@ -84,10 +101,6 @@ def fetch_url_with_retries(url, retries=3, timeout=10):
     for attempt in range(retries):
         try:
             print(f'Fetching URL: {url}')  # !!! переконайтеся, що ви дійсно отримуєте нову сторінку
-            
-            # response = requests.get(url, timeout=timeout)
-            # response.raise_for_status()  # Raise an HTTPError for bad responses (4xx and 5xx)
-            # html = response.text
             html = fetch_content(url, timeout=10, return_soup=False)
             
             if html is None or len(html.strip()) == 0:
@@ -102,17 +115,6 @@ def fetch_url_with_retries(url, retries=3, timeout=10):
             time.sleep(2 ** attempt)  #  Покрокове збільшення затримки, - задля уникнення блокування сервером
 
     return 'Error: Failed to fetch the URL after multiple retries.'  # Якщо усі спроби були невдалі:...
-
-
-def get_html(url: str):
-    try:
-        response = requests.get(url, allow_redirects=False)
-        if 300 <= response.status_code < 400:  #  ! 301 or 302 (redirect)
-            return response.text, 1 # 'redirect'
-        else:
-            return response.text, 0 # 'No redirect'
-    except requests.exceptions.RequestException as e:
-        print(f'An error occured: {e}')
 
 
 def get_element(block_tag, tag_class):
