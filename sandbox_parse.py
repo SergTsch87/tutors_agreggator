@@ -63,6 +63,46 @@ def timer_elapsed(func):   # Для замірювання часу викона
 
 # ------------- Parsing logic ---------------------------------
 
+def fetch_url_with_retries(url, retries=3, timeout=10):
+    """
+    Fetches a URL with a specified number of retries on network-related errors.
+    #  Fetches the HTML content of a webpage with error handling for network issues.
+
+    Args:
+        url (str): The URL of the webpage to fetch.
+        retries (int): Number of retry attempts.
+        timeout (int): Timeout in seconds for the request.
+
+    Returns:
+        str: The HTML content of the page, or an error message if an exception occurs.
+    """
+    
+    if not is_connected():  # Якщо нема інтернет-зв'язку
+        return 'Error: No internet connection'
+
+    # Повтори при таймаутах
+    for attempt in range(retries):
+        try:
+            print(f'Fetching URL: {url}')  # !!! переконайтеся, що ви дійсно отримуєте нову сторінку
+            
+            # response = requests.get(url, timeout=timeout)
+            # response.raise_for_status()  # Raise an HTTPError for bad responses (4xx and 5xx)
+            # html = response.text
+            html = fetch_content(url, timeout=10, return_soup=False)
+            
+            if html is None or len(html.strip()) == 0:
+                return []
+            
+            return html  # Успішний запит, - Повертаємо контент
+        
+        except requests.RequestException as e:
+            logging.error(f"Attempt {attempt + 1} failed for {url}.")
+            if attempt == retries - 1:  # Last attempt
+                return handle_exception(e, context=f"Fetching URL {url}")
+            time.sleep(2 ** attempt)  #  Покрокове збільшення затримки, - задля уникнення блокування сервером
+
+    return 'Error: Failed to fetch the URL after multiple retries.'  # Якщо усі спроби були невдалі:...
+
 
 def get_html(url: str):
     try:
