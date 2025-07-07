@@ -12,6 +12,7 @@ from pathlib import Path
 import socket
 import logging
 import time
+from functools import lru_cache
 
 # ---------- Utility functions --------------------
 
@@ -64,35 +65,38 @@ def timer_elapsed(func):   # Для замірювання часу викона
 # ------------- Parsing logic ---------------------------------
 def get_html(url: str, timeout=20, return_soup=True):
     try:
-        response = requests.get(url, timeout=20, allow_redirects=False)
+        response = requests.get(url, timeout=timeout, allow_redirects=False)
         html = response.text
         soup_or_html = BeautifulSoup(html, 'html.parser') if return_soup else html
         is_redirect = 1 if 300 <= response.status_code < 400 else 0
         return soup_or_html, is_redirect        # 0 == 'No redirect'   # 1 == 'redirect'
     except requests.exceptions.RequestException as e:
         print(f'An error occured: {e}')
+        return None, -1  # Уніфікований фолбек на помилку  # always return a tuple
 
 
-def fetch_content(url, timeout=20, return_soup=True):
-    response = requests.get(url, timeout=20)
-    response.raise_for_status()  # Raise an HTTPError for bad responses (4xx and 5xx)
-    html = response.text
-    return BeautifulSoup(html, 'html.parser') if return_soup else html
+# def fetch_content(url, timeout=20, return_soup=True):
+#     response = requests.get(url, timeout=20)
+#     response.raise_for_status()  # Raise an HTTPError for bad responses (4xx and 5xx)
+#     html = response.text
+#     return BeautifulSoup(html, 'html.parser') if return_soup else html
 
 
-# def get_html(url: str):
-#     try:
-#         response = requests.get(url, allow_redirects=False)
-#         if 300 <= response.status_code < 400:  #  ! 301 or 302 (redirect)
-#             return response.text, 1 # 'redirect'
-#         else:
-#             return response.text, 0 # 'No redirect'
-#     except requests.exceptions.RequestException as e:
-#         print(f'An error occured: {e}')
+# # def get_html(url: str):
+# #     try:
+# #         response = requests.get(url, allow_redirects=False)
+# #         if 300 <= response.status_code < 400:  #  ! 301 or 302 (redirect)
+# #             return response.text, 1 # 'redirect'
+# #         else:
+# #             return response.text, 0 # 'No redirect'
+# #     except requests.exceptions.RequestException as e:
+# #         print(f'An error occured: {e}')
 
-
-def fetch_url_with_retries(url, retries=3, timeout=10):
+@lru_cache(maxsize = 3000)  # Для кешування повторних URL адрес
+def fetch_url_with_retries(url, retries=3, timeout=10, return_soup=False):
     """
+    Фактично, ця ф-ція є обгорткою для get_html(), запускаючи останню до 3-х разів, з перервою у 10 сек між повторами
+    
     Fetches a URL with a specified number of retries on network-related errors.
     #  Fetches the HTML content of a webpage with error handling for network issues.
 
@@ -103,22 +107,37 @@ def fetch_url_with_retries(url, retries=3, timeout=10):
 
     Returns:
         str: The HTML content of the page, or an error message if an exception occurs.
+
+    Example of use:
+        html = fetch_url_with_retries(url, retries=3, timeout=10)
+
+        if not html:
+            print("Empty HTML or failed to fetch page.")
+            break
     """
     
     if not is_connected():  # Якщо нема інтернет-зв'язку
-        return 'Error: No internet connection'
+        return None, -1
+        # return 'Error: No internet connection'
 
     # Повтори при таймаутах
     for attempt in range(retries):
         try:
             print(f'Fetching URL: {url}')  # !!! переконайтеся, що ви дійсно отримуєте нову сторінку
             # html = fetch_content(url, timeout=10, return_soup=False)
-            html = get_html(url, timeout=10, return_soup=False)
+            # html = get_html(url, timeout=10, return_soup=False)
+            # html, redirect = get_html(url, retries=3, timeout=10, return_soup=False)
+            html, redirect = get_html(url, timeout=timeout, return_soup=return_soup)
             
-            if html is None or len(html.strip()) == 0:
-                return []
+            if html:
+                return html, redirect  # Успішний запит, - Повертаємо контент
+
+            # # if html is None or len(html.strip()) == 0:
+            # #     return []
+            # if html is None or ( not return_soup and len(html.strip()) == 0 ): # ???
+            #     return 'Error: Empty HTML content'
             
-            return html  # Успішний запит, - Повертаємо контент
+            # return html, redirect  # Успішний запит, - Повертаємо контент
         
         except requests.RequestException as e:
             logging.error(f"Attempt {attempt + 1} failed for {url}.")
@@ -297,7 +316,15 @@ def get_count_lines_file(file_path):
 
 def writing_html_to_file(num_page, file_name):
     url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
-    html, _ = get_html(url, timeout=10, return_soup=False)
+    # html, _ = get_html(url, timeout=10, return_soup=False)
+    html, _ = fetch_url_with_retries(url, retries=3, timeout=10, return_soup=False)
+
+    # if html is None:
+    #     # handle error
+    if not html or html.startswith('Error'):
+        print(f"Failed to fetch HTML for page {num_page}")
+        return
+
     file_path = f'{Path.cwd()}/bio/{num_page}/{file_name}/{file_name}.txt'
 
     try:
@@ -330,8 +357,16 @@ def write_list_data_to_file(file_path, list_data, mode='a'):
 
 def get_tag_body(num_page):
     url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
-    html, _ = get_html(url, timeout=10, return_soup=False)
-    soup = BeautifulSoup(html, 'html.parser')
+    # html, _ = get_html(url, timeout=10, return_soup=False)
+    # html, _ = fetch_url_with_retries(url, retries=3, timeout=10)
+    # soup = BeautifulSoup(html, 'html.parser')
+    # tag_body = soup.select_one('body')
+    # return tag_body
+    soup, _ = fetch_url_with_retries(url, retries=3, timeout=10, return_soup=True)
+    # if soup is None:
+    #     # handle error
+    if not soup:
+        return None
     tag_body = soup.select_one('body')
     return tag_body
     
