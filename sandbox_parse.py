@@ -62,6 +62,17 @@ def timer_elapsed(func):   # Для замірювання часу викона
     return wrapper
 
 # ------------- Parsing logic ---------------------------------
+def get_html(url: str, timeout=20, return_soup=True):
+    try:
+        response = requests.get(url, timeout=20, allow_redirects=False)
+        html = response.text
+        soup_or_html = BeautifulSoup(html, 'html.parser') if return_soup else html
+        is_redirect = 1 if 300 <= response.status_code < 400 else 0
+        return soup_or_html, is_redirect        # 0 == 'No redirect'   # 1 == 'redirect'
+    except requests.exceptions.RequestException as e:
+        print(f'An error occured: {e}')
+
+
 def fetch_content(url, timeout=20, return_soup=True):
     response = requests.get(url, timeout=20)
     response.raise_for_status()  # Raise an HTTPError for bad responses (4xx and 5xx)
@@ -69,15 +80,15 @@ def fetch_content(url, timeout=20, return_soup=True):
     return BeautifulSoup(html, 'html.parser') if return_soup else html
 
 
-def get_html(url: str):
-    try:
-        response = requests.get(url, allow_redirects=False)
-        if 300 <= response.status_code < 400:  #  ! 301 or 302 (redirect)
-            return response.text, 1 # 'redirect'
-        else:
-            return response.text, 0 # 'No redirect'
-    except requests.exceptions.RequestException as e:
-        print(f'An error occured: {e}')
+# def get_html(url: str):
+#     try:
+#         response = requests.get(url, allow_redirects=False)
+#         if 300 <= response.status_code < 400:  #  ! 301 or 302 (redirect)
+#             return response.text, 1 # 'redirect'
+#         else:
+#             return response.text, 0 # 'No redirect'
+#     except requests.exceptions.RequestException as e:
+#         print(f'An error occured: {e}')
 
 
 def fetch_url_with_retries(url, retries=3, timeout=10):
@@ -101,7 +112,8 @@ def fetch_url_with_retries(url, retries=3, timeout=10):
     for attempt in range(retries):
         try:
             print(f'Fetching URL: {url}')  # !!! переконайтеся, що ви дійсно отримуєте нову сторінку
-            html = fetch_content(url, timeout=10, return_soup=False)
+            # html = fetch_content(url, timeout=10, return_soup=False)
+            html = get_html(url, timeout=10, return_soup=False)
             
             if html is None or len(html.strip()) == 0:
                 return []
@@ -285,7 +297,7 @@ def get_count_lines_file(file_path):
 
 def writing_html_to_file(num_page, file_name):
     url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
-    html, _ = get_html(url)
+    html, _ = get_html(url, timeout=10, return_soup=False)
     file_path = f'{Path.cwd()}/bio/{num_page}/{file_name}/{file_name}.txt'
 
     try:
@@ -318,7 +330,7 @@ def write_list_data_to_file(file_path, list_data, mode='a'):
 
 def get_tag_body(num_page):
     url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
-    html, _ = get_html(url)
+    html, _ = get_html(url, timeout=10, return_soup=False)
     soup = BeautifulSoup(html, 'html.parser')
     tag_body = soup.select_one('body')
     return tag_body
