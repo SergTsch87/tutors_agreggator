@@ -1,4 +1,59 @@
 import re
+import socket
+from pathlib import Path
+import requests
+import logging
+import time
+
+
+def is_connected():    # Для перевірки доступності інтернету перед відправленням запиту
+    try:
+        socket.create_connection(('www.google.com', 80), timeout=5)
+        return True
+    except OSError:
+        return False
+
+
+def get_file_path(fname):       # Визначаємо повний шлях до файлу fname
+    return Path(__file__).parent / fname
+
+
+# ---------- Decorators --------------------
+def handle_exception(e, context=""):
+    """
+    Handles exceptions and returns a formatted error message.
+
+    Args:
+        e (Exception): The exception to handle.
+        context (str): Additional context about where the error occurred.
+
+    Returns:
+        str: Formatted error message
+    """
+    error_messages = {
+        requests.exceptions.Timeout: "Request timed out.",
+        requests.exceptions.ConnectionError: "Could not connect to the server.",
+        requests.exceptions.HTTPError: "HTTP error occurred.",
+        AttributeError: "HTML structure issue.",
+        ValueError: "Data issue.",
+        requests.exceptions.RequestException: "Unexpected request error."
+    }
+
+    error_message = error_messages.get(type(e), f"Unexpected error: {e}")
+    logging.error(f"{context} {error_message}")
+    return error_message
+
+
+def timer_elapsed(func):   # Для замірювання часу виконання ф-ції func
+    def wrapper(*args, **kwargs):
+        start_time = time.time()
+        result = func(*args, **kwargs)
+        end_time = time.time()
+        print(f'Time elapsed in {func.__name__}: {end_time - start_time:.2f} seconds')
+        return result
+    return wrapper
+
+# ------------- Parse logic --------------------------
 
 def parse_price(text):
     """
