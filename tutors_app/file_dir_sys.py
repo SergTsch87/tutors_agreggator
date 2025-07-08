@@ -1,4 +1,5 @@
 from pathlib import Path
+from tutors_app.scrap_logic import fetch_url_with_retries
 
 
 def create_dir(dir_path):

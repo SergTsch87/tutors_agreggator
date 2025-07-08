@@ -3,19 +3,18 @@
 # env1\bin\python -m pip freeze > requirements.txt
 # env2\bin\python -m pip install -r requirements.txt
 
-import requests
-from bs4 import BeautifulSoup
-from tutors_app.utils import parse_price, get_num_of_reviews, is_connected, get_file_path, handle_exception, timer_elapsed
+# import requests
+# from bs4 import BeautifulSoup
+from tutors_app.utils import is_connected, get_file_path, timer_elapsed # parse_price, get_num_of_reviews, handle_exception
+from tutors_app.file_dir_sys import write_list_data_to_file # import create_dir, create_empty_txt_file, create_file_dir_structure, create_and_info_dir, rename_txt_file, get_count_lines_file, writing_html_to_file, write_list_data_to_file
+from tutors_app.scrap_logic import get_tag_body, get_max_pagination, get_tutor_urls
 from pathlib import Path
 # import zlib
 # from lorem_text import lorem  #  for insert text 'dolorem ipsum')
 # import socket
 import logging
-import time
-from functools import lru_cache
-
-from tutors_app.file_dir_sys
-from tutors_app.scrap_logic
+# import time
+# from functools import lru_cache
 
 # ============ Utility functions ========================
 
