@@ -4,7 +4,7 @@
 # env2\bin\python -m pip install -r requirements.txt
 
 from tutors_app.utils import is_connected, get_file_path, timer_elapsed
-from tutors_app.file_dir_sys import write_list_data_to_file
+from tutors_app.file_dir_sys import write_list_data_to_file, save_to_file
 from tutors_app.scrap_logic import get_tag_body, get_max_pagination, get_tutor_urls, get_data_from_one_account #, get_element
 from pathlib import Path
 import logging
@@ -71,7 +71,8 @@ def main():
             # html = get_html(url_tutor)
             # # Тут буде збереження файлу: код сторінки певного репетитора
 
-        write_list_data_to_file(file_path, list_urls_tutors) # Зберіг
+        # Зберіг
+        write_list_data_to_file(file_path, list_urls_tutors)
         # Можна й так ф-цію назвати:
         # save_ids_to_file(ids: list[int], filename: str)
 
@@ -83,7 +84,8 @@ def main():
         for id_rep in list_urls_tutors:
             # Якщо екаунт не містить важливих даних, - тоді оминаємо його
             data_one_account = get_data_from_one_account(id_rep, list_urls_tutors)
-            save_to_db(data_one_account)
+            # save_to_db(data_one_account)
+            save_to_file(data_one_account)
         
         list_urls_tutors = []
 

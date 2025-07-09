@@ -1,5 +1,7 @@
 from pathlib import Path
 from tutors_app.scrap_logic import fetch_url_with_retries
+from tutors_app.utils import get_file_path, timer_elapsed
+import json
 
 
 def create_dir(dir_path):
@@ -100,3 +102,17 @@ def write_list_data_to_file(file_path, list_data, mode='a'):
     '''
     with open(file_path, mode, encoding='utf-8') as file:
         file.write('\n' + '\n'.join(list_data))
+
+
+@timer_elapsed
+def save_to_file(data, fname='data.jsonl'):
+    # Save data to a file after each page to avoid overloading RAM.
+    # Use JSON Lines for incremental saving
+    file_path = get_file_path(fname)
+    with file_path.open(mode='a', encoding='utf-8') as file:
+        if type(data) is list:
+            for record in data:
+                file.write(json.dumps(record) + '\n')
+        elif type(data) is dict:
+            for record in data.items():
+                file.write(json.dumps(record) + '\n')
