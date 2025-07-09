@@ -5,7 +5,7 @@
 
 from tutors_app.utils import is_connected, get_file_path, timer_elapsed
 from tutors_app.file_dir_sys import write_list_data_to_file, save_to_file
-from tutors_app.scrap_logic import get_tag_body, get_max_pagination, get_tutor_urls, get_data_from_one_account #, get_element
+from tutors_app.scrap_logic import get_tag_body, get_max_pagination, get_tutor_urls, get_data_from_one_account, parse_tutor_card_buki #, get_element
 from pathlib import Path
 import logging
 
@@ -46,9 +46,12 @@ def main():
 
     tag_body = get_tag_body(num_page)
     max_num_pagination = get_max_pagination(tag_body)
-    list_urls_tutors = []
+    list_urls_tutors = []  # фактично, це - list_ids_tutors
     file_name = 'list_urls_tutors'
     file_path = f'{Path.cwd()}/bio/{file_name}.txt'
+
+    file_name_data = 'test'
+    file_path_data = f'{Path.cwd()}/bio/{file_name_data}.jsonl'
 
     while num_page <= max_num_pagination:
 
@@ -59,12 +62,19 @@ def main():
         # Логуй і пропускай таку сторінку.
         tag_body = get_tag_body(num_page)
 
+        list_tutors_data = [] # список словників з даними усіх репетиторів (макс. = 20) на сторінці
+
         tutor_cards = tag_body.select(".styles_container__4lrBa")
         for card in tutor_cards:
             # # # Цей рядок потрібен під час витягання коду репетитора з БД чи файлу. А не навпаки(!)
             # # url_tutor = 'https://buki.com.ua' + card.select_one(".styles_userName__ltIVo a")["href"]
             # url_tutor = card.select_one(".styles_userName__ltIVo a")["href"][6:-1]
-            url_tutor = get_tutor_urls(card)
+            current_card = parse_tutor_card_buki(str(card))
+            list_tutors_data.append(current_card)
+
+            url_tutor = current_card['id_tutor']
+
+            # url_tutor = get_tutor_urls(card)  !!! А це ж тоді зайва ф-ція
             list_urls_tutors.append(url_tutor)
 
             # ! Розкоментуй, щойно будеш готовий обробляти код сторінки певного репетитора
@@ -73,6 +83,7 @@ def main():
 
         # Зберіг
         write_list_data_to_file(file_path, list_urls_tutors)
+        write_list_data_to_file(file_path, list_tutors_data)
         # Можна й так ф-цію назвати:
         # save_ids_to_file(ids: list[int], filename: str)
 
@@ -140,7 +151,7 @@ def main():
     # num_page = 5
     # url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
     # html = get_html(url)
-    # # tutors_data = parse_tutors_page_buki(html)
+    # # list_tutors_data = parse_tutors_page_buki(html)
 
 
     # list_num_pages = [1, 10, 30, 50, 60, 90, 98]

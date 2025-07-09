@@ -102,7 +102,6 @@ def safe_text(soup_or_el, selector=None, class_name=None,  tag='span', default="
 # Site BUKI com
 
 # Це скрапінг картки репетитора на Загальній(!) сторінці.
-    # Тре зро ще скрапер для сторінки екаунту кожного реп-ра
 def parse_tutor_card_buki(html_card):
     # Extract Data from a Single Tutor Card
     # Саме в цій функції ми визначаємо усі ті дані, які хочемо дістати з кожної картки репетитора
