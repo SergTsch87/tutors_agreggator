@@ -5,7 +5,7 @@
 
 from tutors_app.utils import is_connected, get_file_path, timer_elapsed
 from tutors_app.file_dir_sys import write_list_data_to_file
-from tutors_app.scrap_logic import get_tag_body, get_max_pagination, get_tutor_urls #, get_element
+from tutors_app.scrap_logic import get_tag_body, get_max_pagination, get_tutor_urls, get_data_from_one_account #, get_element
 from pathlib import Path
 import logging
 
@@ -81,7 +81,8 @@ def main():
         # process_batches(all_ids: list[int], batch_size: int = 20)
 
         for id_rep in list_urls_tutors:
-            data_one_account = get_data_one_account(id_rep)
+            # Якщо екаунт не містить важливих даних, - тоді оминаємо його
+            data_one_account = get_data_from_one_account(id_rep, list_urls_tutors)
             save_to_db(data_one_account)
         
         list_urls_tutors = []

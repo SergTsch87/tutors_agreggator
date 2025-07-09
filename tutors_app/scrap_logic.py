@@ -127,6 +127,26 @@ def parse_tutor_card_buki(html_card):
         }
 
 
+def get_data_from_one_account(id_rep):
+    # Extract Data from a Single Account
+    tag_body = get_tag_body(id_rep)
+    url = f"https://buki.com.ua/user-{id_rep}/"
+    fetch_url_with_retries(url, retries=3, timeout=10, return_soup=False)
+    return {
+            "id_tutor": id_rep,
+            "name": <list>['name'], # get_element(tag_body, ".styles_userName__ltIVo span"),
+            "price": <list>['price'], # parse_price(get_element(tag_body, ".rate .topCeil")),
+            "objects": ['bio'],
+            "rating": <list>['rating'],
+            "number_of_reviews": <list>['rating'],
+            "education": <list>['education'],
+            "experience": <list>['experience'],
+            "about_myself_1": get_element(tag_body, "p.styles_mobileDescription__LxjZs"),
+            "about_myself_2": get_element(tag_body, "p.styles_aboutMe__4uKLA"),
+            "city_or_online": <list>['city_or_online'],
+        }
+
+
 def parse_tutors_page_buki(html):
     soup = BeautifulSoup(html, "html.parser")
 
