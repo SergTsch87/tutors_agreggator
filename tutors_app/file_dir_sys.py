@@ -23,6 +23,16 @@ def create_empty_txt_file(file_name):
     # print(f"File '{file_name}' created successfully") # for test
 
 
+def delete_file(file_path):
+    try:
+        file_path.unlink()
+        print(f'File "{file_path}" deleted successfully')
+    except FileNotFoundError:
+        print(f'Error: File "{file_path}" not found')
+    except OSError as e:
+        print(f'Error deleting file "{file_path}": {e}')
+
+
 def create_file_dir_structure(subject):
     current_directory = Path.cwd()
     dir_path = f"{current_directory}/{subject}/"

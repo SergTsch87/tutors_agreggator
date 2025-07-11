@@ -4,7 +4,7 @@
 # env2\bin\python -m pip install -r requirements.txt
 
 from tutors_app.utils import is_connected, get_file_path, timer_elapsed
-from tutors_app.file_dir_sys import write_list_data_to_file, save_to_file
+from tutors_app.file_dir_sys import write_list_data_to_file, save_to_file, delete_file
 from tutors_app.scrap_logic import get_tag_body, get_max_pagination, get_tutor_urls, get_data_from_one_account, parse_tutor_card_buki #, get_element
 from pathlib import Path
 import logging
@@ -48,10 +48,17 @@ def main():
     max_num_pagination = get_max_pagination(tag_body)
     list_urls_tutors = []  # фактично, це - list_ids_tutors
     file_name = 'list_urls_tutors'
-    file_path = f'{Path.cwd()}/bio/{file_name}.txt'
+    # file_path = f'{Path.cwd()}/bio/{file_name}.txt'
+    file_path = f'{Path.cwd()}/bio/{file_name}.jsonl'
 
     file_name_data = 'test'
     file_path_data = f'{Path.cwd()}/bio/{file_name_data}.jsonl'
+
+    # Tasks:
+        # 1) Заміни .txt на .jsonl у всій file-dir структурі
+        # 2) Перевір правильність збереження даних 20-ти екаунтів до .jsonl (з однієї сторінки)
+        # 3) Перевір правильність збереження даних 20-ти екаунтів до .jsonl (з кількох сторінок)
+        # 4) Запусти скрапер на збирання-збереження усіх даних з усіх сторінок
 
     while num_page <= max_num_pagination:
 
@@ -70,6 +77,12 @@ def main():
             # # url_tutor = 'https://buki.com.ua' + card.select_one(".styles_userName__ltIVo a")["href"]
             # url_tutor = card.select_one(".styles_userName__ltIVo a")["href"][6:-1]
             current_card = parse_tutor_card_buki(str(card))
+            
+            # оминаємо порожні анкети
+            if ( current_card['price'] is None ) and ( current_card['about_myself'] is None ):
+            # is none or is null ?..
+                continue
+            
             list_tutors_data.append(current_card)
 
             url_tutor = current_card['id_tutor']
@@ -83,7 +96,7 @@ def main():
 
         # Зберіг
         write_list_data_to_file(file_path, list_urls_tutors)
-        write_list_data_to_file(file_path, list_tutors_data)
+        write_list_data_to_file(file_path_data, list_tutors_data)
         # Можна й так ф-цію назвати:
         # save_ids_to_file(ids: list[int], filename: str)
 
@@ -95,9 +108,10 @@ def main():
         for id_rep in list_urls_tutors:
             # Якщо екаунт не містить важливих даних, - тоді оминаємо його
             data_one_account = get_data_from_one_account(id_rep, list_urls_tutors)
-            # save_to_db(data_one_account)
-            save_to_file(data_one_account)
-        
+            save_to_file(data_one_account) # creating and saving to jsonl-files
+            
+            delete_file(file_path) # del all txt-files
+            
         list_urls_tutors = []
 
         num_page += 1
