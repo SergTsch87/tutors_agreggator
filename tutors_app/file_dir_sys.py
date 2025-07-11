@@ -40,11 +40,11 @@ def create_file_dir_structure(subject):
     for num_page_dir in range(1, 8):
         dir_path_num_page = f"{dir_path}/{str(num_page_dir)}"
         create_dir(dir_path_num_page)
-        create_empty_txt_file(f'{dir_path_num_page}/{num_page_dir}.txt') # html-код за адресою f'/{num_page_dir}/' - для подальшого зберігання списку репетиторів на певній сторінці
+        create_empty_txt_file(f'{dir_path_num_page}/{num_page_dir}.jsonl') # html-код за адресою f'/{num_page_dir}/' - для подальшого зберігання списку репетиторів на певній сторінці
         for id_tutor_dir in range( 1 + 20 * ( num_page_dir - 1), 1 + 20 * num_page_dir ):
             path_id_tutor_dir = f'{dir_path_num_page}/{str(id_tutor_dir)}'
             create_dir(f'{path_id_tutor_dir}')
-            create_empty_txt_file(f'{path_id_tutor_dir}/{id_tutor_dir}.txt') # html-код за адресою f'/{num_page_dir}/{id_tutor_dir}/'
+            create_empty_txt_file(f'{path_id_tutor_dir}/{id_tutor_dir}.jsonl') # html-код за адресою f'/{num_page_dir}/{id_tutor_dir}/'
   
         # list_ids_tutors_on_page = get_list_ids_tutors_on_page(num_page_dir)
         # for id_tutor_dir in list_ids_tutors_on_page:

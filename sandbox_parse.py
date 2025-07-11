@@ -4,8 +4,8 @@
 # env2\bin\python -m pip install -r requirements.txt
 
 from tutors_app.utils import is_connected, get_file_path, timer_elapsed
-from tutors_app.file_dir_sys import write_list_data_to_file, save_to_file, delete_file
-from tutors_app.scrap_logic import get_tag_body, get_max_pagination, get_tutor_urls, get_data_from_one_account, parse_tutor_card_buki #, get_element
+from tutors_app.file_dir_sys import write_list_data_to_file, save_to_file, delete_file, create_dir, create_empty_txt_file
+from tutors_app.scrap_logic import get_tag_body, get_max_pagination, get_data_from_one_account, parse_tutor_card_buki #, get_element, get_tutor_urls
 from pathlib import Path
 import logging
 
@@ -39,10 +39,24 @@ def main():
     # num_page = 1
 
     num_page = 97 # ! for test !
-
+        
     if not is_connected():  # Якщо нема інтернет-зв'язку
         print('Error: No internet connection')
         return 'Error: No internet connection'
+
+    subject_dir = Path('bio')
+    current_directory = Path.cwd()
+    dir_path = f"{current_directory}/{subject_dir}/"
+    create_dir(dir_path)
+
+    # for num_page_dir in range(1, 8):
+    #     dir_path_num_page = f"{dir_path}/{str(num_page_dir)}"
+    #     create_dir(dir_path_num_page)
+    #     create_empty_txt_file(f'{dir_path_num_page}/{num_page_dir}.jsonl') # html-код за адресою f'/{num_page_dir}/' - для подальшого зберігання списку репетиторів на певній сторінці
+    #     for id_tutor_dir in range( 1 + 20 * ( num_page_dir - 1), 1 + 20 * num_page_dir ):
+    #         path_id_tutor_dir = f'{dir_path_num_page}/{str(id_tutor_dir)}'
+    #         create_dir(f'{path_id_tutor_dir}')
+    #         create_empty_txt_file(f'{path_id_tutor_dir}/{id_tutor_dir}.jsonl') # html-код за адресою f'/{num_page_dir}/{id_tutor_dir}/'
 
     tag_body = get_tag_body(num_page)
     max_num_pagination = get_max_pagination(tag_body)
@@ -64,6 +78,10 @@ def main():
 
 #         # ! Розкоментуй, щойно будеш готовий обробляти код сторінки з усіма її репетиторами
 #         # # Тут буде збереження файлу: код сторінки з усіма її репетиторами
+
+        dir_path_num_page = f"{dir_path}/{str(num_page)}"
+        create_dir(dir_path_num_page)
+        create_empty_txt_file(f'{dir_path_num_page}/{num_page}.jsonl') # json даних з усіх анкет репетиторів за адресою f'/{num_page}/'
 
         # Якщо tutor_cards порожній — це може означати, що сторінка була редіректнута або порожня.
         # Логуй і пропускай таку сторінку.
