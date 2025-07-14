@@ -102,7 +102,7 @@ def safe_text(soup_or_el, selector=None, class_name=None,  tag='span', default="
 # Site BUKI com
 
 # Це скрапінг картки репетитора на Загальній(!) сторінці.
-def parse_tutor_card_buki(html_card):
+def parse_tutor_card_buki(html_card: str) -> dict:
     # Extract Data from a Single Tutor Card
     # Саме в цій функції ми визначаємо усі ті дані, які хочемо дістати з кожної картки репетитора
     soup = BeautifulSoup(html_card, 'html.parser')
@@ -127,23 +127,27 @@ def parse_tutor_card_buki(html_card):
         }
 
 
+# !!!
+        # Це скрапінг картки репетитора на сторінці самого екаунту
+# !!!
+    # Вдоскональ цю ф-цію!
 def get_data_from_one_account(id_rep):
     # Extract Data from a Single Account
     tag_body = get_tag_body(id_rep)
     url = f"https://buki.com.ua/user-{id_rep}/"
     fetch_url_with_retries(url, retries=3, timeout=10, return_soup=False)
     return {
-            "id_tutor": id_rep,
-            "name": <list>['name'], # get_element(tag_body, ".styles_userName__ltIVo span"),
-            "price": <list>['price'], # parse_price(get_element(tag_body, ".rate .topCeil")),
-            "objects": ['bio'],
-            "rating": <list>['rating'],
-            "number_of_reviews": <list>['rating'],
-            "education": <list>['education'],
-            "experience": <list>['experience'],
+            # "id_tutor": id_rep,
+            # "name": <list>['name'], # get_element(tag_body, ".styles_userName__ltIVo span"),
+            # "price": <list>['price'], # parse_price(get_element(tag_body, ".rate .topCeil")),
+            # "objects": ['bio'],
+            # "rating": <list>['rating'],
+            # "number_of_reviews": <list>['rating'],
+            # "education": <list>['education'],
+            # "experience": <list>['experience'],
             "about_myself_1": get_element(tag_body, "p.styles_mobileDescription__LxjZs"),
             "about_myself_2": get_element(tag_body, "p.styles_aboutMe__4uKLA"),
-            "city_or_online": <list>['city_or_online'],
+            # "city_or_online": <list>['city_or_online'],
         }
 
 

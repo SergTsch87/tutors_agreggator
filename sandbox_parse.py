@@ -8,6 +8,15 @@ from tutors_app.file_dir_sys import write_list_data_to_file, save_to_file, delet
 from tutors_app.scrap_logic import get_tag_body, get_max_pagination, get_data_from_one_account, parse_tutor_card_buki #, get_element, get_tutor_urls
 from pathlib import Path
 import logging
+import json
+
+
+def create_dir_bio():
+    subject_dir = Path('bio')
+    current_directory = Path.cwd()
+    dir_path_bio = f"{current_directory}/{subject_dir}/"
+    create_dir(dir_path_bio)
+    return dir_path_bio
 
 
 @timer_elapsed
@@ -36,37 +45,37 @@ def main():
 #         Зберіг - Обробив - Повторив
 
     # ! Розкоментуй, щойно будеш готовий запустити скрипт для збору УСІХ посилань
-    # num_page = 1
+    num_page = 1
 
-    num_page = 97 # ! for test !
+    # num_page = 97 # ! for test !
         
     if not is_connected():  # Якщо нема інтернет-зв'язку
         print('Error: No internet connection')
         return 'Error: No internet connection'
 
-    subject_dir = Path('bio')
-    current_directory = Path.cwd()
-    dir_path = f"{current_directory}/{subject_dir}/"
-    create_dir(dir_path)
+# Creating file-dir structure
 
-    # for num_page_dir in range(1, 8):
-    #     dir_path_num_page = f"{dir_path}/{str(num_page_dir)}"
-    #     create_dir(dir_path_num_page)
-    #     create_empty_txt_file(f'{dir_path_num_page}/{num_page_dir}.jsonl') # html-код за адресою f'/{num_page_dir}/' - для подальшого зберігання списку репетиторів на певній сторінці
-    #     for id_tutor_dir in range( 1 + 20 * ( num_page_dir - 1), 1 + 20 * num_page_dir ):
-    #         path_id_tutor_dir = f'{dir_path_num_page}/{str(id_tutor_dir)}'
-    #         create_dir(f'{path_id_tutor_dir}')
-    #         create_empty_txt_file(f'{path_id_tutor_dir}/{id_tutor_dir}.jsonl') # html-код за адресою f'/{num_page_dir}/{id_tutor_dir}/'
+    # Створюємо папку 'bio'
+    dir_path_bio = create_dir_bio()
+        # subject_dir = Path('bio')
+        # current_directory = Path.cwd()
+        # dir_path_bio = f"{current_directory}/{subject_dir}/"
+        # create_dir(dir_path_bio)
 
-    tag_body = get_tag_body(num_page)
-    max_num_pagination = get_max_pagination(tag_body)
-    list_urls_tutors = []  # фактично, це - list_ids_tutors
-    file_name = 'list_urls_tutors'
-    # file_path = f'{Path.cwd()}/bio/{file_name}.txt'
-    file_path = f'{Path.cwd()}/bio/{file_name}.jsonl'
+    tag_body_tmp = get_tag_body(num_page)  # '_tmp' - для того, щоб не заплутатись потім у циклі
+    max_num_pagination = get_max_pagination(tag_body_tmp)
+    
+    # list_urls_tutors = []  # фактично, це - list_ids_tutors
+    
 
-    file_name_data = 'test'
-    file_path_data = f'{Path.cwd()}/bio/{file_name_data}.jsonl'
+    # # Це все можна закоментувати, - якщо я буду инакше обробляти цей список
+    # file_name = 'list_urls_tutors'
+    # # file_path = f'{Path.cwd()}/bio/{file_name}.txt'
+    # file_path = f'{Path.cwd()}/bio/{file_name}.jsonl'
+
+
+    # file_name_data = 'test'
+    # file_path_data = f'{Path.cwd()}/bio/{file_name_data}.jsonl'
 
     # Tasks:
         # 1) Заміни .txt на .jsonl у всій file-dir структурі
@@ -79,9 +88,16 @@ def main():
 #         # ! Розкоментуй, щойно будеш готовий обробляти код сторінки з усіма її репетиторами
 #         # # Тут буде збереження файлу: код сторінки з усіма її репетиторами
 
-        dir_path_num_page = f"{dir_path}/{str(num_page)}"
-        create_dir(dir_path_num_page)
-        create_empty_txt_file(f'{dir_path_num_page}/{num_page}.jsonl') # json даних з усіх анкет репетиторів за адресою f'/{num_page}/'
+        dir_path_bio_num_page = f"{dir_path_bio}/{str(num_page)}"
+        create_dir(dir_path_bio_num_page)
+        file_path_data = f'{dir_path_bio_num_page}/{num_page}.jsonl'
+        create_empty_txt_file(file_path_data)  # json даних з усіх анкет репетиторів за адресою f'/{num_page}/'
+        
+        # # !!!
+        # # А це для чого?!
+        # file_name_data = f'{num_page}.jsonl'
+        # # file_path_20_repetitors = f'{Path.cwd()}/bio/{file_name_data}.jsonl'
+        # file_path_20_repetitors = f'{dir_path_bio_num_page}/{file_name_data}.jsonl'
 
         # Якщо tutor_cards порожній — це може означати, що сторінка була редіректнута або порожня.
         # Логуй і пропускай таку сторінку.
@@ -89,32 +105,44 @@ def main():
 
         list_tutors_data = [] # список словників з даними усіх репетиторів (макс. = 20) на сторінці
 
-        tutor_cards = tag_body.select(".styles_container__4lrBa")
+        tutor_cards = tag_body.select(".styles_container__4lrBa")  # list of card elements
         for card in tutor_cards:
             # # # Цей рядок потрібен під час витягання коду репетитора з БД чи файлу. А не навпаки(!)
             # # url_tutor = 'https://buki.com.ua' + card.select_one(".styles_userName__ltIVo a")["href"]
             # url_tutor = card.select_one(".styles_userName__ltIVo a")["href"][6:-1]
-            current_card = parse_tutor_card_buki(str(card))
             
-            # оминаємо порожні анкети
-            if ( current_card['price'] is None ) and ( current_card['about_myself'] is None ):
-            # is none or is null ?..
-                continue
+            # Дістали дані репетитора із загальної сторінки
+            dict_current_card = parse_tutor_card_buki(str(card))
             
-            list_tutors_data.append(current_card)
+            
+            # !!!
+            # Коли опрацюєш усі збереження даних, - тоді розкоментуй ці рядки!
+            # # оминаємо порожні анкети
+            # if ( dict_current_card['price'] is None ) and ( dict_current_card['about_myself'] is None ):
+            # # is none or is null ?..
+            #     continue
+            
+            
+            list_tutors_data.append(dict_current_card)  #  list of dicts - список усіх даних про репетиторів
 
-            url_tutor = current_card['id_tutor']
+            # url_tutor = dict_current_card['id_tutor']
 
+            # ! Нащо на ходу збирати списки chunks_urls | ids  репетиторів, коли вони вже є у списку list_tutors_data ?!..
             # url_tutor = get_tutor_urls(card)  !!! А це ж тоді зайва ф-ція
-            list_urls_tutors.append(url_tutor)
+            # list_urls_tutors.append(url_tutor)  # список chunks_urls | ids  репетиторів
 
             # ! Розкоментуй, щойно будеш готовий обробляти код сторінки певного репетитора
             # html = get_html(url_tutor)
             # # Тут буде збереження файлу: код сторінки певного репетитора
 
-        # Зберіг
-        write_list_data_to_file(file_path, list_urls_tutors)
+        # Зберіг дані 20-ти репетиторів із загальної сторінки
         write_list_data_to_file(file_path_data, list_tutors_data)
+
+        # write_list_data_to_file(file_path_data, list_tutors_data)
+
+        # # !!! Це, мабуть, зайвий рядок коду
+        # write_list_data_to_file(file_path, list_urls_tutors)
+        
         # Можна й так ф-цію назвати:
         # save_ids_to_file(ids: list[int], filename: str)
 
@@ -123,23 +151,75 @@ def main():
         # fetch_data_from_urls(ids: list[int]) -> list[dict]
         # process_batches(all_ids: list[int], batch_size: int = 20)
 
-        for id_rep in list_urls_tutors:
+        # !!!
+        # Зі списку list_tutors_data витягаємо "id_tutor" кожного репетитора
+        list_urls_tutors = [dict_tutor_data['id_tutor'] for dict_tutor_data in list_tutors_data]
+        
+        # # Далі заходимо на сторінки анкет репетиторів, та витягаємо з кожної розділи "about_myself_1" та "about_myself_2"
+        # ??? list_urls_tutors = [dict_tutor_data['about_myself_1'] + '>]\/[<' + dict_tutor_data['about_myself_2'] for dict_tutor_data in list_tutors_data]
+        # За цим рядком '>]\/[<' потім будемо ділити ці два about's
+        
+        # ! list_data_one_account - це буде список словників з двома ключами: "about_myself_1" та "about_myself_2"
+        list_data_one_account = []
+        
+        for about_data_rep in list_urls_tutors:
             # Якщо екаунт не містить важливих даних, - тоді оминаємо його
-            data_one_account = get_data_from_one_account(id_rep, list_urls_tutors)
-            save_to_file(data_one_account) # creating and saving to jsonl-files
             
-            delete_file(file_path) # del all txt-files
+            # Тут відбувається звернення до сайту
+            list_data_one_account.append( get_data_from_one_account(about_data_rep) )
+
+            # Слід дописати дані 'about' до вже існуючого jsonl-файлу
+            # Напиши таку ф-цію
+
+            # save_to_file(data_one_account) # creating and saving to jsonl-files
             
-        list_urls_tutors = []
+            # Це вже зайве, бо структури з txt-файлами вже не буде
+            # # delete_file(file_path) # del all txt-files
+            
+        # list_urls_tutors = []
+
+        # ! Дістаємо дані 20-ти репетиторів із загальної сторінки
+        data_tutors = []
+        with open(file_path_data, "r", encoding='utf-8') as jsonFile:
+            for line in jsonFile:
+                try:
+                    json_object = json.loads(line)
+                    data_tutors.append(json_object)
+                except json.JSONDecodeError as e:
+                    print(f'Error decoding JSON on line: {line.strip()} - {e}')
+                    continue # skip invalid lines and continue processing
+
+        # # ! for test
+        # for item in data_tutors:
+        #     print(item)
+
+        # Додаємо текст з анкети репетитора до списку даних
+        for index, one_tutor in enumerate(data_tutors):
+            one_tutor['about_myself_1'] = list_data_one_account[index]['about_myself_1']
+            one_tutor['about_myself_2'] = list_data_one_account[index]['about_myself_2']
+        
+        # Зберігаємо файл з оновленими даними
+        with open(file_path_data, "w") as jsonFile:
+            for item in data_tutors:
+                json.dump(item, jsonFile)
+                jsonFile.write('\n')
+
 
         num_page += 1
         
         # THE END While Loop
     # ----------------------------
     
-    list_urls_tutors = []
+    # list_urls_tutors = []
 
 # ================================================
+
+
+
+
+
+
+
 
     # !!! Already work!
     # category_name = 'bio'
