@@ -4,7 +4,7 @@
 # env2\bin\python -m pip install -r requirements.txt
 
 from tutors_app.utils import is_connected, get_file_path, timer_elapsed
-from tutors_app.file_dir_sys import write_list_data_to_file, save_to_file, delete_file, create_dir, create_empty_txt_file
+from tutors_app.file_dir_sys import write_list_data_to_file, create_dir, create_empty_txt_file # save_to_file, delete_file
 from tutors_app.scrap_logic import get_tag_body, get_max_pagination, get_data_from_one_account, parse_tutor_card_buki #, get_element, get_tutor_urls
 from pathlib import Path
 import logging
@@ -28,9 +28,6 @@ def main():
         filemode = 'a'   # Дозаписування нових записів до файлу
     )
 # ================================
-# Тестовий код для обходу усіх сторінок
-#   
-    # list_num_pages = [1, 10, 30, 50, 60, 90, 98]
     
     # Код для отримання найбільшого номера пагінації
     # ! Якщо такого номера нема, - тоді:
@@ -39,14 +36,7 @@ def main():
 
 # ---------------------
 
-# 09.07.25
-#     Task 1:
-#         Взяти 20 ідентифікаторів → Зберегти їх у файл → Зібрати дані з відповідних URL-адрес → Повторити.
-#         Зберіг - Обробив - Повторив
-
-    # ! Розкоментуй, щойно будеш готовий запустити скрипт для збору УСІХ посилань
     num_page = 1
-
     # num_page = 97 # ! for test !
         
     if not is_connected():  # Якщо нема інтернет-зв'язку
@@ -54,66 +44,47 @@ def main():
         return 'Error: No internet connection'
 
 # Creating file-dir structure
-
     # Створюємо папку 'bio'
     dir_path_bio = create_dir_bio()
-        # subject_dir = Path('bio')
-        # current_directory = Path.cwd()
-        # dir_path_bio = f"{current_directory}/{subject_dir}/"
-        # create_dir(dir_path_bio)
-
     tag_body_tmp = get_tag_body(num_page)  # '_tmp' - для того, щоб не заплутатись потім у циклі
     max_num_pagination = get_max_pagination(tag_body_tmp)
     
-    # list_urls_tutors = []  # фактично, це - list_ids_tutors
-    
-
-    # # Це все можна закоментувати, - якщо я буду инакше обробляти цей список
-    # file_name = 'list_urls_tutors'
-    # # file_path = f'{Path.cwd()}/bio/{file_name}.txt'
-    # file_path = f'{Path.cwd()}/bio/{file_name}.jsonl'
-
-
-    # file_name_data = 'test'
-    # file_path_data = f'{Path.cwd()}/bio/{file_name_data}.jsonl'
-
     # Tasks:
-        # 1) Заміни .txt на .jsonl у всій file-dir структурі
         # 2) Перевір правильність збереження даних 20-ти екаунтів до .jsonl (з однієї сторінки)
         # 3) Перевір правильність збереження даних 20-ти екаунтів до .jsonl (з кількох сторінок)
         # 4) Запусти скрапер на збирання-збереження усіх даних з усіх сторінок
 
     while num_page <= max_num_pagination:
 
-#         # ! Розкоментуй, щойно будеш готовий обробляти код сторінки з усіма її репетиторами
-#         # # Тут буде збереження файлу: код сторінки з усіма її репетиторами
-
+# ========= Ініціалізація пар-рів + створення '/bio/1.jsonl' =============
+    # === BEGIN ===
         dir_path_bio_num_page = f"{dir_path_bio}/{str(num_page)}"
         create_dir(dir_path_bio_num_page)
         file_path_data = f'{dir_path_bio_num_page}/{num_page}.jsonl'
         create_empty_txt_file(file_path_data)  # json даних з усіх анкет репетиторів за адресою f'/{num_page}/'
-        
-        # # !!!
-        # # А це для чого?!
-        # file_name_data = f'{num_page}.jsonl'
-        # # file_path_20_repetitors = f'{Path.cwd()}/bio/{file_name_data}.jsonl'
-        # file_path_20_repetitors = f'{dir_path_bio_num_page}/{file_name_data}.jsonl'
 
-        # Якщо tutor_cards порожній — це може означати, що сторінка була редіректнута або порожня.
-        # Логуй і пропускай таку сторінку.
+        # # Перевірку на відсутність мережі краще зробити декоратором
+        # if not is_connected():  # Якщо нема інтернет-зв'язку
+        #     print('Error: No internet connection')
+        #     return 'Error: No internet connection'
+        
+        # ! Тут відбувається звернення до веб сайту
         tag_body = get_tag_body(num_page)
 
         list_tutors_data = [] # список словників з даними усіх репетиторів (макс. = 20) на сторінці
+    # === THE END ===
 
+# ========= Збирання та зберігання даних 20-ти репетиторів із загальної сторінки, до файлу =============
+    # === BEGIN ===
         tutor_cards = tag_body.select(".styles_container__4lrBa")  # list of card elements
+        
+        # if tutor_cards == []: # ми дійшли до останньої сторінки пагінації
+        #     logging()
+        #     break
+        
         for card in tutor_cards:
-            # # # Цей рядок потрібен під час витягання коду репетитора з БД чи файлу. А не навпаки(!)
-            # # url_tutor = 'https://buki.com.ua' + card.select_one(".styles_userName__ltIVo a")["href"]
-            # url_tutor = card.select_one(".styles_userName__ltIVo a")["href"][6:-1]
-            
             # Дістали дані репетитора із загальної сторінки
             dict_current_card = parse_tutor_card_buki(str(card))
-            
             
             # !!!
             # Коли опрацюєш усі збереження даних, - тоді розкоментуй ці рядки!
@@ -122,61 +93,41 @@ def main():
             # # is none or is null ?..
             #     continue
             
-            
             list_tutors_data.append(dict_current_card)  #  list of dicts - список усіх даних про репетиторів
-
-            # url_tutor = dict_current_card['id_tutor']
-
-            # ! Нащо на ходу збирати списки chunks_urls | ids  репетиторів, коли вони вже є у списку list_tutors_data ?!..
-            # url_tutor = get_tutor_urls(card)  !!! А це ж тоді зайва ф-ція
-            # list_urls_tutors.append(url_tutor)  # список chunks_urls | ids  репетиторів
-
-            # ! Розкоментуй, щойно будеш готовий обробляти код сторінки певного репетитора
-            # html = get_html(url_tutor)
-            # # Тут буде збереження файлу: код сторінки певного репетитора
-
+        
         # Зберіг дані 20-ти репетиторів із загальної сторінки
         write_list_data_to_file(file_path_data, list_tutors_data)
-
-        # write_list_data_to_file(file_path_data, list_tutors_data)
-
-        # # !!! Це, мабуть, зайвий рядок коду
-        # write_list_data_to_file(file_path, list_urls_tutors)
-        
         # Можна й так ф-цію назвати:
         # save_ids_to_file(ids: list[int], filename: str)
+    # === THE END ===
+    
+# ========= Збираємо дані ("about_myself_1" та "about_myself_2") зі сторінок кожного з 20-ти репетиторів =============
+    # === BEGIN ===
 
-        #  # Обробив:
-            # Використовуючи ці 20 IDs, - витяг дані з сайту за 20-ю URL'ами
-        # fetch_data_from_urls(ids: list[int]) -> list[dict]
-        # process_batches(all_ids: list[int], batch_size: int = 20)
-
-        # !!!
-        # Зі списку list_tutors_data витягаємо "id_tutor" кожного репетитора
+        # !!! Зі списку list_tutors_data витягаємо "id_tutor" кожного репетитора
         list_urls_tutors = [dict_tutor_data['id_tutor'] for dict_tutor_data in list_tutors_data]
-        
-        # # Далі заходимо на сторінки анкет репетиторів, та витягаємо з кожної розділи "about_myself_1" та "about_myself_2"
-        # ??? list_urls_tutors = [dict_tutor_data['about_myself_1'] + '>]\/[<' + dict_tutor_data['about_myself_2'] for dict_tutor_data in list_tutors_data]
-        # За цим рядком '>]\/[<' потім будемо ділити ці два about's
         
         # ! list_data_one_account - це буде список словників з двома ключами: "about_myself_1" та "about_myself_2"
         list_data_one_account = []
         
-        for about_data_rep in list_urls_tutors:
+        for id_rep in list_urls_tutors:
             # Якщо екаунт не містить важливих даних, - тоді оминаємо його
             
-            # Тут відбувається звернення до сайту
-            list_data_one_account.append( get_data_from_one_account(about_data_rep) )
+            # ! Тут відбувається звернення до сайту
+            list_data_one_account.append( get_data_from_one_account(id_rep) )
 
             # Слід дописати дані 'about' до вже існуючого jsonl-файлу
             # Напиши таку ф-цію
 
             # save_to_file(data_one_account) # creating and saving to jsonl-files
-            
-            # Це вже зайве, бо структури з txt-файлами вже не буде
-            # # delete_file(file_path) # del all txt-files
-            
-        # list_urls_tutors = []
+    # === THE END ===
+
+# ========= Збираємо дані ("about_myself_1" та "about_myself_2") зі сторінок кожного з 20-ти репетиторів =============
+    # === BEGIN ===
+    #     Дістаємо дані 20-ти репетиторів із загальної сторінки    
+    #     Додаємо текст з анкети репетитора до списку даних
+    #     Зберігаємо до файлу з оновленими даними
+    # # === ... ===
 
         # ! Дістаємо дані 20-ти репетиторів із загальної сторінки
         data_tutors = []
@@ -209,9 +160,6 @@ def main():
         
         # THE END While Loop
     # ----------------------------
-    
-    # list_urls_tutors = []
-
 # ================================================
 
 
