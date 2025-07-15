@@ -1,6 +1,6 @@
 from pathlib import Path
-from tutors_app.scrap_logic import fetch_url_with_retries
-from tutors_app.utils import get_file_path, timer_elapsed
+from scrap_logic import fetch_url_with_retries
+from utils import get_file_path, timer_elapsed
 import json
 
 
@@ -126,3 +126,20 @@ def save_to_file(data, fname='data.jsonl'):
         elif type(data) is dict:
             for record in data.items():
                 file.write(json.dumps(record) + '\n')
+
+
+def create_dir_bio():
+    subject_dir = Path('bio')
+    current_directory = Path.cwd()
+    dir_path_bio = f"{current_directory}/{subject_dir}/"
+    create_dir(dir_path_bio)
+    return dir_path_bio
+
+
+def main():
+    dir_path_bio = create_dir_bio()
+    print(f'dir_path_bio == {dir_path_bio}')
+
+
+if __name__ == "__main__":
+    main()
