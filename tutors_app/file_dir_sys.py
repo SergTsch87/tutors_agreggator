@@ -1,6 +1,6 @@
 from pathlib import Path
-from scrap_logic import fetch_url_with_retries
-from utils import get_file_path, timer_elapsed
+from tutors_app.scrap_logic import fetch_url_with_retries
+from tutors_app.utils import get_file_path, timer_elapsed
 import json
 
 
@@ -136,10 +136,10 @@ def create_dir_bio():
     return dir_path_bio
 
 
-def main():
-    dir_path_bio = create_dir_bio()
-    print(f'dir_path_bio == {dir_path_bio}')
+# def main():
+#     dir_path_bio = create_dir_bio()
+#     print(f'dir_path_bio == {dir_path_bio}')
 
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()

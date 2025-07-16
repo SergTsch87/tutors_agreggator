@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from functools import lru_cache
 import logging
 import time
-from utils import parse_price, get_num_of_reviews, is_connected, handle_exception
+from tutors_app.utils import parse_price, get_num_of_reviews, is_connected, handle_exception
 # from file_dir_sys import save_to_file
 # sandbox.get_list_ids_tutors_on_page
 
@@ -137,7 +137,11 @@ def get_data_from_one_account(id_rep):
     # Extract Data from a Single Account
     tag_body = get_tag_body(id_rep)
     url = f"https://buki.com.ua/user-{id_rep}/"
+    
+    # !!! Та це ж повторний зайвий виклик!
+    # У tag_body вже відбувся такий же виклик
     fetch_url_with_retries(url, retries=3, timeout=10, return_soup=False)
+    
     return {
             "about_myself_1": get_element(tag_body, "p.styles_mobileDescription__LxjZs"),
             "about_myself_2": get_element(tag_body, "p.styles_aboutMe__4uKLA"),
@@ -202,6 +206,7 @@ def get_tag_body(num_page):
     url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
     soup, _ = fetch_url_with_retries(url, retries=3, timeout=10, return_soup=True)
     if soup is None:
+        print('Func get_tag_body returning None')
         return None
     tag_body = soup.select_one('body')
     return tag_body

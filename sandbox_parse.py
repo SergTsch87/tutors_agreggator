@@ -29,7 +29,6 @@ def main():
 # ---------------------
 
     num_page = 1
-    # num_page = 97 # ! for test !
         
     if not is_connected():  # Якщо нема інтернет-зв'язку
         print('Error: No internet connection')
@@ -40,6 +39,8 @@ def main():
     dir_path_bio = create_dir_bio()
     tag_body_tmp = get_tag_body(num_page)  # '_tmp' - для того, щоб не заплутатись потім у циклі
     max_num_pagination = get_max_pagination(tag_body_tmp)
+
+    num_page = max_num_pagination - 1 # ! for test !
     
     # Tasks:
         # 2) Перевір правильність збереження даних 20-ти екаунтів до .jsonl (з однієї сторінки)
