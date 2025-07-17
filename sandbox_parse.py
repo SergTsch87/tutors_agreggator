@@ -11,6 +11,10 @@ import logging
 import json
 
 
+def get_print_test(var, var_name):
+    print(f'\n{var_name}: {var}\n')
+
+
 @timer_elapsed
 def main():
     logging.basicConfig(
@@ -28,7 +32,8 @@ def main():
 
 # ---------------------
 
-    num_page = 1
+    # num_page = 1 # Тут чомусь виникає редірект, код = 301
+    num_page = 2
         
     if not is_connected():  # Якщо нема інтернет-зв'язку
         print('Error: No internet connection')
@@ -38,7 +43,13 @@ def main():
     # Створюємо папку 'bio'
     dir_path_bio = create_dir_bio()
     tag_body_tmp = get_tag_body(num_page)  # '_tmp' - для того, щоб не заплутатись потім у циклі
+    # print(f'\ntag_body_tmp: {tag_body_tmp}\n')
     max_num_pagination = get_max_pagination(tag_body_tmp)
+    
+    # print(f'\nmax_num_pagination: {max_num_pagination}\n')
+    var_info = f'{max_num_pagination=}'
+    var_name = var_info.split('=')[0]
+    get_print_test(max_num_pagination, var_name)
 
     num_page = max_num_pagination - 1 # ! for test !
     

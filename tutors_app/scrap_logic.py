@@ -52,10 +52,12 @@ def fetch_url_with_retries(url, retries=3, timeout=10, return_soup=False):
     # Повтори при таймаутах
     for attempt in range(retries):
         try:
-            print(f'Fetching URL: {url}')  # !!! переконайтеся, що ви дійсно отримуєте нову сторінку
+            print(f'(Msg from func fetch_url_with_retries) Fetching URL: {url}')  # !!! переконайтеся, що ви дійсно отримуєте нову сторінку
             html, redirect = get_html(url, timeout=timeout, return_soup=return_soup)
             
             if html:
+                # print(f'\nFROM fetch_url_with_retries:\nhtml: {html}\n')
+                print(f'\nredirect: {redirect}\n')
                 return html, redirect  # Успішний запит, - Повертаємо контент
 
             # # if html is None or len(html.strip()) == 0:
@@ -203,16 +205,22 @@ def parse_tutors_page_buki(html):
 
 
 def get_tag_body(num_page):
-    url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
+    if num_page == 1:
+        url = f"https://buki.com.ua/tutors/biolohiia"
+    else:
+        url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
     soup, _ = fetch_url_with_retries(url, retries=3, timeout=10, return_soup=True)
+    # print(f'soup FROM get_tag_body: {soup}')
     if soup is None:
         print('Func get_tag_body returning None')
         return None
     tag_body = soup.select_one('body')
+    # print(f'tag_body FROM get_tag_body: {tag_body}')
     return tag_body
     
 
 def get_max_pagination(soup_element):
+    # print(f'soup_element == {soup_element}')
     return int( safe_text( soup_element.select(".styles_pagination__qGM14 div a")[-1] ) )
 
 
