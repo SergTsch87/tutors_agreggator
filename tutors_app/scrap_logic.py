@@ -109,6 +109,14 @@ def parse_tutor_card_buki(html_card: str) -> dict:
     # Саме в цій функції ми визначаємо усі ті дані, які хочемо дістати з кожної картки репетитора
     soup = BeautifulSoup(html_card, 'html.parser')
     about_myself = soup.select_one('p.styles_description__EnqoA')
+    if about_myself.select_one('span') is not None:
+        a_m_1 = about_myself.select_one('span').get_text(strip=True)
+    else:
+        a_m_1 = ''
+    if about_myself.select_one('span span') is not None: # select('span')[:-1]
+        a_m_2 = about_myself.select_one('span span').get_text(strip=True)
+    else:
+        a_m_2 = ''
     return {
             "id_tutor": int(soup.select_one(".styles_userName__ltIVo a")["href"][6:-1]),
             "name": get_element(soup, ".styles_userName__ltIVo span"),
@@ -123,7 +131,13 @@ def parse_tutor_card_buki(html_card: str) -> dict:
             "experience": safe_text(soup.select_one('p.styles_practice__AZyXc'))[15:-6].strip() + '+',
             
             # "about_myself": safe_text(soup.select_one('p.styles_description__EnqoA')),
-            "about_myself": about_myself.select_one('span').get_text(strip=True) + about_myself.select_one('span.next_sibling').get_text(strip=True),
+            # "about_myself": about_myself.select_one('span').get_text(strip=True) + about_myself.select_one('span.next_sibling').get_text(strip=True),
+            "about_myself": a_m_1 + a_m_2,
+            # !!! Тут тре обробити два варіанти:
+            #     1) Коли нема жодного з цих розділів (коли картка має лише поле "Ціна", але не має жодного "про себе")
+            #     2) Коли нема другої частини "about"
+            #     3) Замість select_one('span.next_sibling') краще мабуть буде: select_one('span span')
+
             "about_myself_1": '',
             "about_myself_2": '',
             
@@ -206,7 +220,7 @@ def parse_tutors_page_buki(html):
 
 def get_tag_body(num_page):
     if num_page == 1:
-        url = f"https://buki.com.ua/tutors/biolohiia"
+        url = "https://buki.com.ua/tutors/biolohiia"
     else:
         url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
     soup, _ = fetch_url_with_retries(url, retries=3, timeout=10, return_soup=True)
