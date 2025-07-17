@@ -108,10 +108,16 @@ def writing_html_to_file(num_page, file_name):
 
 def write_list_data_to_file(file_path, list_data, mode='a'):
     '''
-        mode == 'a' or 'w'
+        Зберігає список словників до JSONL-файлу
+        mode: 'a' or 'w'
     '''
     with open(file_path, mode, encoding='utf-8') as file:
-        file.write('\n' + '\n'.join(list_data))
+        for item in list_data:
+            json_line = json.dumps(item, ensure_ascii=False)
+            file.write(json_line + '\n')
+                # json.dumps(item) перетворює словник на JSON-рядок
+                # ensure_ascii=False дозволяє зберігати кирилицю та інші символи як є
+                # '\n' після кожного рядка відповідає формату .jsonl
 
 
 @timer_elapsed
