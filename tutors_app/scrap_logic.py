@@ -136,6 +136,11 @@ def parse_tutor_card_buki(html_card: str) -> dict:
     else:
         city = ''
 
+    if soup.select_one('span.styles_reviewsCount__EAIh6') is not None:
+        number_of_reviews = safe_text(soup.select_one('span.styles_reviewsCount__EAIh6'))[11:-1].strip()
+    else:
+        number_of_reviews = ''
+
     return {
             "id_tutor": int(soup.select_one(".styles_userName__ltIVo a")["href"][6:-1]),
             "name": get_element(soup, ".styles_userName__ltIVo span"),
@@ -144,7 +149,7 @@ def parse_tutor_card_buki(html_card: str) -> dict:
             "objects": [o.get_text(strip=True) for o in soup.find_all('span', class_="styles_lessonsItem__v8FAD")],
             "rating": safe_text(soup.select_one('div.styles_reviewsBlock__FNrPL span')), # safe_text(soup.select_one('div.styles_reviewsBlock__FNrPL'), "span"),
             # "number_of_reviews": safe_text(soup.select_one('div.styles_reviewsBlock__FNrPL'), "span", class_name="styles_reviewsCount__EAIh6"),
-            "number_of_reviews": get_num_of_reviews(safe_text(soup.select_one('div.styles_reviewsCount__EAIh6'))),
+            "number_of_reviews": number_of_reviews,
             #   get_num_of_reviews(safe_text(soup.select_one('div.styles_reviewsBlock__FNrPL'), "span", class_name="styles_reviewsCount__EAIh6")),
             "education": safe_text(soup.select_one('p.styles_education__41VXk'), "span"),
             
