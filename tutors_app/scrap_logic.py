@@ -108,31 +108,51 @@ def parse_tutor_card_buki(html_card: str) -> dict:
     # Extract Data from a Single Tutor Card
     # Саме в цій функції ми визначаємо усі ті дані, які хочемо дістати з кожної картки репетитора
     soup = BeautifulSoup(html_card, 'html.parser')
+
     about_myself = soup.select_one('p.styles_description__EnqoA')
     if about_myself.select_one('span') is not None:
         a_m_1 = about_myself.select_one('span').get_text(strip=True)
     else:
         a_m_1 = ''
+
     if about_myself.select_one('span span') is not None: # select('span')[:-1]
         a_m_2 = about_myself.select_one('span span').get_text(strip=True)
     else:
         a_m_2 = ''
+
+    about_myself = a_m_1 + '   >])([<   ' + a_m_2
+    if len(about_myself) == 12:
+        about_myself = ''
+    elif ( len(a_m_1) == 0 ) or ( len(a_m_2) == 0 ):
+        about_myself = a_m_1 + a_m_2
+    
+    if soup.select_one('p.styles_workOnline__p4t8f') is not None:
+        is_online = True
+    else:
+        is_online = False
+
+    if soup.select_one('div.styles_userData__xpfLk a') is not None:
+        city = safe_text(soup.select_one('div.styles_userData__xpfLk a'))
+    else:
+        city = ''
+
     return {
             "id_tutor": int(soup.select_one(".styles_userName__ltIVo a")["href"][6:-1]),
             "name": get_element(soup, ".styles_userName__ltIVo span"),
             "price": parse_price(get_element(soup, ".rate .topCeil")),
             # "price": get_element(soup, ".rate .topCeil"),
             "objects": [o.get_text(strip=True) for o in soup.find_all('span', class_="styles_lessonsItem__v8FAD")],
-            "rating": safe_text(soup.select_one('div.styles_reviewsBlock__FNrPL'), "span"),
+            "rating": safe_text(soup.select_one('div.styles_reviewsBlock__FNrPL span')), # safe_text(soup.select_one('div.styles_reviewsBlock__FNrPL'), "span"),
             # "number_of_reviews": safe_text(soup.select_one('div.styles_reviewsBlock__FNrPL'), "span", class_name="styles_reviewsCount__EAIh6"),
-            "number_of_reviews": get_num_of_reviews(safe_text(soup.select_one('div.styles_reviewsBlock__FNrPL'), "span", class_name="styles_reviewsCount__EAIh6")),
+            "number_of_reviews": get_num_of_reviews(safe_text(soup.select_one('div.styles_reviewsCount__EAIh6'))),
+            #   get_num_of_reviews(safe_text(soup.select_one('div.styles_reviewsBlock__FNrPL'), "span", class_name="styles_reviewsCount__EAIh6")),
             "education": safe_text(soup.select_one('p.styles_education__41VXk'), "span"),
             
-            "experience": safe_text(soup.select_one('p.styles_practice__AZyXc'))[15:-6].strip() + '+',
+            "experience": safe_text(soup.select_one('p.styles_practice__AZyXc'))[14:-5].strip(),
             
             # "about_myself": safe_text(soup.select_one('p.styles_description__EnqoA')),
             # "about_myself": about_myself.select_one('span').get_text(strip=True) + about_myself.select_one('span.next_sibling').get_text(strip=True),
-            "about_myself": a_m_1 + a_m_2,
+            "about_myself": about_myself,
             # !!! Тут тре обробити два варіанти:
             #     1) Коли нема жодного з цих розділів (коли картка має лише поле "Ціна", але не має жодного "про себе")
             #     2) Коли нема другої частини "about"
@@ -141,7 +161,8 @@ def parse_tutor_card_buki(html_card: str) -> dict:
             "about_myself_1": '',
             "about_myself_2": '',
             
-            "city_or_online": safe_text(soup.select_one('div.styles_userData__xpfLk a')),
+            "city": city,
+            "is_online": is_online,
         }
 
 
@@ -218,6 +239,9 @@ def parse_tutors_page_buki(html):
 #     pass
 
 
+# !!!
+# Додай другий параметр: id_rep.
+# А потім, через if..else повертай відповідний tag_body
 def get_tag_body(num_page):
     if num_page == 1:
         url = "https://buki.com.ua/tutors/biolohiia"

@@ -84,26 +84,26 @@ def get_count_lines_file(file_path):
     return line_count
 
 
-def writing_html_to_file(num_page, file_name):
-    url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
-    # html, _ = get_html(url, timeout=10, return_soup=False)
-    html, _ = fetch_url_with_retries(url, retries=3, timeout=10, return_soup=False)
+# def writing_html_to_file(num_page, file_name):
+#     # url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/" - це хибна адреса!
+#     # html, _ = get_html(url, timeout=10, return_soup=False)
+#     html, _ = fetch_url_with_retries(url, retries=3, timeout=10, return_soup=False)
 
-    # if html is None:
-    #     # handle error
-    if not html or html.startswith('Error'):
-        print(f"Failed to fetch HTML for page {num_page}")
-        return
+#     # if html is None:
+#     #     # handle error
+#     if not html or html.startswith('Error'):
+#         print(f"Failed to fetch HTML for page {num_page}")
+#         return
 
-    file_path = f'{Path.cwd()}/bio/{num_page}/{file_name}/{file_name}.txt'
+#     file_path = f'{Path.cwd()}/bio/{num_page}/{file_name}/{file_name}.txt'
 
-    try:
-        with open(file_path, 'w', encoding='utf-8') as file:
-            file.write(html)
-        print(f"Succesfully wrote large text in chunks to {file_path}")
+#     try:
+#         with open(file_path, 'w', encoding='utf-8') as file:
+#             file.write(html)
+#         print(f"Succesfully wrote large text in chunks to {file_path}")
 
-    except IOError as e:
-        print(f'Error writing to file: {e}')
+#     except IOError as e:
+#         print(f'Error writing to file: {e}')
 
 
 def write_list_data_to_file(file_path, list_data, mode='a'):
@@ -120,18 +120,19 @@ def write_list_data_to_file(file_path, list_data, mode='a'):
                 # '\n' після кожного рядка відповідає формату .jsonl
 
 
-@timer_elapsed
-def save_to_file(data, fname='data.jsonl'):
-    # Save data to a file after each page to avoid overloading RAM.
-    # Use JSON Lines for incremental saving
-    file_path = get_file_path(fname)
-    with file_path.open(mode='a', encoding='utf-8') as file:
-        if type(data) is list:
-            for record in data:
-                file.write(json.dumps(record) + '\n')
-        elif type(data) is dict:
-            for record in data.items():
-                file.write(json.dumps(record) + '\n')
+# !!! Not using
+# # @timer_elapsed
+# # def save_to_file(data, fname='data.jsonl'):
+# #     # Save data to a file after each page to avoid overloading RAM.
+# #     # Use JSON Lines for incremental saving
+# #     file_path = get_file_path(fname)
+# #     with file_path.open(mode='a', encoding='utf-8') as file:
+# #         if type(data) is list:
+# #             for record in data:
+# #                 file.write(json.dumps(record) + '\n')
+# #         elif type(data) is dict:
+# #             for record in data.items():
+#                 file.write(json.dumps(record) + '\n')
 
 
 def create_dir_bio():
