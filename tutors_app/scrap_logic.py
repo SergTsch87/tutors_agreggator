@@ -113,14 +113,16 @@ def parse_tutor_card_buki(html_card: str) -> dict:
     soup = BeautifulSoup(html_card, 'html.parser')
 
     about_myself = soup.select_one('p.styles_description__EnqoA')
-    if about_myself.select_one('span') is not None:
+    # if about_myself.select_one('span') is not None:
+    if len( about_myself.select_one('span').get_text(strip=True) ) == 0:
         a_m_1 = about_myself.select_one('span').get_text(strip=True)
     else:
         a_m_1 = ''
 
     # if about_myself.select_one('span span') is not None: # select('span')[:-1]
-    if about_myself.select('span')[:-1] is not None:
-        a_m_2 = about_myself.select('span')[:-1].get_text(strip=True)
+    # if about_myself.select('span')[:-1] is not None:
+    if len( about_myself.select('span')[:-1][0].get_text(strip=True) ) == 0:
+        a_m_2 = about_myself.select('span')[:-1][0].get_text(strip=True)
     else:
         a_m_2 = ''
 
