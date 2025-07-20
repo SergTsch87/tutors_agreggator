@@ -42,7 +42,9 @@ def main():
 # Creating file-dir structure
     # Створюємо папку 'bio'
     dir_path_bio = create_dir_bio()
-    tag_body_tmp = get_tag_body(num_page)  # '_tmp' - для того, щоб не заплутатись потім у циклі
+    # tag_body_tmp = get_tag_body(num_page)  # '_tmp' - для того, щоб не заплутатись потім у циклі
+    url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
+    tag_body_tmp = get_tag_body(url)
     # print(f'\ntag_body_tmp: {tag_body_tmp}\n')
     max_num_pagination = get_max_pagination(tag_body_tmp)
     
@@ -72,8 +74,10 @@ def main():
         #     print('Error: No internet connection')
         #     return 'Error: No internet connection'
         
-        # ! Тут відбувається звернення до веб сайту
-        tag_body = get_tag_body(num_page)
+        # # ! Тут відбувається звернення до веб сайту
+        # tag_body = get_tag_body(num_page)
+        url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
+        tag_body = get_tag_body(url)
 
         list_tutors_data = [] # список словників з даними усіх репетиторів (макс. = 20) на сторінці
     # === THE END ===
@@ -120,7 +124,7 @@ def main():
             # ! Тут відбувається звернення до сайту
             list_data_one_account.append( get_data_from_one_account(id_rep) )
 
-            # Слід дописати дані 'about' до вже існуючого jsonl-файлу
+            # !!! Слід дописати дані 'about' до вже існуючого jsonl-файлу
             # Напиши таку ф-цію
 
             # save_to_file(data_one_account) # creating and saving to jsonl-files
@@ -148,8 +152,10 @@ def main():
         # for item in data_tutors:
         #     print(item)
 
-        # Додаємо текст з анкети репетитора до списку даних
+        # # Додаємо текст з анкети репетитора до списку даних
+        # Саме тут відбувається перезапис даних кожного словника репетитора!
         for index, one_tutor in enumerate(data_tutors):
+            # ! Тут відбувається звернення до сайту, - і вже двічі! А чи не зайві тут саме ці виклики??!!
             one_tutor['about_myself_1'] = list_data_one_account[index]['about_myself_1']
             one_tutor['about_myself_2'] = list_data_one_account[index]['about_myself_2']
         

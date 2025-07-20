@@ -53,6 +53,8 @@ def fetch_url_with_retries(url, retries=3, timeout=10, return_soup=False):
     for attempt in range(retries):
         try:
             print(f'(Msg from func fetch_url_with_retries) Fetching URL: {url}')  # !!! переконайтеся, що ви дійсно отримуєте нову сторінку
+            
+            # !!! А що, хіба get_tag_body тут не потрібне?!
             html, redirect = get_html(url, timeout=timeout, return_soup=return_soup)
             
             if html:
@@ -176,13 +178,14 @@ def parse_tutor_card_buki(html_card: str) -> dict:
 # !!!
     # Вдоскональ цю ф-цію!
 def get_data_from_one_account(id_rep):
-    # Extract Data from a Single Account
-    tag_body = get_tag_body(id_rep)
+    # # Extract Data from a Single Account
+    # tag_body = get_tag_body(id_rep)
     url = f"https://buki.com.ua/user-{id_rep}/"
+    tag_body = get_tag_body(url)
     
-    # !!! Та це ж повторний зайвий виклик!
-    # У tag_body вже відбувся такий же виклик
-    fetch_url_with_retries(url, retries=3, timeout=10, return_soup=False)
+    # # !!! Та це ж повторний зайвий виклик!
+    # # У tag_body вже відбувся такий же виклик
+    # fetch_url_with_retries(url, retries=3, timeout=10, return_soup=False)
     
     return {
             "about_myself_1": get_element(tag_body, "p.styles_mobileDescription__LxjZs"),
@@ -244,14 +247,28 @@ def parse_tutors_page_buki(html):
 #     pass
 
 
-# !!!
-# Додай другий параметр: id_rep.
-# А потім, через if..else повертай відповідний tag_body
-def get_tag_body(num_page):
-    if num_page == 1:
-        url = "https://buki.com.ua/tutors/biolohiia"
-    else:
-        url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
+# # !!!
+# # Додай другий параметр: id_rep.
+# # А потім, через if..else повертай відповідний tag_body
+# def get_tag_body(num_page):
+#     if num_page == 1:
+#         url = "https://buki.com.ua/tutors/biolohiia"
+#     else:
+#         url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
+#     soup, _ = fetch_url_with_retries(url, retries=3, timeout=10, return_soup=True)
+#     # print(f'soup FROM get_tag_body: {soup}')
+#     if soup is None:
+#         print('Func get_tag_body returning None')
+#         return None
+#     tag_body = soup.select_one('body')
+#     # print(f'tag_body FROM get_tag_body: {tag_body}')
+#     return tag_body
+
+def get_tag_body(url):
+    # if num_page == 1:
+    #     url = "https://buki.com.ua/tutors/biolohiia"
+    # else:
+    #     url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
     soup, _ = fetch_url_with_retries(url, retries=3, timeout=10, return_soup=True)
     # print(f'soup FROM get_tag_body: {soup}')
     if soup is None:
