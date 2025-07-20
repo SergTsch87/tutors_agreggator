@@ -118,8 +118,9 @@ def parse_tutor_card_buki(html_card: str) -> dict:
     else:
         a_m_1 = ''
 
-    if about_myself.select_one('span span') is not None: # select('span')[:-1]
-        a_m_2 = about_myself.select_one('span span').get_text(strip=True)
+    # if about_myself.select_one('span span') is not None: # select('span')[:-1]
+    if about_myself.select('span')[:-1] is not None:
+        a_m_2 = about_myself.select('span')[:-1].get_text(strip=True)
     else:
         a_m_2 = ''
 
