@@ -160,10 +160,11 @@ def main():
             one_tutor['about_myself_2'] = list_data_one_account[index]['about_myself_2']
         
         # Зберігаємо файл з оновленими даними
-        with open(file_path_data, "w") as jsonFile:
-            for item in data_tutors:
-                json.dump(item, jsonFile)
-                jsonFile.write('\n')
+        write_list_data_to_file(file_path_data, data_tutors, 'w')
+        # with open(file_path_data, "w") as jsonFile:
+        #     for item in data_tutors:
+        #         json.dump(item, jsonFile)
+        #         jsonFile.write('\n')
 
 
         num_page += 1

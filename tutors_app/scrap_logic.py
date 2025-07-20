@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from functools import lru_cache
 import logging
 import time
-from tutors_app.utils import parse_price, get_num_of_reviews, is_connected, handle_exception
+from tutors_app.utils import parse_price, is_connected, handle_exception  # get_num_of_reviews
 # from file_dir_sys import save_to_file
 # sandbox.get_list_ids_tutors_on_page
 
@@ -52,14 +52,15 @@ def fetch_url_with_retries(url, retries=3, timeout=10, return_soup=False):
     # Повтори при таймаутах
     for attempt in range(retries):
         try:
-            print(f'(Msg from func fetch_url_with_retries) Fetching URL: {url}')  # !!! переконайтеся, що ви дійсно отримуєте нову сторінку
-            
+            # print(f'(Msg from func fetch_url_with_retries) Fetching URL: {url}')  # !!! переконайтеся, що ви дійсно отримуєте нову сторінку
+            print(f'Fetching URL: {url}')
+
             # !!! А що, хіба get_tag_body тут не потрібне?!
             html, redirect = get_html(url, timeout=timeout, return_soup=return_soup)
             
             if html:
                 # print(f'\nFROM fetch_url_with_retries:\nhtml: {html}\n')
-                print(f'\nredirect: {redirect}\n')
+                # print(f'redirect: {redirect}')
                 return html, redirect  # Успішний запит, - Повертаємо контент
 
             # # if html is None or len(html.strip()) == 0:
