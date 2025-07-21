@@ -92,6 +92,7 @@ def main():
         #     break
         
         for card in tutor_cards:
+        # for card in tutor_cards[1:3]: # for test
             # Дістали дані репетитора із загальної сторінки
             dict_current_card = parse_tutor_card_buki(str(card))
             

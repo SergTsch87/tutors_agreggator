@@ -1,6 +1,6 @@
 from pathlib import Path
-from tutors_app.scrap_logic import fetch_url_with_retries
-from tutors_app.utils import get_file_path, timer_elapsed
+# from tutors_app.scrap_logic import fetch_url_with_retries
+# from tutors_app.utils import get_file_path, timer_elapsed
 import json
 
 
