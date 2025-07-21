@@ -67,14 +67,15 @@ def main():
         dir_path_bio_num_page = f"{dir_path_bio}/{str(num_page)}"
         create_dir(dir_path_bio_num_page)
         file_path_data = f'{dir_path_bio_num_page}/{num_page}.jsonl'
-        create_empty_txt_file(file_path_data)  # json даних з усіх анкет репетиторів за адресою f'/{num_page}/'
+        create_empty_txt_file(file_path_data)  # створює порожній jsonl-файл
+        # json даних з усіх анкет репетиторів за адресою f'/{num_page}/'
 
         # # Перевірку на відсутність мережі краще зробити декоратором
         # if not is_connected():  # Якщо нема інтернет-зв'язку
         #     print('Error: No internet connection')
         #     return 'Error: No internet connection'
         
-        # # ! Тут відбувається звернення до веб сайту
+        # # ! Тут відбувається звернення до сайту
         # tag_body = get_tag_body(num_page)
         url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
         tag_body = get_tag_body(url)
@@ -124,9 +125,6 @@ def main():
             # ! Тут відбувається звернення до сайту
             list_data_one_account.append( get_data_from_one_account(id_rep) )
 
-            # !!! Слід дописати дані 'about' до вже існуючого jsonl-файлу
-            # Напиши таку ф-цію
-
             # save_to_file(data_one_account) # creating and saving to jsonl-files
     # === THE END ===
 
@@ -155,7 +153,6 @@ def main():
         # # Додаємо текст з анкети репетитора до списку даних
         # Саме тут відбувається перезапис даних кожного словника репетитора!
         for index, one_tutor in enumerate(data_tutors):
-            # ! Тут відбувається звернення до сайту, - і вже двічі! А чи не зайві тут саме ці виклики??!!
             one_tutor['about_myself_1'] = list_data_one_account[index]['about_myself_1']
             one_tutor['about_myself_2'] = list_data_one_account[index]['about_myself_2']
         

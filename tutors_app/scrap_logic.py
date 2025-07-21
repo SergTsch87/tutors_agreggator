@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 from functools import lru_cache
 import logging
 import time
+from random import uniform
 from tutors_app.utils import parse_price, is_connected, handle_exception  # get_num_of_reviews
 # from file_dir_sys import save_to_file
 # sandbox.get_list_ids_tutors_on_page
@@ -10,6 +11,7 @@ from tutors_app.utils import parse_price, is_connected, handle_exception  # get_
 
 def get_html(url: str, timeout=20, return_soup=True):
     try:
+        time.sleep( uniform( 0.5, 2.0 ) ) # Павза перед кожним запитом до сайту
         response = requests.get(url, timeout=timeout, allow_redirects=False)
         html = response.text
         soup_or_html = BeautifulSoup(html, 'html.parser') if return_soup else html
@@ -113,18 +115,22 @@ def parse_tutor_card_buki(html_card: str) -> dict:
     soup = BeautifulSoup(html_card, 'html.parser')
 
     about_myself = soup.select_one('p.styles_description__EnqoA')
+    print(f'len( about_myself_1 ) == {len( about_myself.select_one('span').get_text(strip=True) )}')
     # if about_myself.select_one('span') is not None:
-    if len( about_myself.select_one('span').get_text(strip=True) ) == 0:
+    if len( about_myself.select_one('span').get_text(strip=True) ) == 0: # Чи завжди довжина порожнього розділу буде = 0 ?..
         a_m_1 = about_myself.select_one('span').get_text(strip=True)
     else:
         a_m_1 = ''
+    print(f'a_m_1 == {a_m_1}') # !!! for tests ! After - delete!
 
+    print(f'len( about_myself_2 ) == {len( about_myself.select('span')[:-1][0].get_text(strip=True) )}')
     # if about_myself.select_one('span span') is not None: # select('span')[:-1]
     # if about_myself.select('span')[:-1] is not None:
     if len( about_myself.select('span')[:-1][0].get_text(strip=True) ) == 0:
         a_m_2 = about_myself.select('span')[:-1][0].get_text(strip=True)
     else:
         a_m_2 = ''
+    print(f'a_m_2 == {a_m_2}') # !!! for tests ! After - delete!
 
     about_myself = a_m_1 + '   >])([<   ' + a_m_2
     if len(about_myself) == 12:
