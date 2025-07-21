@@ -116,21 +116,20 @@ def parse_tutor_card_buki(html_card: str) -> dict:
 
     about_myself = soup.select_one('p.styles_description__EnqoA')
     print(f'len( about_myself_1 ) == {len( about_myself.select_one('span').get_text(strip=True) )}')
-    # if about_myself.select_one('span') is not None:
-    if len( about_myself.select_one('span').get_text(strip=True) ) == 0: # Чи завжди довжина порожнього розділу буде = 0 ?..
+    if about_myself.select_one('span') is not None:
         a_m_1 = about_myself.select_one('span').get_text(strip=True)
-    else:
+    elif ( len( about_myself.select_one('span').get_text(strip=True) ) == 0)  or ( about_myself.select_one('span') is None ): # Чи завжди довжина порожнього розділу буде = 0 ?..:
         a_m_1 = ''
     print(f'a_m_1 == {a_m_1}') # !!! for tests ! After - delete!
 
     print(f'len( about_myself_2 ) == {len( about_myself.select('span')[:-1][0].get_text(strip=True) )}')
     # if about_myself.select_one('span span') is not None: # select('span')[:-1]
-    # if about_myself.select('span')[:-1] is not None:
-    if len( about_myself.select('span')[:-1][0].get_text(strip=True) ) == 0:
+    if about_myself.select('span')[:-1] is not None:
         a_m_2 = about_myself.select('span')[:-1][0].get_text(strip=True)
-    else:
+    elif ( len( about_myself.select('span')[:-1][0].get_text(strip=True) ) == 0)  or ( about_myself.select('span')[:-1] is None ):
         a_m_2 = ''
-    print(f'a_m_2 == {a_m_2}') # !!! for tests ! After - delete!
+
+    # print(f'a_m_2 == {a_m_2}') # !!! for tests ! After - delete!
 
     about_myself = a_m_1 + '   >])([<   ' + a_m_2
     if len(about_myself) == 12:
