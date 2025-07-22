@@ -141,11 +141,46 @@ def extract_reviews_count(soup):
     return safe_text(reviews_el)[11:-1].strip() if reviews_el else ''
 
 
+def extract_rating(soup):
+    rating_el = soup.select_one('div.styles_reviewsBlock__FNrPL span')
+    return safe_text(rating_el)
+
+
+def extract_education(soup):
+    edu_el = soup.select_one('p.styles_education__41VXk')
+    return safe_text(edu_el, "span") if edu_el else ''
+
+
+def extract_experience(soup):
+    exp_el = soup.select_one('p.styles_practice__AZyXc')
+    return safe_text(exp_el)[14:-5].strip() if exp_el else ''
+
+
+def extract_subjects(soup):
+    return [el.get_text(strip=True) for el in soup.select('span.styles_lessonsItem__v8FAD')]
+
+
+def extract_name(soup):
+    return get_element( soup, ".styles_userName__ltIVo span" )
+
+
+def extract_id(soup):
+    href = soup.select_one(".styles_userName__ltIVo a")["href"]
+    return int(href[6:-1])
+
+
+def extract_is_online(soup):
+    is_online = soup.select_one('p.styles_workOnline__p4t8f')
+    return True if is_online else False
+
+
 # Це скрапінг картки репетитора на Загальній(!) сторінці.
 def parse_tutor_card_buki(html_card: str) -> dict:
     # Extract Data from a Single Tutor Card
     # Саме в цій функції ми визначаємо усі ті дані, які хочемо дістати з кожної картки репетитора
     soup = BeautifulSoup(html_card, 'html.parser')
+
+    id_tutor = extract_id(soup)
 
     # about_myself = soup.select_one('p.styles_description__EnqoA')
     # if about_myself.select_one('span') is not None:
@@ -172,18 +207,18 @@ def parse_tutor_card_buki(html_card: str) -> dict:
     #     price = ''
     price = extract_price(soup)
 
-    id_tutor = int(soup.select_one(".styles_userName__ltIVo a")["href"][6:-1])
-
     # Оминаємо певного репетитора з порожніми водночас ціною та about
-    if about_myself == '' and price == '':
+    if not about_myself and not price:
         return {
             "id_tutor": id_tutor,
-            "empty": "empty"}
+            "empty": "empty"
+            }
         
-    if soup.select_one('p.styles_workOnline__p4t8f') is not None:
-        is_online = True
-    else:
-        is_online = False
+    is_online = extract_is_online(soup)
+    # if soup.select_one('p.styles_workOnline__p4t8f') is not None:
+    #     is_online = True
+    # else:
+    #     is_online = False
 
     # if soup.select_one('div.styles_userData__xpfLk a') is not None:
     #     city = safe_text(soup.select_one('div.styles_userData__xpfLk a'))
@@ -198,13 +233,13 @@ def parse_tutor_card_buki(html_card: str) -> dict:
     
     return {
             "id_tutor": id_tutor,
-            "name": get_element(soup, ".styles_userName__ltIVo span"),
+            "name": extract_name(soup),
             "price": price,
             "objects": [o.get_text(strip=True) for o in soup.find_all('span', class_="styles_lessonsItem__v8FAD")],
-            "rating": safe_text(soup.select_one('div.styles_reviewsBlock__FNrPL span')),
+            "rating": extract_rating(soup),
             "number_of_reviews": extract_reviews_count(soup),
-            "education": safe_text(soup.select_one('p.styles_education__41VXk'), "span"),
-            "experience": safe_text(soup.select_one('p.styles_practice__AZyXc'))[14:-5].strip(),
+            "education": extract_education(soup),
+            "experience": extract_experience(soup),
             "about_myself": about_myself,
             "about_myself_1": '',
             "about_myself_2": '',
