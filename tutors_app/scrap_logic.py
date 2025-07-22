@@ -112,17 +112,33 @@ def extract_about_myself(soup):
     paragraph = soup.select_one('p.styles_description__EnqoA')
     spans = paragraph.select('span') if paragraph else []
     a_m_1 = spans[0].get_text(strip=True) if len( spans ) > 0 else ''
-    a_m_2 = spans[-1].get_text(strip=True) if len( spans ) > 1 else a_m_1  # Чому тут 1 ?
+    a_m_2 = spans[-1].get_text(strip=True) if len( spans ) > 0 else a_m_1  # Чому тут 1 ?
 
     if not a_m_1 and not a_m_2:
         return ''
     
-    if not a_m_1 or not a_m_2:
+    if (not a_m_1 or not a_m_2) or (a_m_1 and a_m_2):
         return a_m_1 + a_m_2
     
-    about_combined = f"{a_m_1}   >])([<   {a_m_2}"
+    const_middle = '   >])([<   '
+    about_combined = f"{a_m_1}{const_middle}{a_m_2}"
     
-    return '' if len(about_combined) == 12 else about_combined
+    return '' if len(about_combined) == len(const_middle) else about_combined
+
+
+def extract_price(soup):
+    price_el = soup.select_one("span.topCeil")
+    return parse_price( get_element( soup, "span.topCeil" ) ) if price_el else ''
+   
+
+def extract_city(soup):
+    city_el = soup.select_one("div.styles_userData__xpfLk a")
+    return safe_text(city_el) if city_el else ''
+
+
+def extract_reviews_count(soup):
+    reviews_el = soup.select_one("span.styles_reviewsCount__EAIh6")
+    return safe_text(reviews_el)[11:-1].strip() if reviews_el else ''
 
 
 # Це скрапінг картки репетитора на Загальній(!) сторінці.
@@ -149,11 +165,12 @@ def parse_tutor_card_buki(html_card: str) -> dict:
     #     about_myself = a_m_1 + a_m_2
     about_myself = extract_about_myself(soup)
 
-    price = soup.select_one("span.topCeil")
-    if price is not None:
-        price = parse_price( get_element( soup, "span.topCeil" ) )
-    else:
-        price = ''
+    # price = soup.select_one("span.topCeil")
+    # if price is not None:
+    #     price = parse_price( get_element( soup, "span.topCeil" ) )
+    # else:
+    #     price = ''
+    price = extract_price(soup)
 
     id_tutor = int(soup.select_one(".styles_userName__ltIVo a")["href"][6:-1])
 
@@ -168,23 +185,24 @@ def parse_tutor_card_buki(html_card: str) -> dict:
     else:
         is_online = False
 
-    if soup.select_one('div.styles_userData__xpfLk a') is not None:
-        city = safe_text(soup.select_one('div.styles_userData__xpfLk a'))
-    else:
-        city = ''
+    # if soup.select_one('div.styles_userData__xpfLk a') is not None:
+    #     city = safe_text(soup.select_one('div.styles_userData__xpfLk a'))
+    # else:
+    #     city = ''
+    city = extract_city(soup)
 
-    if soup.select_one('span.styles_reviewsCount__EAIh6') is not None:
-        number_of_reviews = safe_text(soup.select_one('span.styles_reviewsCount__EAIh6'))[11:-1].strip()
-    else:
-        number_of_reviews = ''
-
+    # if soup.select_one('span.styles_reviewsCount__EAIh6') is not None:
+    #     number_of_reviews = safe_text(soup.select_one('span.styles_reviewsCount__EAIh6'))[11:-1].strip()
+    # else:
+    #     number_of_reviews = ''
+    
     return {
             "id_tutor": id_tutor,
             "name": get_element(soup, ".styles_userName__ltIVo span"),
             "price": price,
             "objects": [o.get_text(strip=True) for o in soup.find_all('span', class_="styles_lessonsItem__v8FAD")],
             "rating": safe_text(soup.select_one('div.styles_reviewsBlock__FNrPL span')),
-            "number_of_reviews": number_of_reviews,
+            "number_of_reviews": extract_reviews_count(soup),
             "education": safe_text(soup.select_one('p.styles_education__41VXk'), "span"),
             "experience": safe_text(soup.select_one('p.styles_practice__AZyXc'))[14:-5].strip(),
             "about_myself": about_myself,
