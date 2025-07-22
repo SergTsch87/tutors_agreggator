@@ -108,41 +108,61 @@ def safe_text(soup_or_el, selector=None, class_name=None,  tag='span', default="
 # ------------------------------------------------
 # Site BUKI com
 
+def extract_about_myself(soup):
+    paragraph = soup.select_one('p.styles_description__EnqoA')
+    spans = paragraph.select('span') if paragraph else []
+    a_m_1 = spans[0].get_text(strip=True) if len( spans ) > 0 else ''
+    a_m_2 = spans[-1].get_text(strip=True) if len( spans ) > 1 else a_m_1  # Чому тут 1 ?
+
+    if not a_m_1 and not a_m_2:
+        return ''
+    
+    if not a_m_1 or not a_m_2:
+        return a_m_1 + a_m_2
+    
+    about_combined = f"{a_m_1}   >])([<   {a_m_2}"
+    
+    return '' if len(about_combined) == 12 else about_combined
+
+
 # Це скрапінг картки репетитора на Загальній(!) сторінці.
 def parse_tutor_card_buki(html_card: str) -> dict:
     # Extract Data from a Single Tutor Card
     # Саме в цій функції ми визначаємо усі ті дані, які хочемо дістати з кожної картки репетитора
     soup = BeautifulSoup(html_card, 'html.parser')
 
-    about_myself = soup.select_one('p.styles_description__EnqoA')
-    if about_myself.select_one('span') is not None:
-        a_m_1 = about_myself.select_one('span').get_text(strip=True)
-    elif ( len( about_myself.select_one('span').get_text(strip=True) ) == 0)  or ( about_myself.select_one('span') is None ): # Чи завжди довжина порожнього розділу буде = 0 ?..:
-        a_m_1 = ''
+    # about_myself = soup.select_one('p.styles_description__EnqoA')
+    # if about_myself.select_one('span') is not None:
+    #     a_m_1 = about_myself.select_one('span').get_text(strip=True)
+    # elif ( len( about_myself.select_one('span').get_text(strip=True) ) == 0)  or ( about_myself.select_one('span') is None ):
+    #     a_m_1 = ''
 
-    if about_myself.select('span')[-1] is not None:
-        a_m_2 = about_myself.select('span')[-1].get_text(strip=True)
-    elif ( len( about_myself.select('span')[-1].get_text(strip=True) ) == 0)  or ( about_myself.select('span')[-1] is None ):
-        a_m_2 = ''
+    # if about_myself.select('span')[-1] is not None:
+    #     a_m_2 = about_myself.select('span')[-1].get_text(strip=True)
+    # elif ( len( about_myself.select('span')[-1].get_text(strip=True) ) == 0)  or ( about_myself.select('span')[-1] is None ):
+    #     a_m_2 = ''
 
-    about_myself = a_m_1 + '   >])([<   ' + a_m_2
-    if len(about_myself) == 12:
-        about_myself = ''
-    elif ( len(a_m_1) == 0 ) or ( len(a_m_2) == 0 ):
-        about_myself = a_m_1 + a_m_2
+    # about_myself = a_m_1 + '   >])([<   ' + a_m_2
+    # if len(about_myself) == 12:
+    #     about_myself = ''
+    # elif ( len(a_m_1) == 0 ) or ( len(a_m_2) == 0 ):
+    #     about_myself = a_m_1 + a_m_2
+    about_myself = extract_about_myself(soup)
 
-    price = soup.select_one("span.topCeil") # get_element(soup, ".rate .topCeil")
+    price = soup.select_one("span.topCeil")
     if price is not None:
         price = parse_price( get_element( soup, "span.topCeil" ) )
     else:
         price = ''
 
+    id_tutor = int(soup.select_one(".styles_userName__ltIVo a")["href"][6:-1])
+
     # Оминаємо певного репетитора з порожніми водночас ціною та about
     if about_myself == '' and price == '':
-        return {"empty": "empty"}
-        # Чи, мо,краще передати словник поррожніх значень усіх ключів? - 
-        # - щоб не виникало якихось помилок через неспівпадіння значень?..
-
+        return {
+            "id_tutor": id_tutor,
+            "empty": "empty"}
+        
     if soup.select_one('p.styles_workOnline__p4t8f') is not None:
         is_online = True
     else:
@@ -159,31 +179,17 @@ def parse_tutor_card_buki(html_card: str) -> dict:
         number_of_reviews = ''
 
     return {
-            "id_tutor": int(soup.select_one(".styles_userName__ltIVo a")["href"][6:-1]),
+            "id_tutor": id_tutor,
             "name": get_element(soup, ".styles_userName__ltIVo span"),
             "price": price,
-            # "price": parse_price(get_element(soup, ".rate .topCeil")),
-            # "price": get_element(soup, ".rate .topCeil"),
             "objects": [o.get_text(strip=True) for o in soup.find_all('span', class_="styles_lessonsItem__v8FAD")],
-            "rating": safe_text(soup.select_one('div.styles_reviewsBlock__FNrPL span')), # safe_text(soup.select_one('div.styles_reviewsBlock__FNrPL'), "span"),
-            # "number_of_reviews": safe_text(soup.select_one('div.styles_reviewsBlock__FNrPL'), "span", class_name="styles_reviewsCount__EAIh6"),
+            "rating": safe_text(soup.select_one('div.styles_reviewsBlock__FNrPL span')),
             "number_of_reviews": number_of_reviews,
-            #   get_num_of_reviews(safe_text(soup.select_one('div.styles_reviewsBlock__FNrPL'), "span", class_name="styles_reviewsCount__EAIh6")),
             "education": safe_text(soup.select_one('p.styles_education__41VXk'), "span"),
-            
             "experience": safe_text(soup.select_one('p.styles_practice__AZyXc'))[14:-5].strip(),
-            
-            # "about_myself": safe_text(soup.select_one('p.styles_description__EnqoA')),
-            # "about_myself": about_myself.select_one('span').get_text(strip=True) + about_myself.select_one('span.next_sibling').get_text(strip=True),
             "about_myself": about_myself,
-            # !!! Тут тре обробити два варіанти:
-            #     1) Коли нема жодного з цих розділів (коли картка має лише поле "Ціна", але не має жодного "про себе")
-            #     2) Коли нема другої частини "about"
-            #     3) Замість select_one('span.next_sibling') краще мабуть буде: select_one('span span')
-
             "about_myself_1": '',
             "about_myself_2": '',
-            
             "city": city,
             "is_online": is_online,
         }
