@@ -53,14 +53,15 @@ def main():
     var_name = var_info.split('=')[0]
     get_print_test(max_num_pagination, var_name)
 
-    num_page = max_num_pagination - 1 # ! for test !
+    # num_page = max_num_pagination - 10 # ! for test !
+    num_page = 2
     
     # Tasks:
         # 2) Перевір правильність збереження даних 20-ти екаунтів до .jsonl (з однієї сторінки)
         # 3) Перевір правильність збереження даних 20-ти екаунтів до .jsonl (з кількох сторінок)
         # 4) Запусти скрапер на збирання-збереження усіх даних з усіх сторінок
 
-    while num_page <= max_num_pagination:
+    while num_page <= 3: # max_num_pagination:
 
 # ========= Ініціалізація пар-рів + створення '/bio/1.jsonl' =============
     # === BEGIN ===
