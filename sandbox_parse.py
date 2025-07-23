@@ -11,6 +11,13 @@ import logging
 import json
 
 
+def correct_url(num_page):
+    if num_page == 1:
+        return "https://buki.com.ua/tutors/biolohiia/"
+    else:
+        return f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
+
+
 @timer_elapsed
 def main():
     logging.basicConfig(
@@ -28,8 +35,8 @@ def main():
 
 # ---------------------
 
-    # num_page = 1 # Тут чомусь виникає редірект, код = 301
-    num_page = 2
+    num_page = 1 # Тут чомусь виникає редірект, код = 301
+    # num_page = 2
         
     if not is_connected():  # Якщо нема інтернет-зв'язку
         print('Error: No internet connection')
@@ -39,15 +46,15 @@ def main():
     # Створюємо папку 'bio'
     dir_path_bio = create_dir_bio()
     # tag_body_tmp = get_tag_body(num_page)  # '_tmp' - для того, щоб не заплутатись потім у циклі
-    url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
-    tag_body_tmp = get_tag_body(url)
+    url_upd = correct_url(num_page)
+    tag_body_tmp = get_tag_body(url_upd)
     # print(f'\ntag_body_tmp: {tag_body_tmp}\n')
     max_num_pagination = get_max_pagination(tag_body_tmp)
     
     print(f'\nmax_num_pagination: {max_num_pagination}\n')
 
     # num_page = max_num_pagination - 10 # ! for test !
-    num_page = 2
+    # num_page = 2
     
     # Tasks:
         # 2) Перевір правильність збереження даних 20-ти екаунтів до .jsonl (з однієї сторінки)
@@ -62,8 +69,8 @@ def main():
         min_num_pagination = int( max_num_pagination * 0.7 )
         # # ! Тут відбувається звернення до сайту
         # tag_body = get_tag_body(num_page)
-        url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
-        tag_body = get_tag_body(url)
+        url_upd = correct_url(num_page)
+        tag_body = get_tag_body(url_upd)
 
         if ( num_page >= min_num_pagination ) and not is_there_next_page(tag_body):
             break

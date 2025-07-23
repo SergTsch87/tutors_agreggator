@@ -23,6 +23,7 @@ def get_html(url: str, timeout=20, return_soup=True):
         time.sleep( uniform( 0.5, 2.0 ) ) # Павза перед кожним запитом до сайту
         response = requests.get(url, timeout=timeout, allow_redirects=False)
         html = response.text
+        # print(f'html: {html}') # for test
         soup_or_html = BeautifulSoup(html, 'html.parser') if return_soup else html
         is_redirect = 1 if 300 <= response.status_code < 400 else 0
         return soup_or_html, is_redirect        # 0 == 'No redirect'   # 1 == 'redirect'
