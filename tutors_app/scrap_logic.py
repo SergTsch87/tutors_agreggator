@@ -12,6 +12,12 @@ from tutors_app.utils import parse_price, is_connected, handle_exception  # get_
 ABOUT_SEPARATOR = '   >])([<   '
 
 
+# Чи знаходимось ми зараз на останній сторінці пагінації?..
+# Якщо нема наступного елементу 'a' (посилання на будь-яку наступну сторінку), - тоді повертає False
+def is_there_next_page(soup):
+    return bool( soup.select("span.styles_button__6Yhoi.styles_active__O51t0 + a") )
+
+
 def get_html(url: str, timeout=20, return_soup=True):
     try:
         time.sleep( uniform( 0.5, 2.0 ) ) # Павза перед кожним запитом до сайту
