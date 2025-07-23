@@ -11,14 +11,6 @@ import logging
 import json
 
 
-def get_print_test(var, var_name):
-    print(f'\n{var_name}: {var}\n')
-
-
-def is_there_next_page(soup):
-    return bool( soup.select("span.styles_button__6Yhoi.styles_active__O51t0 + a") )
-
-
 @timer_elapsed
 def main():
     logging.basicConfig(
@@ -52,10 +44,7 @@ def main():
     # print(f'\ntag_body_tmp: {tag_body_tmp}\n')
     max_num_pagination = get_max_pagination(tag_body_tmp)
     
-    # print(f'\nmax_num_pagination: {max_num_pagination}\n')
-    var_info = f'{max_num_pagination=}'
-    var_name = var_info.split('=')[0]
-    get_print_test(max_num_pagination, var_name)
+    print(f'\nmax_num_pagination: {max_num_pagination}\n')
 
     # num_page = max_num_pagination - 10 # ! for test !
     num_page = 2
