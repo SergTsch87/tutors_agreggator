@@ -15,6 +15,10 @@ def get_print_test(var, var_name):
     print(f'\n{var_name}: {var}\n')
 
 
+def is_there_next_page(soup):
+    return bool( soup.select("span.styles_button__6Yhoi.styles_active__O51t0 + a") )
+
+
 @timer_elapsed
 def main():
     logging.basicConfig(
@@ -61,10 +65,20 @@ def main():
         # 3) Перевір правильність збереження даних 20-ти екаунтів до .jsonl (з кількох сторінок)
         # 4) Запусти скрапер на збирання-збереження усіх даних з усіх сторінок
 
-    while num_page <= 3: # max_num_pagination:
+    # while num_page <= 3: # for test  # max_num_pagination:
+    while num_page <= max_num_pagination:
 
 # ========= Ініціалізація пар-рів + створення '/bio/1.jsonl' =============
     # === BEGIN ===
+        min_num_pagination = int( max_num_pagination * 0.7 )
+        # # ! Тут відбувається звернення до сайту
+        # tag_body = get_tag_body(num_page)
+        url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
+        tag_body = get_tag_body(url)
+
+        if ( num_page >= min_num_pagination ) and not is_there_next_page(tag_body):
+            break
+
         dir_path_bio_num_page = f"{dir_path_bio}/{str(num_page)}"
         create_dir(dir_path_bio_num_page)
         file_path_data = f'{dir_path_bio_num_page}/{num_page}.jsonl'
@@ -76,10 +90,10 @@ def main():
         #     print('Error: No internet connection')
         #     return 'Error: No internet connection'
         
-        # # ! Тут відбувається звернення до сайту
-        # tag_body = get_tag_body(num_page)
-        url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
-        tag_body = get_tag_body(url)
+        # # # ! Тут відбувається звернення до сайту
+        # # tag_body = get_tag_body(num_page)
+        # url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
+        # tag_body = get_tag_body(url)
 
         list_tutors_data = [] # список словників з даними усіх репетиторів (макс. = 20) на сторінці
     # === THE END ===
