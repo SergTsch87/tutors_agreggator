@@ -4,18 +4,16 @@
 # env2\bin\python -m pip install -r requirements.txt
 
 from tutors_app.utils import is_connected, get_file_path, timer_elapsed
-from tutors_app.file_dir_sys import write_list_data_to_file, create_dir, create_empty_txt_file, create_dir_bio # save_to_file, delete_file
-from tutors_app.scrap_logic import is_there_next_page, get_tag_body, get_max_pagination, get_data_from_one_account, parse_tutor_card_buki #, get_element, get_tutor_urls
+from tutors_app.file_dir_sys import write_list_data_to_file, create_dir, create_empty_txt_file, create_dir_bio # create_file_dir_structure, save_to_file, delete_file
+from tutors_app.scrap_logic import correct_url, is_there_next_page, get_tag_body, get_max_pagination, get_data_from_one_account, parse_tutor_card_buki #, get_element, get_tutor_urls
 from pathlib import Path
 import logging
 import json
+from collections import Counter
 
 
-def correct_url(num_page):
-    if num_page == 1:
-        return "https://buki.com.ua/tutors/biolohiia/"
-    else:
-        return f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
+def get_freq_dict(my_list):
+    return Counter(my_list)
 
 
 @timer_elapsed
@@ -35,117 +33,19 @@ def main():
 
 # ---------------------
 
-    num_page = 1 # Тут чомусь виникає редірект, код = 301
-    # num_page = 2
+    # num_page = 1
+    num_page = 10
         
     if not is_connected():  # Якщо нема інтернет-зв'язку
         print('Error: No internet connection')
         return 'Error: No internet connection'
-
-# Creating file-dir structure
-    # Створюємо папку 'bio'
-    dir_path_bio = create_dir_bio()
-    # tag_body_tmp = get_tag_body(num_page)  # '_tmp' - для того, щоб не заплутатись потім у циклі
-    url_upd = correct_url(num_page)
-    tag_body_tmp = get_tag_body(url_upd)
-    # print(f'\ntag_body_tmp: {tag_body_tmp}\n')
-    max_num_pagination = get_max_pagination(tag_body_tmp)
     
-    print(f'\nmax_num_pagination: {max_num_pagination}\n')
-
-    # num_page = max_num_pagination - 10 # ! for test !
-    # num_page = 2
+# -------------------
+    subject_dir = Path('bio')
     
-    # Tasks:
-        # 2) Перевір правильність збереження даних 20-ти екаунтів до .jsonl (з однієї сторінки)
-        # 3) Перевір правильність збереження даних 20-ти екаунтів до .jsonl (з кількох сторінок)
-        # 4) Запусти скрапер на збирання-збереження усіх даних з усіх сторінок
-
-    # while num_page <= 3: # for test  # max_num_pagination:
-    while num_page <= max_num_pagination:
-
-# ========= Ініціалізація пар-рів + створення '/bio/1.jsonl' =============
-    # === BEGIN ===
-        min_num_pagination = int( max_num_pagination * 0.7 )
-        # # ! Тут відбувається звернення до сайту
-        # tag_body = get_tag_body(num_page)
-        url_upd = correct_url(num_page)
-        tag_body = get_tag_body(url_upd)
-
-        if ( num_page >= min_num_pagination ) and not is_there_next_page(tag_body):
-            break
-
-        dir_path_bio_num_page = f"{dir_path_bio}/{str(num_page)}"
-        create_dir(dir_path_bio_num_page)
-        file_path_data = f'{dir_path_bio_num_page}/{num_page}.jsonl'
-        create_empty_txt_file(file_path_data)  # створює порожній jsonl-файл
-        # json даних з усіх анкет репетиторів за адресою f'/{num_page}/'
-
-        # # Перевірку на відсутність мережі краще зробити декоратором
-        # if not is_connected():  # Якщо нема інтернет-зв'язку
-        #     print('Error: No internet connection')
-        #     return 'Error: No internet connection'
-        
-        # # # ! Тут відбувається звернення до сайту
-        # # tag_body = get_tag_body(num_page)
-        # url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
-        # tag_body = get_tag_body(url)
-
-        list_tutors_data = [] # список словників з даними усіх репетиторів (макс. = 20) на сторінці
-    # === THE END ===
-
-# ========= Збирання та зберігання даних 20-ти репетиторів із загальної сторінки, до файлу =============
-    # === BEGIN ===
-        tutor_cards = tag_body.select(".styles_container__4lrBa")  # list of card elements
-        
-        # if tutor_cards == []: # ми дійшли до останньої сторінки пагінації
-        #     logging()
-        #     break
-        
-        for card in tutor_cards:
-        # for card in tutor_cards[1:3]: # for test
-            # Дістали дані репетитора із загальної сторінки
-            dict_current_card = parse_tutor_card_buki(str(card))
-            
-            # !!!
-            # Коли опрацюєш усі збереження даних, - тоді розкоментуй ці рядки!
-            # # оминаємо порожні анкети
-            # if ( dict_current_card['price'] is None ) and ( dict_current_card['about_myself'] is None ):
-            # # is none or is null ?..
-            #     continue
-            
-            list_tutors_data.append(dict_current_card)  #  list of dicts - список усіх даних про репетиторів
-        
-        # Зберіг дані 20-ти репетиторів із загальної сторінки
-        write_list_data_to_file(file_path_data, list_tutors_data)
-        # Можна й так ф-цію назвати:
-        # save_ids_to_file(ids: list[int], filename: str)
-    # === THE END ===
-    
-# ========= Збираємо дані ("about_myself_1" та "about_myself_2") зі сторінок кожного з 20-ти репетиторів =============
-    # === BEGIN ===
-
-        # !!! Зі списку list_tutors_data витягаємо "id_tutor" кожного репетитора
-        list_urls_tutors = [dict_tutor_data['id_tutor'] for dict_tutor_data in list_tutors_data]
-        
-        # ! list_data_one_account - це буде список словників з двома ключами: "about_myself_1" та "about_myself_2"
-        list_data_one_account = []
-        
-        for id_rep in list_urls_tutors:
-            # Якщо екаунт не містить важливих даних, - тоді оминаємо його
-            
-            # ! Тут відбувається звернення до сайту
-            list_data_one_account.append( get_data_from_one_account(id_rep) )
-
-            # save_to_file(data_one_account) # creating and saving to jsonl-files
-    # === THE END ===
-
-# ========= Збираємо дані ("about_myself_1" та "about_myself_2") зі сторінок кожного з 20-ти репетиторів =============
-    # === BEGIN ===
-    #     Дістаємо дані 20-ти репетиторів із загальної сторінки    
-    #     Додаємо текст з анкети репетитора до списку даних
-    #     Зберігаємо до файлу з оновленими даними
-    # # === ... ===
+    if subject_dir.exists():
+        print('Така папка вже існує!')
+        # get_freq_dict(my_list)
 
         # ! Дістаємо дані 20-ти репетиторів із загальної сторінки
         data_tutors = []
@@ -158,25 +58,148 @@ def main():
                     print(f'Error decoding JSON on line: {line.strip()} - {e}')
                     continue # skip invalid lines and continue processing
 
-        # # ! for test
-        # for item in data_tutors:
-        #     print(item)
+    else:
+        print('Такої папки нема, тому Створено задану структуру папок')
+# -------------------
+    # === BEGIN else ===
 
-        # # Додаємо текст з анкети репетитора до списку даних
-        # Саме тут відбувається перезапис даних кожного словника репетитора!
-        for index, one_tutor in enumerate(data_tutors):
-            one_tutor['about_myself_1'] = list_data_one_account[index]['about_myself_1']
-            one_tutor['about_myself_2'] = list_data_one_account[index]['about_myself_2']
+    # Creating file-dir structure
+        # Створюємо папку 'bio'
+        dir_path_bio = create_dir_bio()
+        # tag_body_tmp = get_tag_body(num_page)  # '_tmp' - для того, щоб не заплутатись потім у циклі
+        url_upd = correct_url(num_page)
+        tag_body_tmp = get_tag_body(url_upd)
+        # print(f'\ntag_body_tmp: {tag_body_tmp}\n')
+        max_num_pagination = get_max_pagination(tag_body_tmp)
         
-        # Зберігаємо файл з оновленими даними
-        write_list_data_to_file(file_path_data, data_tutors, 'w')
-        # with open(file_path_data, "w") as jsonFile:
-        #     for item in data_tutors:
-        #         json.dump(item, jsonFile)
-        #         jsonFile.write('\n')
+        print(f'\nmax_num_pagination: {max_num_pagination}\n')
+
+        num_page = max_num_pagination # - 10 # ! for test !
+        # num_page = 2
+        
+        # Tasks:
+            # 2) Перевір правильність збереження даних 20-ти екаунтів до .jsonl (з однієї сторінки)
+            # 3) Перевір правильність збереження даних 20-ти екаунтів до .jsonl (з кількох сторінок)
+            # 4) Запусти скрапер на збирання-збереження усіх даних з усіх сторінок
+
+        # while num_page <= 3: # for test  # max_num_pagination:
+        while num_page <= max_num_pagination:
+
+    # ========= Ініціалізація пар-рів + створення '/bio/1.jsonl' =============
+        # === BEGIN ===
+            min_num_pagination = int( max_num_pagination * 0.7 )
+            # # ! Тут відбувається звернення до сайту
+            # tag_body = get_tag_body(num_page)
+            url_upd = correct_url(num_page)
+            tag_body = get_tag_body(url_upd)
+
+            if ( num_page >= min_num_pagination and num_page < max_num_pagination ) and not is_there_next_page(tag_body):
+                break
+
+            dir_path_bio_num_page = f"{dir_path_bio}/{str(num_page)}"
+            create_dir(dir_path_bio_num_page)
+            file_path_data = f'{dir_path_bio_num_page}/{num_page}.jsonl'
+            create_empty_txt_file(file_path_data)  # створює порожній jsonl-файл
+            # json даних з усіх анкет репетиторів за адресою f'/{num_page}/'
+
+            # # Перевірку на відсутність мережі краще зробити декоратором
+            # if not is_connected():  # Якщо нема інтернет-зв'язку
+            #     print('Error: No internet connection')
+            #     return 'Error: No internet connection'
+            
+            # # # ! Тут відбувається звернення до сайту
+            # # tag_body = get_tag_body(num_page)
+            # url = f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
+            # tag_body = get_tag_body(url)
+
+            list_tutors_data = [] # список словників з даними усіх репетиторів (макс. = 20) на сторінці
+        # === THE END ===
+
+    # ========= Збирання та зберігання даних 20-ти репетиторів із загальної сторінки, до файлу =============
+        # === BEGIN ===
+            tutor_cards = tag_body.select(".styles_container__4lrBa")  # list of card elements
+            
+            # if tutor_cards == []: # ми дійшли до останньої сторінки пагінації
+            #     logging()
+            #     break
+            
+            for card in tutor_cards:
+            # for card in tutor_cards[1:3]: # for test
+                # Дістали дані репетитора із загальної сторінки
+                dict_current_card = parse_tutor_card_buki(str(card))
+                
+                # !!!
+                # Коли опрацюєш усі збереження даних, - тоді розкоментуй ці рядки!
+                # # оминаємо порожні анкети
+                # if ( dict_current_card['price'] is None ) and ( dict_current_card['about_myself'] is None ):
+                # # is none or is null ?..
+                #     continue
+                
+                list_tutors_data.append(dict_current_card)  #  list of dicts - список усіх даних про репетиторів
+            
+            # Зберіг дані 20-ти репетиторів із загальної сторінки
+            write_list_data_to_file(file_path_data, list_tutors_data)
+            # Можна й так ф-цію назвати:
+            # save_ids_to_file(ids: list[int], filename: str)
+        # === THE END ===
+        
+    # ========= Збираємо дані ("about_myself_1" та "about_myself_2") зі сторінок кожного з 20-ти репетиторів =============
+        # === BEGIN ===
+
+            # !!! Зі списку list_tutors_data витягаємо "id_tutor" кожного репетитора
+            list_urls_tutors = [dict_tutor_data['id_tutor'] for dict_tutor_data in list_tutors_data]
+            
+            # ! list_data_one_account - це буде список словників з двома ключами: "about_myself_1" та "about_myself_2"
+            list_data_one_account = []
+            
+            for id_rep in list_urls_tutors:
+                # Якщо екаунт не містить важливих даних, - тоді оминаємо його
+                
+                # ! Тут відбувається звернення до сайту
+                list_data_one_account.append( get_data_from_one_account(id_rep) )
+
+                # save_to_file(data_one_account) # creating and saving to jsonl-files
+        # === THE END ===
+
+    # ========= Збираємо дані ("about_myself_1" та "about_myself_2") зі сторінок кожного з 20-ти репетиторів =============
+        # === BEGIN ===
+        #     Дістаємо дані 20-ти репетиторів із загальної сторінки    
+        #     Додаємо текст з анкети репетитора до списку даних
+        #     Зберігаємо до файлу з оновленими даними
+        # # === ... ===
+
+            # ! Дістаємо дані 20-ти репетиторів із загальної сторінки
+            data_tutors = []
+            with open(file_path_data, "r", encoding='utf-8') as jsonFile:
+                for line in jsonFile:
+                    try:
+                        json_object = json.loads(line)
+                        data_tutors.append(json_object)
+                    except json.JSONDecodeError as e:
+                        print(f'Error decoding JSON on line: {line.strip()} - {e}')
+                        continue # skip invalid lines and continue processing
+
+            # # ! for test
+            # for item in data_tutors:
+            #     print(item)
+
+            # # Додаємо текст з анкети репетитора до списку даних
+            # Саме тут відбувається перезапис даних кожного словника репетитора!
+            for index, one_tutor in enumerate(data_tutors):
+                one_tutor['about_myself_1'] = list_data_one_account[index]['about_myself_1']
+                one_tutor['about_myself_2'] = list_data_one_account[index]['about_myself_2']
+            
+            # Зберігаємо файл з оновленими даними
+            write_list_data_to_file(file_path_data, data_tutors, 'w')
+            # with open(file_path_data, "w") as jsonFile:
+            #     for item in data_tutors:
+            #         json.dump(item, jsonFile)
+            #         jsonFile.write('\n')
 
 
-        num_page += 1
+            num_page += 1
+    
+    # === THE END else ===
         
         # THE END While Loop
     # ----------------------------

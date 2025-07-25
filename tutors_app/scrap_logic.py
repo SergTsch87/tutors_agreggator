@@ -12,6 +12,13 @@ from tutors_app.utils import parse_price, is_connected, handle_exception  # get_
 ABOUT_SEPARATOR = '   >])([<   '
 
 
+def correct_url(num_page):
+    if num_page == 1:
+        return "https://buki.com.ua/tutors/biolohiia/"
+    else:
+        return f"https://buki.com.ua/tutors/biolohiia/{num_page}/"
+
+
 # Чи знаходимось ми зараз на останній сторінці пагінації?..
 # Якщо нема наступного елементу 'a' (посилання на будь-яку наступну сторінку), - тоді повертає False
 def is_there_next_page(soup):
@@ -174,15 +181,17 @@ def extract_name(soup):
 
 
 def extract_id(soup):
-    href = soup.select_one(".styles_userName__ltIVo a")["href"]
-    if not href:
+    # print(f'ID rep: {soup.select_one("p.styles_userName__ltIVo a")}')
+    tag_a = soup.select_one("p.styles_userName__ltIVo a")
+    if not tag_a:
         img_with_id = soup.select_one("div.styles_imageWrapper__GmpHF div img")
         img_title = img_with_id['title']
         if img_title:
             beg_index_id_rep = img_title.find('id:')
             id_rep = img_title[beg_index_id_rep + 3:]
-            return id_rep
+            return int(id_rep)
         #  div.styles_imageWrapper__GmpHF div img[title] "Репетитор - Софія Китчак id:195421"
+    href = soup.select_one(".styles_userName__ltIVo a")["href"]
     return int(href[6:-1])
 
 
