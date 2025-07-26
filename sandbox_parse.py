@@ -10,10 +10,53 @@ from pathlib import Path
 import logging
 import json
 from collections import Counter
+import os
 
 
 def get_freq_dict(my_list):
     return Counter(my_list)
+
+
+# def find_folder_in_current_dir(target_name):
+#     """
+#     Знаходить папку з певною назвою в поточному каталозі.
+
+#     Args:
+#         target_name: Назва папки, яку потрібно знайти.
+
+#     Returns:
+#         Повний шлях до папки, якщо знайдено, інакше None.
+#     """
+#     for item in os.listdir("."):
+#         item_path = os.path.join(".", item)
+#         if os.path.isdir(item_path) and item == target_name:
+#             return item_path
+#     return None
+
+
+def count_subdirectories(directory_path):
+    """
+    Counts the number of subdirectories directly within a given directory.
+
+    Args:
+        directory_path (str): The path to the directory to examine.
+
+    Returns:
+        int: The number of subdirectories found.
+    """
+    if not os.path.isdir(directory_path):
+        print(f"Error: '{directory_path}' is not a valid directory.")
+        return 0
+
+    # os.walk yields a 3-tuple: (dirpath, dirnames, filenames)
+    # The first element returned by next(os.walk(...)) will contain the
+    # dirnames (subdirectories) of the top-level directory.
+    try:
+        _, dirnames, _ = next(os.walk(directory_path))
+        return len(dirnames)
+    except StopIteration:
+        # This can happen if the directory_path itself is empty or not accessible
+        return 0
 
 
 @timer_elapsed
@@ -47,16 +90,43 @@ def main():
         print('Така папка вже існує!')
         # get_freq_dict(my_list)
 
-        # ! Дістаємо дані 20-ти репетиторів із загальної сторінки
-        data_tutors = []
-        with open(file_path_data, "r", encoding='utf-8') as jsonFile:
-            for line in jsonFile:
-                try:
-                    json_object = json.loads(line)
-                    data_tutors.append(json_object)
-                except json.JSONDecodeError as e:
-                    print(f'Error decoding JSON on line: {line.strip()} - {e}')
-                    continue # skip invalid lines and continue processing
+        # # Приклад використання:
+        # folder_name = "max_num"
+        # found_path = find_folder_in_current_dir(folder_name)
+
+        # if found_path:
+        #     print(f"Папку знайдено за шляхом: {found_path}")
+        # else:
+        #     print(f"Папку з назвою '{folder_name}' не знайдено.")
+
+        # # # Як знайти папку з певною назвою? а саме - з найбільшим цілим числом у назві
+        # max_num = find_folder_in_current_dir(subject_dir) + 1
+
+        data_prices = []
+        current_directory = Path.cwd()
+        dir_path_bio = f"{current_directory}/{subject_dir}/"
+
+        # Example usage:
+        target_directory = dir_path_bio
+        num_folders = count_subdirectories(target_directory)
+        print(f"Number of folders in '{target_directory}': {num_folders}")
+
+        # for page_dir in range(1, max_num):
+        #     dir_path_bio_num_page = f"{dir_path_bio}/{str(page_dir)}"
+        #     file_path_data = f'{dir_path_bio_num_page}/{page_dir}.jsonl'
+            
+        #     with open(file_path_data, "r", encoding='utf-8') as jsonFile:
+        #         for line in jsonFile:
+        #             try:
+        #                 json_object = json.loads(line)
+        #                 data_prices.append(json_object)
+        #             except json.JSONDecodeError as e:
+            
+        #                 print(f'Error decoding JSON on line: {line.strip()} - {e}')
+        #                 continue # skip invalid lines and continue processing
+
+        #     freq_dict_prices = get_freq_dict(data_prices)
+        #     print(f'freq_dict_prices == {freq_dict_prices}')
 
     else:
         print('Такої папки нема, тому Створено задану структуру папок')
