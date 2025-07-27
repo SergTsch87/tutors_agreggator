@@ -111,6 +111,49 @@ def main():
         num_folders = count_subdirectories(target_directory)
         print(f"Number of folders in '{target_directory}': {num_folders}")
 
+        # list_tutors_data = [] # список словників з даними усіх репетиторів (макс. = 20) на сторінці
+        
+        # Отримати список усіх файлів
+        num_page = 1
+        dir_path_bio_num_page = f"{dir_path_bio}/{str(num_page)}"
+        dir_path_bio_num_page = Path(dir_path_bio_num_page)
+        list_file_pathes = []
+
+        print('Begin WHILE loop...')
+        # while dir_path_bio_num_page.exists():
+        while dir_path_bio_num_page.is_dir():
+            file_path_data = f'{dir_path_bio_num_page}/{num_page}.jsonl'
+            list_file_pathes.append(file_path_data)
+            print(num_page)
+            
+            num_page += 1
+            dir_path_bio_num_page = f"{dir_path_bio}/{str(num_page)}"
+            dir_path_bio_num_page = Path(dir_path_bio_num_page)
+
+        print('THE END while loop...')
+        print('Begin FOR loop...')
+
+        # Тут буде цикл обходу усіх папок
+        for file_path in list_file_pathes:
+
+        # ! Дістаємо дані 20-ти репетиторів із загальної сторінки
+            data_tutors = []
+            with open(file_path, "r", encoding='utf-8') as jsonFile:
+                for line in jsonFile:
+                    try:
+                        json_object = json.loads(line)
+                        data_tutors.append(json_object)
+                    except json.JSONDecodeError as e:
+                        print(f'Error decoding JSON on line: {line.strip()} - {e}')
+                        continue # skip invalid lines and continue processing
+
+        # Дописав список даних до файлу bio_data.jsonl
+            file_path_data = f'{dir_path_bio}/bio_data.jsonl'
+            write_list_data_to_file(file_path_data, data_tutors, 'a')
+            print(f'Writing data from {file_path}')
+
+        print('THE END for loop...')
+
         # for page_dir in range(1, max_num):
         #     dir_path_bio_num_page = f"{dir_path_bio}/{str(page_dir)}"
         #     file_path_data = f'{dir_path_bio_num_page}/{page_dir}.jsonl'
