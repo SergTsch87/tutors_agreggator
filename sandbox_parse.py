@@ -122,19 +122,36 @@ def main():
                         print(f'Error decoding JSON on line: {line.strip()} - {e}')
                         continue # skip invalid lines and continue processing
 
-        # Writiing prices to file
-            file_path_data = f'{dir_path_bio}/prices.jsonl'
+        # Writing prices to file
+            file_path_data = f'{dir_path_bio}/prices.json'
             file_path_data = Path(file_path_data)
-            write_list_data_to_file(file_path_data, data_prices, 'w')
+            # write_list_data_to_file(file_path_data, data_prices, 'w')
+            with open(file_path_data, "w") as json_file:
+                json.dump(data_prices, json_file)
 
-            # freq_dict_prices = get_freq_dict(data_prices)
-            # # print(f'freq_dict_prices == {freq_dict_prices}')
-            # # print(f'freq_dict_prices == {list(freq_dict_prices)}')
-            # file_path_data = f'{dir_path_bio}/freq_dict_prices.jsonl'
-            # file_path_data = Path(file_path_data)
-            # # write_list_data_to_file(file_path_data, list(freq_dict_prices), 'w')
-            # with open(file_path_data, "w") as json_file:
-            #     json.dump(freq_dict_prices, json_file, indent=4, sort_keys=True)
+        # Reading list of prices from prices.json
+            try:
+                data_prices = []
+                with open(file_path_data, "r", encoding='utf-8') as jsonFile:
+                    try:
+                        data_prices = json.loads(jsonFile.read()) # Це дозволить правильно прочитати ціле вміст файлу як рядок, а потім розпарсити його як JSON.
+                        print(f'data_prices == {data_prices}')
+                    except json.JSONDecodeError as e:                
+                        print(f'Error decoding JSON: {e}')
+            except FileNotFoundError:
+                print("Error: 'prices.json' not found")
+            except json.JSONDecodeError:
+                print("Error: Could not decode JSON from 'prices.json'")
+
+        # Writing freq_dict_prices to file
+            freq_dict_prices = get_freq_dict(data_prices)
+            print(f'freq_dict_prices == {freq_dict_prices}')
+            # print(f'freq_dict_prices == {list(freq_dict_prices)}')
+            file_path_data = f'{dir_path_bio}/freq_dict_prices.json'
+            file_path_data = Path(file_path_data)
+            # write_list_data_to_file(file_path_data, list(freq_dict_prices), 'w')
+            with open(file_path_data, "w") as json_file:
+                json.dump(freq_dict_prices, json_file, indent=4, sort_keys=True)
         
         else:
     # ============= Transferred all data from a hundred files to a single file, in two cycles =======
