@@ -11,10 +11,100 @@ import logging
 import json
 from collections import Counter
 import os
+import math
 
 
 def get_freq_dict(my_list):
     return Counter(my_list)
+
+
+def get_hist_prices(data_prices: list, freq_dict) -> dict:
+    min_price = min(data_prices) # 150
+    max_price = max(data_prices) # 1000
+    width_bin = 50
+    count_bins = math.ceil( ( max_price - min_price ) / width_bin ) + 1
+
+    # Initial...
+    hist_dict = {}
+
+    # Range of each bins:
+    min_bin = min_price
+    # max_bin = min_bin + width_bin
+
+    # ... and create hist_dict
+    for _ in range( count_bins ):
+        # hist_dict[f'{min_bin}'] = 0  # [ min_bin..max_bin ]
+        hist_dict[min_bin] = 0  # [ min_bin..max_bin ]
+        min_bin += width_bin
+        # hist_dict[f'{min_bin} - {max_bin}'] = 0
+        # min_bin += width_bin
+        # max_bin += width_bin
+    print(f'Empty hist_dict: {hist_dict}')
+
+    # # Reading freq dict of prices ( freq_dict ) from freq_dict_prices.json
+    # file_path_data = f'{dir_path_bio}/freq_dict_prices.json'
+    # file_path_data = Path(file_path_data)
+    # with open(file_path_data, "r") as json_file:
+    #     freq_dict = json.loads(json_file.read())
+
+    # Заповнення hist_dict
+    for price_str, count in freq_dict.items():
+        price = int(price_str)
+        bin_key = price - ( price % width_bin )
+        if bin_key in hist_dict:
+            hist_dict[bin_key] += count
+        # if str(bin_key) in hist_dict:
+        #     hist_dict[str(bin_key)] += count
+
+    print(f'Follow hist_dict: {hist_dict}')
+
+    return hist_dict
+
+
+
+        # # Writing freq_dict_prices to file
+        # current_directory = Path.cwd()
+        # subject_dir = Path('bio')
+        # dir_path_bio = f"{current_directory}/{subject_dir}/"
+        # # freq_dict_prices = get_freq_dict(data_prices)
+        # # print(f'freq_dict_prices == {freq_dict_prices}')
+        # # # print(f'freq_dict_prices == {list(freq_dict_prices)}')
+        # file_path_data = f'{dir_path_bio}/hist_dict_prices.json'
+        # file_path_data = Path(file_path_data)
+        # # write_list_data_to_file(file_path_data, list(freq_dict_prices), 'w')
+        # with open(file_path_data, "w") as json_file:
+        #     json.dump(hist_dict, json_file, indent=4, sort_keys=True)
+
+
+
+    # while ...:
+    #     if freq_dict[key] < hist_dict[f'{min_bin}']:
+    #         hist_dict[f'{min_bin}'] += freq_dict[key]
+
+    # for key, val in hist_dict:
+    #     if int(key) < max_bin:
+    #         hist_dict[f'{min_bin}'] += val
+
+    # # freq_dict.sort()
+
+    
+
+
+# how to round to nearest 50 in python
+# 50 * round(number / 50)
+# 50 * math.ceil(number / 50)
+    
+    # for num in data_prices:
+    #     if num in hist_dict:
+    #         hist_dict[f'{min_bin}'] += 1
+    #     else:
+    #         hist_dict[f'{min_bin}'] = 1
+
+    #     min_bin = min_price + width_bin
+    #     max_bin = min_bin + width_bin
+
+# ---------------------
+
 
 
 # def find_folder_in_current_dir(target_name):
@@ -109,33 +199,35 @@ def main():
 
         if file_path_data.is_file():
     # ============= Витягаю дані для створення freq_dict_prices =======
-            # file_path_data = f'{dir_path_bio}/bio_data.jsonl'
-            data_prices = []
+        #     # file_path_data = f'{dir_path_bio}/bio_data.jsonl'
+        #     data_prices = []
             
-            with open(file_path_data, "r", encoding='utf-8') as jsonFile:
-                for line in jsonFile:
-                    try:
-                        json_object = json.loads(line)
-                        data_prices.append(json_object['price'])
-                    except json.JSONDecodeError as e:
+        #     # Reading bio_data.jsonl for extract data_prices list with all data
+        #     with open(file_path_data, "r", encoding='utf-8') as jsonFile:
+        #         for line in jsonFile:
+        #             try:
+        #                 json_object = json.loads(line)
+        #                 data_prices.append(json_object['price'])
+        #             except json.JSONDecodeError as e:
             
-                        print(f'Error decoding JSON on line: {line.strip()} - {e}')
-                        continue # skip invalid lines and continue processing
+        #                 print(f'Error decoding JSON on line: {line.strip()} - {e}')
+        #                 continue # skip invalid lines and continue processing
 
-        # Writing prices to file
+        # # Writing prices to prices.json
             file_path_data = f'{dir_path_bio}/prices.json'
             file_path_data = Path(file_path_data)
-            # write_list_data_to_file(file_path_data, data_prices, 'w')
-            with open(file_path_data, "w") as json_file:
-                json.dump(data_prices, json_file)
+        #     # write_list_data_to_file(file_path_data, data_prices, 'w')
+        #     with open(file_path_data, "w") as json_file:
+        #         json.dump(data_prices, json_file)
 
-        # Reading list of prices from prices.json
+        # Reading list of prices ( data_prices ) from prices.json
             try:
                 data_prices = []
                 with open(file_path_data, "r", encoding='utf-8') as jsonFile:
                     try:
-                        data_prices = json.loads(jsonFile.read()) # Це дозволить правильно прочитати ціле вміст файлу як рядок, а потім розпарсити його як JSON.
-                        print(f'data_prices == {data_prices}')
+                        # data_prices = json.loads(jsonFile.read()) # Це дозволить правильно прочитати ціле вміст файлу як рядок, а потім розпарсити його як JSON.
+                        data_prices = json.load(jsonFile) # Це дозволить правильно прочитати ціле вміст файлу як рядок, а потім розпарсити його як JSON.
+                        # print(f'data_prices == {data_prices}')
                     except json.JSONDecodeError as e:                
                         print(f'Error decoding JSON: {e}')
             except FileNotFoundError:
@@ -143,15 +235,40 @@ def main():
             except json.JSONDecodeError:
                 print("Error: Could not decode JSON from 'prices.json'")
 
-        # Writing freq_dict_prices to file
-            freq_dict_prices = get_freq_dict(data_prices)
-            print(f'freq_dict_prices == {freq_dict_prices}')
-            # print(f'freq_dict_prices == {list(freq_dict_prices)}')
+        # Reading freq dict of prices ( freq_dict ) from freq_dict_prices.json
             file_path_data = f'{dir_path_bio}/freq_dict_prices.json'
             file_path_data = Path(file_path_data)
-            # write_list_data_to_file(file_path_data, list(freq_dict_prices), 'w')
+            print('Reading freq dict of prices ( freq_dict ) from freq_dict_prices.json')
+            # write_list_data_to_file(file_path_data, list(hist_prices), 'w')
+            with open(file_path_data, "r") as json_file:
+                freq_dict = json.loads(json_file.read())
+                # json.load(freq_dict, json_file, indent=4, sort_keys=True)
+
+            print(f'freq_dict == {freq_dict}')
+
+            file_path_data = f'{dir_path_bio}/hist_prices.json'
+            file_path_data = Path(file_path_data)            
+            
+        # Forming hist_prices of dict
+            # print(f'data_prices == {data_prices}')
+            hist_prices = get_hist_prices(data_prices, freq_dict)
+            # print(f'hist_prices == {hist_prices}')
+            # print(f'hist_prices == {list(hist_prices)}')
+
+        # Writing hist_prices to hist_prices.json
+            # write_list_data_to_file(file_path_data, list(hist_prices), 'w')
             with open(file_path_data, "w") as json_file:
-                json.dump(freq_dict_prices, json_file, indent=4, sort_keys=True)
+                json.dump(hist_prices, json_file, indent=4, sort_keys=True)
+
+        # # Writing freq_dict_prices to file
+        #     freq_dict_prices = get_freq_dict(data_prices)
+        #     print(f'freq_dict_prices == {freq_dict_prices}')
+        #     # print(f'freq_dict_prices == {list(freq_dict_prices)}')
+        #     file_path_data = f'{dir_path_bio}/freq_dict_prices.json'
+        #     file_path_data = Path(file_path_data)
+        #     # write_list_data_to_file(file_path_data, list(freq_dict_prices), 'w')
+        #     with open(file_path_data, "w") as json_file:
+        #         json.dump(freq_dict_prices, json_file, indent=4, sort_keys=True)
         
         else:
     # ============= Transferred all data from a hundred files to a single file, in two cycles =======
