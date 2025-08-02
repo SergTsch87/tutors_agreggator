@@ -11,43 +11,43 @@ import logging
 import json
 # from collections import Counter
 import os
-import math
+# import math
 
+# delete!
+# def get_hist_prices(data_prices: list, freq_dict) -> dict:
+#     min_price = min(data_prices) # 150
+#     max_price = max(data_prices) # 1000
+#     width_bin = 50
+#     count_bins = math.ceil( ( max_price - min_price ) / width_bin ) + 1
 
-def get_hist_prices(data_prices: list, freq_dict) -> dict:
-    min_price = min(data_prices) # 150
-    max_price = max(data_prices) # 1000
-    width_bin = 50
-    count_bins = math.ceil( ( max_price - min_price ) / width_bin ) + 1
+#     # Initial...
+#     hist_dict = {}
 
-    # Initial...
-    hist_dict = {}
+#     # Range of each bins:
+#     min_bin = min_price
 
-    # Range of each bins:
-    min_bin = min_price
+#     # ... and create hist_dict
+#     for _ in range( count_bins ):
+#         hist_dict[min_bin] = 0  # [ min_bin..max_bin ]
+#         min_bin += width_bin
+#     print(f'Empty hist_dict: {hist_dict}')
 
-    # ... and create hist_dict
-    for _ in range( count_bins ):
-        hist_dict[min_bin] = 0  # [ min_bin..max_bin ]
-        min_bin += width_bin
-    print(f'Empty hist_dict: {hist_dict}')
+#     # # Reading freq dict of prices ( freq_dict ) from freq_dict_prices.json
+#     # file_path_data = f'{dir_path_bio}/freq_dict_prices.json'
+#     # file_path_data = Path(file_path_data)
+#     # with open(file_path_data, "r") as json_file:
+#     #     freq_dict = json.loads(json_file.read())
 
-    # # Reading freq dict of prices ( freq_dict ) from freq_dict_prices.json
-    # file_path_data = f'{dir_path_bio}/freq_dict_prices.json'
-    # file_path_data = Path(file_path_data)
-    # with open(file_path_data, "r") as json_file:
-    #     freq_dict = json.loads(json_file.read())
+#     # Заповнення hist_dict
+#     for price_str, count in freq_dict.items():
+#         price = int(price_str)
+#         bin_key = price - ( price % width_bin )
+#         if bin_key in hist_dict:
+#             hist_dict[bin_key] += count
 
-    # Заповнення hist_dict
-    for price_str, count in freq_dict.items():
-        price = int(price_str)
-        bin_key = price - ( price % width_bin )
-        if bin_key in hist_dict:
-            hist_dict[bin_key] += count
+#     print(f'Follow hist_dict: {hist_dict}')
 
-    print(f'Follow hist_dict: {hist_dict}')
-
-    return hist_dict
+#     return hist_dict
 
 
 
