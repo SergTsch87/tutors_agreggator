@@ -84,7 +84,31 @@ def main():
         format='%(asctime)s - %(levelname)s - %(message)s',
         filemode = 'a'   # Дозаписування нових записів до файлу
     )
+
+# ============= BEGIN of STRUCTURE ===================
+
+    subject_dir = Path('bio')
+    
+    if subject_dir.exists():
+        current_directory = Path.cwd()
+        dir_path_bio = f"{current_directory}/{subject_dir}/"
+
+        file_path_data = f'{dir_path_bio}/bio_data.jsonl'
+        file_path_data = Path(file_path_data)
+
+        if file_path_data.is_file():
+            run_analysis_pipeline()
+        else:
+            merge_jsonl_files_to_bio_data()
+            run_analysis_pipeline()
+    else:
+        fetch_data_and_create_folders()
+        merge_jsonl_files_to_bio_data()
+        run_analysis_pipeline()
+# ============= THE END of STRUCTURE ===================
+
 # ================================
+
     
     # Код для отримання найбільшого номера пагінації
     # ! Якщо такого номера нема, - тоді:
