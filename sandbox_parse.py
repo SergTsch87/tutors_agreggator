@@ -3,19 +3,15 @@
 # env1\bin\python -m pip freeze > requirements.txt
 # env2\bin\python -m pip install -r requirements.txt
 
-from tutors_app.utils import is_connected, get_file_path, timer_elapsed
+from tutors_app.utils import is_connected, get_file_path, timer_elapsed, get_freq_dict
 from tutors_app.file_dir_sys import write_list_data_to_file, create_dir, create_empty_txt_file, create_dir_bio # create_file_dir_structure, save_to_file, delete_file
 from tutors_app.scrap_logic import correct_url, is_there_next_page, get_tag_body, get_max_pagination, get_data_from_one_account, parse_tutor_card_buki #, get_element, get_tutor_urls
 from pathlib import Path
 import logging
 import json
-from collections import Counter
+# from collections import Counter
 import os
 import math
-
-
-def get_freq_dict(my_list):
-    return Counter(my_list)
 
 
 def get_hist_prices(data_prices: list, freq_dict) -> dict:

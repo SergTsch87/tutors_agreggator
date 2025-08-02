@@ -4,6 +4,11 @@ from pathlib import Path
 import requests
 import logging
 import time
+from collections import Counter
+
+
+def get_freq_dict(my_list):
+    return Counter(my_list)
 
 
 def is_connected():    # Для перевірки доступності інтернету перед відправленням запиту
