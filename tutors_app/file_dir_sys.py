@@ -2,7 +2,33 @@ from pathlib import Path
 # from tutors_app.scrap_logic import fetch_url_with_retries
 # from tutors_app.utils import get_file_path, timer_elapsed
 import json
+import os
 
+
+def count_subdirectories(directory_path):
+    """
+    Counts the number of subdirectories directly within a given directory.
+
+    Args:
+        directory_path (str): The path to the directory to examine.
+
+    Returns:
+        int: The number of subdirectories found.
+    """
+    if not os.path.isdir(directory_path):
+        print(f"Error: '{directory_path}' is not a valid directory.")
+        return 0
+
+    # os.walk yields a 3-tuple: (dirpath, dirnames, filenames)
+    # The first element returned by next(os.walk(...)) will contain the
+    # dirnames (subdirectories) of the top-level directory.
+    try:
+        _, dirnames, _ = next(os.walk(directory_path))
+        return len(dirnames)
+    except StopIteration:
+        # This can happen if the directory_path itself is empty or not accessible
+        return 0
+    
 
 def create_dir(dir_path):
     '''

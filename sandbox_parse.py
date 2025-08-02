@@ -4,51 +4,14 @@
 # env2\bin\python -m pip install -r requirements.txt
 
 from tutors_app.utils import is_connected, get_file_path, timer_elapsed, get_freq_dict
-from tutors_app.file_dir_sys import write_list_data_to_file, create_dir, create_empty_txt_file, create_dir_bio # create_file_dir_structure, save_to_file, delete_file
+from tutors_app.file_dir_sys import count_subdirectories, write_list_data_to_file, create_dir, create_empty_txt_file, create_dir_bio # create_file_dir_structure, save_to_file, delete_file
 from tutors_app.scrap_logic import correct_url, is_there_next_page, get_tag_body, get_max_pagination, get_data_from_one_account, parse_tutor_card_buki #, get_element, get_tutor_urls
 from pathlib import Path
 import logging
 import json
 # from collections import Counter
-import os
+# import os
 # import math
-
-# delete!
-# def get_hist_prices(data_prices: list, freq_dict) -> dict:
-#     min_price = min(data_prices) # 150
-#     max_price = max(data_prices) # 1000
-#     width_bin = 50
-#     count_bins = math.ceil( ( max_price - min_price ) / width_bin ) + 1
-
-#     # Initial...
-#     hist_dict = {}
-
-#     # Range of each bins:
-#     min_bin = min_price
-
-#     # ... and create hist_dict
-#     for _ in range( count_bins ):
-#         hist_dict[min_bin] = 0  # [ min_bin..max_bin ]
-#         min_bin += width_bin
-#     print(f'Empty hist_dict: {hist_dict}')
-
-#     # # Reading freq dict of prices ( freq_dict ) from freq_dict_prices.json
-#     # file_path_data = f'{dir_path_bio}/freq_dict_prices.json'
-#     # file_path_data = Path(file_path_data)
-#     # with open(file_path_data, "r") as json_file:
-#     #     freq_dict = json.loads(json_file.read())
-
-#     # Заповнення hist_dict
-#     for price_str, count in freq_dict.items():
-#         price = int(price_str)
-#         bin_key = price - ( price % width_bin )
-#         if bin_key in hist_dict:
-#             hist_dict[bin_key] += count
-
-#     print(f'Follow hist_dict: {hist_dict}')
-
-#     return hist_dict
-
 
 
         # # Writing freq_dict_prices to file
@@ -111,31 +74,6 @@ import os
 #         if os.path.isdir(item_path) and item == target_name:
 #             return item_path
 #     return None
-
-
-def count_subdirectories(directory_path):
-    """
-    Counts the number of subdirectories directly within a given directory.
-
-    Args:
-        directory_path (str): The path to the directory to examine.
-
-    Returns:
-        int: The number of subdirectories found.
-    """
-    if not os.path.isdir(directory_path):
-        print(f"Error: '{directory_path}' is not a valid directory.")
-        return 0
-
-    # os.walk yields a 3-tuple: (dirpath, dirnames, filenames)
-    # The first element returned by next(os.walk(...)) will contain the
-    # dirnames (subdirectories) of the top-level directory.
-    try:
-        _, dirnames, _ = next(os.walk(directory_path))
-        return len(dirnames)
-    except StopIteration:
-        # This can happen if the directory_path itself is empty or not accessible
-        return 0
 
 
 @timer_elapsed
